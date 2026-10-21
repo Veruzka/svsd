@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Endangered Languages</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -271,6 +272,31 @@ header.top>*{pointer-events:auto}
 .sx-gap svg.line{width:100%;height:56px;overflow:visible}
 .sx-gap svg.line text{font-family:var(--mono);font-size:11px;fill:var(--muted)}
 .sx-gap .hyp{opacity:0}
+.sx-wa{background:var(--bg);overflow:hidden}
+.wa-rays{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.sx-wa .dir{position:absolute;left:50%;transform:translateX(-50%);text-align:center;font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--muted);opacity:0;transition:opacity 1.2s ease 1.4s}.sx-wa.on .dir{opacity:1}
+.a1{position:absolute;inset:0;will-change:opacity,transform}
+.sx-wa h2 small{display:block;font-family:var(--serif);font-style:normal;font-size:clamp(16px,1.9vw,20px);color:var(--muted);margin-top:10px}
+.sx-wa .txt::before{content:'';position:absolute;inset:-70px -120px;z-index:-1;background:radial-gradient(ellipse at center,rgba(252,251,250,.6) 35%,transparent 72%)}
+.sx-wa .txt{position:absolute;z-index:1;left:50%;top:50%;transform:translate(-50%,-50%);width:min(640px,calc(100% - 48px));text-align:center}
+.sx-wa .txt>*{opacity:0;transform:translateY(10px);transition:opacity 1.2s ease,transform 1.2s ease}
+.sx-wa h2{font-family:var(--serif);font-weight:400;font-style:italic;font-size:clamp(28px,4.6vw,46px);line-height:1.15;margin:16px 0 22px}
+.sx-wa p{font-family:var(--serif);font-size:clamp(16px,1.8vw,19px);line-height:1.42;color:var(--ink);margin:0 0 7px}
+.sx-wa .dir.n{top:78px}.sx-wa .dir.s{bottom:26px}
+.sx-wa .dir small{display:block;color:var(--faint);font-size:11px;letter-spacing:.04em}
+.m2{position:absolute;inset:0;pointer-events:none}.m2-stage{opacity:0}
+.m2-stage{position:absolute;left:50%;top:50%;width:min(92vw,calc((100vh - 70px)*1.2535));aspect-ratio:1920/1531;transform:translate(-50%,-50%);will-change:transform}
+.m2-half{position:absolute;inset:0;will-change:transform}
+.m2-half img{width:100%;height:100%;display:block}
+.m2-half svg{position:absolute;inset:0;width:100%;height:100%}
+.m2-half path{fill:none;stroke:#9a3b2b;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1 1.01;stroke-dashoffset:1}
+.m2-sand{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.m2-cards{position:absolute;left:24px;bottom:24px;width:min(390px,calc(100% - 48px));display:grid;pointer-events:none}
+.m2-c{grid-area:1/1;align-self:end;opacity:0;background:rgba(252,251,250,.9);border:1px solid var(--line);border-radius:4px;padding:15px 18px 4px;will-change:opacity,transform}
+.m2-c .cap{margin-bottom:8px}
+.m2-c p{font-size:clamp(14.5px,1.5vw,16.5px);line-height:1.5;margin:0 0 11px}
+.sx-wa.on .txt>*{opacity:1;transform:none}
+.sx-wa.on .txt>:nth-child(1){transition-delay:.4s}.sx-wa.on .txt>:nth-child(2){transition-delay:.8s}.sx-wa.on .txt>:nth-child(3){transition-delay:1.3s}
 .sx-steps{position:relative;z-index:1}
 .sx-step{display:flow-root;position:relative;box-sizing:border-box;padding:0 max(24px,env(safe-area-inset-right,0px)) 0 max(6vw,env(safe-area-inset-left,0px));pointer-events:none}
 .sx-card{pointer-events:auto;position:relative;width:min(400px,100%);box-sizing:border-box;background:var(--surface);border:1px solid var(--line);border-radius:6px;box-shadow:var(--shadow);padding:22px 24px;margin-top:62vh}
@@ -1075,6 +1101,7 @@ ga:{title:'The language that left on the boats',dek:'Irish fell from millions of
 haw:{title:'Eighty-seven years without a count',dek:'Hawaiian went from the language of a kingdom to fewer than fifty children. For most of that century, no one was counting.',
  steps:[
   {t:'photo',hero:true,key:'haw-hero',scene:'ship',cap:'Image slot · suggested: Honolulu harbour, c. 1890 · Hawaiʻi State Archives',ken:[0,-3]},
+  {t:'wa',h0:900},
   {t:'map',cam:{lon:-168,lat:14,z:1.1,year:1853},k:'1853 · estimate',h:'In the middle of the Pacific',p:['Hawaiʻi is 3,800 km from the nearest continent. Hawaiian’s closest relatives, Tahitian and Marquesan, are spoken more than 3,000 km to the south.']},
   {t:'map',cam:{...HAW,year:1853},k:'1853 · estimate',h:'Almost everyone spoke Hawaiian',p:['The Kingdom’s census counted about 70,000 Native Hawaiians. Hawaiian was the language of government, church and the press.','Each blue dot stands for a share of the islands’ people who spoke it.']},
   {t:'photo',key:'haw-queen',scene:'portrait',cap:'Image slot · suggested: Queen Liliʻuokalani, c. 1891 · public domain',ken:[0,-3],ann:{x:.5,y:.34,r:.12,l:'Liliʻuokalani, last monarch of Hawaiʻi'},k:'1893',h:'The overthrow',p:['Business leaders, backed by US marines, deposed Queen Liliʻuokalani. Three years later, the republic they formed rewrote the school law.']},
@@ -1165,7 +1192,25 @@ function sceneHTML(L,s,i){
     return`<div class="sx-scene sx-gap" data-sc="${i}"><div class="in"><div><div class="yrs" data-n="${g.to-g.from}">${g.to-g.from}</div><div class="cap" style="margin-top:10px">${esc(gapTitle(g))}</div></div>
      <svg class="line" viewBox="0 0 ${W2} 56"><line x1="14" x2="${W2-14}" y1="22" y2="22" stroke="${C.faint}" stroke-width="2" stroke-dasharray="2 6" stroke-linecap="round" pathLength="100"/><circle cx="14" cy="22" r="6" fill="${g.a.k==='meas'?C.fg:C.bg}" stroke="${C.fg}" stroke-width="1.5"/><circle cx="${W2-14}" cy="22" r="6" fill="${g.b.k==='meas'?C.fg:C.bg}" stroke="${C.fg}" stroke-width="1.5"/><text x="14" y="50">${g.from} · ${fmt(g.a.v)}</text><text x="${W2-14}" y="50" text-anchor="end">${g.to} · ${fmt(g.b.v)}</text></svg>
      <div data-gapvis="${g.id}" data-lang="${L.id}">${gapHyps(g,true)}</div><div><button class="btn ghost sm" data-opengap="${g.id}">Confirm, correct or add to these</button></div></div></div>`}
-  return''}
+  if(s.t==='wa')return`<div class="sx-scene sx-wa" data-sc="${i}"><div class="a1">
+    <canvas class="wa-rays" aria-hidden="true"></canvas>
+    <div class="dir n">Mauka<small>toward the mountains</small></div>
+    <div class="txt">
+      <div class="cap">[ Cognitive Worldview · Wā ]</div>
+      <h2>I ka wā ma mua, ka wā ma hope<small>The time in front; the time behind.</small></h2>
+      <div><p>In our language, space and time are one: <em>Wā</em>.</p><p>What lies in front of our eyes (<em>mua</em>) is the past—already seen, known, and shaped by our ancestors.</p><p>What approaches from behind our backs (<em>hope</em>) is the future—unseen, unknown.</p><p>We do not blindly march forward into tomorrow.</p><p><em>We step backward into the future, facing what came before.</em></p></div>
+    </div>
+    <div class="dir s">Makai<small>toward the ocean</small></div>
+  </div>
+  <div class="m2">
+    <div class="m2-stage"></div>
+    <canvas class="m2-sand" aria-hidden="true"></canvas>
+    <div class="m2-cards">
+      <div class="m2-c"><div class="cap">[ The Fracture of Fluidity · Wao vs. Grids ]</div><p>A <i>wao</i> is not a parcel. Mountain, forest, stream and shore ran into one another, and families moved along them with the seasons.</p><p>Then came maps like this one, made for title and sale by the acre. The surveys served the sugar planters, and U.S. marines stood behind the 1893 overthrow that cleared their way.</p></div>
+      <div class="m2-c"><div class="cap">[ Ahupuaʻa · Survey lines ]</div><p>An ahupuaʻa ran from the summit to the sea. The survey redrew the land from Haleakalā outward as straight lines, then laid rigid plantation grids across the isthmus.</p></div>
+      <div class="m2-c"><div class="cap">[ Where the lines cut ]</div><p>Where the lines cut, the land comes apart. One living system becomes lots to be sold, and the grains begin to fall.</p></div>
+    </div>
+  </div></div>`;  return''}
 function cardHTML(L,ST,s){
   if(s.hero)return`<div class="sx-card hero"><div class="cap">${esc(L.place)} · ${esc(L.endo)}</div><h1>${esc(ST.title)}</h1><p>${esc(ST.dek)}</p><div class="mono" style="margin-top:20px">Scroll ↓</div></div>`;
   if(!s.h)return'';const mark=/unexplained|estimate/.test(s.k)?'<i class="ring" style="border-style:dashed"></i>':/measured/.test(s.k)?'<i class="dot" style="color:var(--fg)"></i>':'<i class="dot" style="color:var(--accent)"></i>';
@@ -1184,15 +1229,16 @@ function openStory(id){const L=LANGS[id],ST=STORIES[id];const el=$('#story');tog
   el.hidden=false;el.classList.remove('fade');el.scrollTop=0;initPlates(el);document.body.style.overflow='hidden';
   el.querySelector('#sClose').onclick=closeStory;el.querySelector('#sBack').onclick=closeStory;el.querySelector('#sAdd').onclick=()=>openForm({lang:id});el.querySelector('#sOther').onclick=()=>openStory(other);
   el.querySelectorAll('[data-opengap]').forEach(b=>b.onclick=()=>openGap(L.gapList.find(g=>g.id===b.dataset.opengap)));renderGaps(L,el.querySelector('#sGaps'));
-  SX.cv=el.querySelector('.sx-map');SX.ctx=SX.cv.getContext('2d');
+  SX.cv=el.querySelector('.sx-map');SX.ctx=SX.cv.getContext('2d');WX.mount(el);
   SX.ro&&SX.ro.disconnect();SX.ro=new ResizeObserver(()=>{storyMeasure();storyTick()});SX.ro.observe(el.querySelector('.sx-stage'));
   el.onscroll=()=>{if(!SX.raf)SX.raf=requestAnimationFrame(()=>{SX.raf=0;storyTick()})};storyMeasure();storyTick()}
 function storyMeasure(){const el=SX.el;if(!el||el.hidden)return;const r=SX.cv.getBoundingClientRect();const dpr=Math.min(2,devicePixelRatio||1);SX.W=r.width;SX.H=r.height;
-  SX.cv.width=r.width*dpr;SX.cv.height=r.height*dpr;SX.ctx.setTransform(dpr,0,0,dpr,0,0);
+  SX.cv.width=r.width*dpr;SX.cv.height=r.height*dpr;SX.ctx.setTransform(dpr,0,0,dpr,0,0);WX.size();
   const base=el.getBoundingClientRect().top-el.scrollTop;SX.tops=[...el.querySelectorAll('.sx-step')].map(s=>{const b=s.getBoundingClientRect();return{top:b.top-base,h:b.height}})}
 function storyTick(){const el=SX.el;if(!el||el.hidden||!SX.tops.length)return;const vh=el.clientHeight,y=el.scrollTop+vh*.5;
   let i=0;for(let k=0;k<SX.tops.length;k++)if(SX.tops[k].top<=y)i=k;const p=clamp01((y-SX.tops[i].top)/SX.tops[i].h);const s=SX.steps[i];
-  if(i!==SX.i){SX.i=i;el.querySelectorAll('.sx-scene').forEach(n=>n.classList.toggle('on',+n.dataset.sc===i));el.querySelector('.sx-hud').classList.toggle('off',s.t!=='map')}
+  if(i!==SX.i){SX.i=i;el.querySelectorAll('.sx-scene').forEach(n=>n.classList.toggle('on',+n.dataset.sc===i));el.querySelector('.sx-hud').classList.toggle('off',s.t!=='map');WX.setActive(s.t==='wa')}
+  if(s.t==='wa')WX.apply(clamp01((el.scrollTop-SX.tops[i].top)/Math.max(1,SX.tops[i].h-vh)));
   el.querySelector('.prog').style.width=(el.scrollTop/Math.max(1,el.scrollHeight-vh)*100)+'%';
   const sc=el.querySelector(`.sx-scene[data-sc="${i}"]`);
   if(s.t==='map'||(sc&&s.t==='gap')||!sc)drawStoryMap(camAt(i,p));
@@ -1206,7 +1252,64 @@ function storyTick(){const el=SX.el;if(!el||el.hidden||!SX.tops.length)return;co
   if(s.t==='gap'){const n=sc.querySelector('.yrs');const N=+n.dataset.n;n.textContent=reduce?N:Math.round(N*smooth(p/.3));
     sc.querySelector('svg.line line').setAttribute('stroke-dashoffset',0);
     sc.querySelectorAll('.hyp').forEach((h,j)=>{const t=reduce?1:smooth((p-.25-j*.09)/.08);h.style.opacity=t;h.style.transform=`translateY(${(1-t)*14}px)`})}}
-function closeStory(){const el=$('#story');el.classList.add('fade');SX.ro&&SX.ro.disconnect();el.onscroll=null;setTimeout(()=>{el.hidden=true;el.innerHTML='';SX.el=null},600);document.body.style.overflow=''}
+function closeStory(){const el=$('#story');WX.setActive(false);el.classList.add('fade');SX.ro&&SX.ro.disconnect();el.onscroll=null;setTimeout(()=>{el.hidden=true;el.innerHTML='';SX.el=null},600);document.body.style.overflow=''}
+
+/* ============ Wā: first-person time, then the 1885 map of Maui cut by survey lines (a scroll step in the Hawaiian story) ============ */
+const WX=(()=>{const IW=1920,IH=1531,SRC='picture_local/Map_of_Maui.jpg',INK='#9a3b2b';
+  let sc,a1,rc,rg,stage,cards,sand,sg,halves,prs,W=0,H=0,sw=0,sh=0,run=false,t0=0,last=0,zc=0,boost=0,col='#999';
+  const pts=Array.from({length:90},()=>({x:(Math.random()*2-1)*7,z:Math.random(),w:.6+Math.random()*.8}));
+  const ridge=Array.from({length:30},(_,i)=>{const x=i/29;return[x,.25+.75*Math.abs(Math.sin(i*2.3)*Math.cos(i*.7))*Math.max(.25,1-Math.abs(x-.5)*1.6)]});
+  const CUT=[[590,0],[600,120],[576,260],[606,380],[588,470],[612,560],[580,660],[606,760],[590,880],[604,1020],[580,1180],[598,1340],[586,1531]];
+  const cutX=y=>{for(let i=1;i<CUT.length;i++){const a=CUT[i-1],b=CUT[i];if(y<=b[1])return a[0]+(b[0]-a[0])*(y-a[1])/(b[1]-a[1])}return CUT[CUT.length-1][0]};
+  const poly=side=>{const q=CUT.map(([x,y])=>`${(x/IW*100).toFixed(2)}% ${(y/IH*100).toFixed(2)}%`).join(',');return side<0?`polygon(0% 0%,${q},0% 100%)`:`polygon(${q},100% 100%,100% 0%)`};
+  // survey lines in map pixels: ahupuaʻa out from Haleakalā's crater, a plantation grid over the isthmus, and the cut itself
+  const SUM=[1335,960],ENDS=[[1030,372],[1180,395],[1400,560],[1545,655],[1750,830],[1700,1020],[1560,1130],[1330,1185],[1010,1285],[730,1160],[760,775],[900,430]];
+  const paths=[];
+  ENDS.forEach((e,i)=>{const mx=(SUM[0]+e[0])/2,my=(SUM[1]+e[1])/2,dx=e[0]-SUM[0],dy=e[1]-SUM[1],k=(i%2?.07:-.07);paths.push({d:`M${SUM[0]} ${SUM[1]}Q${mx-dy*k} ${my+dx*k} ${e[0]} ${e[1]}`,w:3.4,a:i/ENDS.length*.5,b:i/ENDS.length*.5+.32})});
+  [665,735,805,875,945].forEach((x,i)=>paths.push({d:`M${x} 470L${x} 770`,w:2.8,a:.4+i*.05,b:.62+i*.05}));
+  [520,590,660,730].forEach((y,i)=>paths.push({d:`M620 ${y}L1005 ${y}`,w:2.8,a:.55+i*.05,b:.77+i*.05}));
+  paths.push({d:'M'+CUT.map(c=>c.join(' ')).join('L'),w:5.2,a:.72,b:1});
+  // sand colours: sampled from the map where the browser allows it (not from file://), else a paper/forest/ink palette
+  let pal=['#cdb88a','#bfa670','#7f9a5a','#6f8a4a','#9a3b2b','#8a8372'];
+  const N=2400,sd=Array.from({length:N},()=>({s:Math.random()*.75,ty:Math.random(),side:Math.random()<.5?-1:1,vx:(Math.random()-.3)*190,r:1.1+Math.random()*2.2,c:Math.floor(Math.random()*40),q:Math.random(),g:560+Math.random()*180}));
+  function mount(el){sc=el.querySelector('.sx-wa');if(!sc)return;run=false;a1=sc.querySelector('.a1');rc=sc.querySelector('.wa-rays');rg=rc.getContext('2d');stage=sc.querySelector('.m2-stage');cards=[...sc.querySelectorAll('.m2-c')];sand=sc.querySelector('.m2-sand');sg=sand.getContext('2d');
+    halves=[-1,1].map(side=>{const h=document.createElement('div');h.className='m2-half';h.style.clipPath=poly(side);
+      h.innerHTML=`<img src="${SRC}" alt="${side<0?'Hawaiian Government Survey map of Maui, 1885':''}" ${side>0?'aria-hidden="true"':''}><svg viewBox="0 0 ${IW} ${IH}" aria-hidden="true">${paths.map(q=>`<path d="${q.d}" pathLength="1" style="stroke-width:${q.w}"/>`).join('')}</svg>`;stage.appendChild(h);return h});
+    prs=halves.map(h=>[...h.querySelectorAll('path')]);
+    const im=halves[0].querySelector('img');im.addEventListener('load',()=>{try{const o=document.createElement('canvas');o.width=o.height=48;const x=o.getContext('2d');x.drawImage(im,0,0,48,48);const d=x.getImageData(0,0,48,48).data,out=[];for(let i=0;i<d.length;i+=28)out.push(`rgb(${d[i]*.8|0},${d[i+1]*.8|0},${d[i+2]*.8|0})`);if(out.length>20)pal=out.concat(INK,INK)}catch(e){}});
+    size();apply(0)}
+  function size(){if(!sc)return;const d=Math.min(devicePixelRatio||1,2);W=sc.clientWidth;H=sc.clientHeight;if(!W)return;
+    for(const c of[rc,sand]){c.width=W*d;c.height=H*d}rg.setTransform(d,0,0,d,0,0);sg.setTransform(d,0,0,d,0,0);sw=stage.offsetWidth;sh=stage.offsetHeight;col=getComputedStyle(document.documentElement).getPropertyValue('--muted').trim()||'#999'}
+  // Act 1: a one-point-perspective ground; lines and dots recede toward the horizon, as if stepping backward
+  function drawGround(t){const g=rg;g.clearRect(0,0,W,H);
+    const dt=last?Math.min(.05,(t-last)/1000):0;last=t;boost*=Math.pow(.18,dt);zc+=(.05+boost)*dt;
+    const ease=Math.min(1,(t-t0)/1200),cx=W/2,hy=H*.42,hg=H-hy,f=Math.max(W,H*1.2)*.11,rx=Math.min(400,W*.42),ry=Math.min(210,H*.36);
+    const Z=zr=>hy+hg/zr;
+    const pull=1/(1+zc*.05);g.strokeStyle='rgba(0,0,0,.14)';g.lineWidth=1;g.globalAlpha=ease;g.beginPath();g.moveTo(0,hy);g.lineTo(W,hy);g.stroke();
+    g.fillStyle='rgba(0,0,0,.13)';g.beginPath();g.moveTo(0,hy);for(const[rx0,rh]of ridge)g.lineTo(cx+(rx0-.5)*W*1.15*pull,hy-rh*H*.13*pull);g.lineTo(cx+.575*W*1.15*pull,hy);g.closePath();g.fill();
+    const gr=g.createLinearGradient(0,hy,0,H);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,'rgba(0,0,0,.2)');g.strokeStyle=gr;g.setLineDash([1.5,5]);g.lineCap='round';
+    g.beginPath();for(let i=-16;i<=16;i++){const x=i*1.1;g.moveTo(cx,hy);g.lineTo(cx+x/.7*f,Z(.7))}g.stroke();g.setLineDash([]);
+    const sp=.55,u=(zc/sp)%1;for(let k=0;k<26;k++){const zr=.8+(k+u)*sp*(1+k*.04),y=Z(zr),a=Math.min(1,(zr-.8)/.5)*Math.min(1,2.2/zr)*.17*ease;if(a<.004)continue;g.strokeStyle=`rgba(0,0,0,${a})`;g.beginPath();g.moveTo(0,y);g.lineTo(W,y);g.stroke()}
+    g.fillStyle=col;for(const p of pts){const q=((p.z+zc*.22)%1+1)%1,zr=.9+q*q*14,x=cx+p.x/zr*f,y=Z(zr);if(x<-4||x>W+4)continue;
+      const d=Math.hypot((x-cx)/rx,(y-H/2)/ry),a=Math.min(1,(zr-.9)/.6)*Math.min(1,(1-q)*3)*Math.min(1,(d-1)/.4)*.7*ease;if(a<=.01)continue;g.globalAlpha=a;g.beginPath();g.arc(x,y,Math.max(.5,2.2*p.w/Math.pow(zr,.8)),0,7);g.fill()}
+    g.globalAlpha=1}
+  function loop(t){if(!run)return;drawGround(t);requestAnimationFrame(loop)}
+  function setActive(on){if(!sc||on===run)return;run=on;if(on){if(!W)size();t0=performance.now();last=0;boost=0;reduce?drawGround(t0+3000):requestAnimationFrame(loop)}}
+  const ramp=(p,a,b)=>smooth((p-a)/(b-a));
+  // Act 2, driven by the scroll progress p (0–1) of the step: map in, survey lines drawn, the cut opens, sand falls
+  function apply(p){if(!sc)return;if(!W)size();if(!W)return;
+    const f=ramp(p,.09,.2);a1.style.opacity=1-f;a1.style.transform=`translateY(${-f*70}px)`;a1.style.visibility=f>=1?'hidden':'visible';
+    const e=ramp(p,.13,.24);stage.style.opacity=e;stage.style.transform=`translate(-50%,-50%) scale(${.9+.1*e})`;
+    const p3=Math.max(0,(p-.68)/.32),gap=ramp(p,.68,.82)*18,q=(p-.36)/.32;
+    halves.forEach((h,i)=>h.style.transform=`translateX(${(i?1:-1)*gap}px)`);
+    prs.forEach(list=>list.forEach((el,i)=>{const P=paths[i],t=clamp01((q-P.a)/(P.b-P.a));el.style.strokeDashoffset=(1-t).toFixed(4);el.style.opacity=t>0?1:0}));
+    const c=[ramp(p,.2,.25)*(1-ramp(p,.355,.4)),ramp(p,.4,.45)*(1-ramp(p,.655,.7)),ramp(p,.72,.78)];
+    cards.forEach((el,i)=>{el.style.opacity=c[i];el.style.transform=`translateY(${(1-c[i])*14}px)`});
+    sg.clearRect(0,0,W,H);if(p3>0){const ox=(W-sw)/2,oy=(H-sh)/2,k=sw/IW,pile=Math.min(90,H*.13);
+      for(const o of sd){const dt=(p3-o.s)*3;if(dt<=0)continue;const y0=oy+o.ty*sh,x0=ox+cutX(o.ty*IH)*k+o.side*gap,fy=H-2-o.q*o.q*pile;
+        const y=Math.min(y0+.5*o.g*dt*dt,fy),x=x0+o.vx*Math.min(dt,1.8);sg.globalAlpha=Math.min(1,dt*7);sg.fillStyle=pal[o.c%pal.length];sg.fillRect(x,y,o.r,o.r)}sg.globalAlpha=1}}
+  return{mount,size,apply,setActive,wheel(e){if(run)boost=Math.min(.6,boost+Math.abs(e.deltaY)*.0012)}}})();
+$('#story').addEventListener('wheel',e=>WX.wheel(e),{passive:true});
 
 /* ============ boot ============ */
 renderLegend();updateYearNote();resize();connect();
