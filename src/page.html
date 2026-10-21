@@ -1510,8 +1510,8 @@ function sceneHTML(L,s,i){
     return`<div class="sx-scene sx-gap" data-sc="${i}"><div class="in"><div><div class="yrs" data-n="${g.to-g.from}">${g.to-g.from}</div><div class="cap" style="margin-top:10px">${esc(gapTitle(g))}</div></div>
      <svg class="line" viewBox="0 0 ${W2} 56"><line x1="14" x2="${W2-14}" y1="22" y2="22" stroke="${C.faint}" stroke-width="2" stroke-dasharray="2 6" stroke-linecap="round" pathLength="100"/><circle cx="14" cy="22" r="6" fill="${g.a.k==='meas'?C.fg:C.bg}" stroke="${C.fg}" stroke-width="1.5"/><circle cx="${W2-14}" cy="22" r="6" fill="${g.b.k==='meas'?C.fg:C.bg}" stroke="${C.fg}" stroke-width="1.5"/><text x="14" y="50">${g.from} · ${fmt(g.a.v)}</text><text x="${W2-14}" y="50" text-anchor="end">${g.to} · ${fmt(g.b.v)}</text></svg>
      <div data-gapvis="${g.id}" data-lang="${L.id}">${gapHyps(g,true)}</div><div><button class="btn ghost sm" data-opengap="${g.id}">Confirm, correct or add to these</button></div></div></div>`}
-  if(s.t==='news')return`<div class="sx-scene sx-news" data-sc="${i}"><figure class="sx-fig"><img src="picture_local/newspaper1_web.jpg" alt="Ka Hōkū o Hawaiʻi, Hilo, 10 July 1924"></figure>${s.yr?`<div class="sx-yr"><div class="y">${s.yr}</div><div class="k mono">${esc(s.yk||'')}</div></div>`:''}</div>`;
-  if(s.t==='pet')return`<div class="sx-scene sx-pet" data-sc="${i}"><div class="pet-pages"><img class="pg1" src="picture_local/sign1.jpg" alt="A page of the 1897 Kūʻē petition against annexation"><div class="pg2"><img src="picture_local/sign3.jpg" alt="A page of the women’s Kūʻē petition against annexation, 43 signatures"><img class="pet-tot" src="picture_local/sign3_44.jpg" alt="" aria-hidden="true"><div class="pet-slot" aria-hidden="true"></div><div class="pet-name"></div></div></div>${s.yr?`<div class="sx-yr"><div class="y">${s.yr}</div><div class="k mono">${esc(s.yk||'')}</div></div>`:''}</div>`;
+  if(s.t==='news')return`<div class="sx-scene sx-news" data-sc="${i}"><figure class="sx-fig"><img src="img/ka-hoku-o-hawaii-1924.jpg" alt="Ka Hōkū o Hawaiʻi, Hilo, 10 July 1924"></figure>${s.yr?`<div class="sx-yr"><div class="y">${s.yr}</div><div class="k mono">${esc(s.yk||'')}</div></div>`:''}</div>`;
+  if(s.t==='pet')return`<div class="sx-scene sx-pet" data-sc="${i}"><div class="pet-pages"><img class="pg1" src="img/kue-petition-1897-men.jpg" alt="A page of the 1897 Kūʻē petition against annexation"><div class="pg2"><img src="img/kue-petition-1897-women.jpg" alt="A page of the women’s Kūʻē petition against annexation, 43 signatures"><img class="pet-tot" src="img/kue-petition-1897-women-44.jpg" alt="" aria-hidden="true"><div class="pet-slot" aria-hidden="true"></div><div class="pet-name"></div></div></div>${s.yr?`<div class="sx-yr"><div class="y">${s.yr}</div><div class="k mono">${esc(s.yk||'')}</div></div>`:''}</div>`;
   if(s.t==='wa')return`<div class="sx-scene sx-wa" data-sc="${i}"><div class="a1">
     <canvas class="wa-rays" aria-hidden="true"></canvas>
     <div class="dir n">Mauka<small>toward the mountains</small></div>
@@ -1575,11 +1575,11 @@ function storyTick(){const el=SX.el;if(!el||el.hidden||!SX.tops.length)return;co
 function closeStory(){const el=$('#story');WX.setActive(false);el.classList.add('fade');SX.ro&&SX.ro.disconnect();el.onscroll=null;setTimeout(()=>{el.hidden=true;el.innerHTML='';SX.el=null},600);document.body.style.overflow=''}
 
 /* ============ Wā: first-person time, then the 1885 map of Maui cut by survey lines (a scroll step in the Hawaiian story) ============ */
-const WX=(()=>{const IW=1920,IH=1531,SRC='picture_local/Map_of_Maui_clean.jpg',LINES='picture_local/Map_of_Maui_lines.png';
+const WX=(()=>{const IW=1920,IH=1531,SRC='img/maui-1885-clean.jpg',LINES='img/maui-1885-lines.png';
   let sc,a1,rc,rg,stage,cards,lines,yrEl,W=0,H=0,sw=0,sh=0,run=false,t0=0,last=0,zc=0,boost=0,col='#999';
   const pts=Array.from({length:90},()=>({x:(Math.random()*2-1)*7,z:Math.random(),w:.6+Math.random()*.8}));
   const ridge=Array.from({length:30},(_,i)=>{const x=i/29;return[x,.25+.75*Math.abs(Math.sin(i*2.3)*Math.cos(i*.7))*Math.max(.25,1-Math.abs(x-.5)*1.6)]});
-  // only the map's own survey lines (picture_local/Map_of_Maui_lines.png) are shown; nothing is drawn over the source
+  // only the map's own survey lines (img/maui-1885-lines.png) are shown; nothing is drawn over the source
   function mount(el){sc=el.querySelector('.sx-wa');if(!sc)return;run=false;a1=sc.querySelector('.a1');rc=sc.querySelector('.wa-rays');rg=rc.getContext('2d');stage=sc.querySelector('.m2-stage');cards=[...sc.querySelectorAll('.m2-c')];yrEl=sc.querySelector('.m2-yr');
     stage.innerHTML=`<img src="${SRC}" alt="Hawaiian Government Survey map of Maui, 1885"><img class="m2-lines" src="${LINES}" alt="" aria-hidden="true">`;
     lines=stage.querySelector('.m2-lines');

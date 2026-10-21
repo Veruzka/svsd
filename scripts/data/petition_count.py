@@ -1,4 +1,4 @@
-"""Builds picture_local/sign3_44.jpg from sign3.jpg: the same page with the clerk's total, 43, rewritten as 44.
+"""Builds img/kue-petition-1897-women-44.jpg from picture_local/sign3.jpg (and img/kue-petition-1897-women.jpg, the original, web-sized): the same page with the clerk's total, 43, rewritten as 44.
 
   python scripts/data/petition_count.py
 
@@ -10,8 +10,8 @@ import os
 import cv2
 import numpy as np
 
-root = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'picture_local')
-im = cv2.imread(os.path.join(root, 'sign3.jpg'))
+root = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..')
+im = cv2.imread(os.path.join(root, 'picture_local', 'sign3.jpg'))
 
 # for each total: the box around its 3 (painted out), the box around its 4, and where a copy of the 4 goes
 JOBS = [
@@ -38,5 +38,7 @@ for j in JOBS:
     region = out[ty:ty + (y1 - y0), tx:tx + (x1 - x0)]
     region[m] = np.minimum(region[m], glyph[m])
 
-cv2.imwrite(os.path.join(root, 'sign3_44.jpg'), out, [cv2.IMWRITE_JPEG_QUALITY, 90])
+q = [cv2.IMWRITE_JPEG_QUALITY, 80]
+cv2.imwrite(os.path.join(root, 'img', 'kue-petition-1897-women-44.jpg'), out, q)
+cv2.imwrite(os.path.join(root, 'img', 'kue-petition-1897-women.jpg'), im, q)
 print('ok')
