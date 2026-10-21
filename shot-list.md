@@ -22,3 +22,18 @@ Every photo slot in the stories accepts a drag-and-drop preview. Send the final 
 ## Audio
 - Hawaiian: a short recording of a native speaker (Ka Leo Hawaiʻi radio archive, University of Hawaiʻi). Ask for permission.
 - Irish: a Conamara or Blasket speaker (RTÉ Archives, or the Doegen Records at the Royal Irish Academy, 1928–31).
+
+## Timeline fact cards
+Small photos shown in the card that follows the timeline slider (4:3, they display at about 120 × 90 px).
+
+| Language | Year | What to find |
+|---|---|---|
+| Irish | 1845 | "Bridget O'Donnell and her children", Illustrated London News, 1849 (public domain) |
+| Irish | 1893 | A Gaelic League (Conradh na Gaeilge) Irish class, c. 1900s · National Library of Ireland |
+| Irish | 1922 | Constitution of the Irish Free State, 1922, Irish-language text |
+| Irish | 1972 | Raidió na Gaeltachta studio, Casla, 1972 · RTÉ Archives |
+| Hawaiian | 1893 | Queen Liliʻuokalani, c. 1891 (public domain) |
+| Hawaiian | 1896 | Act 57, Section 30, Laws of the Republic of Hawaii, 1896 |
+| Hawaiian | 1948 | Front page of Ka Hoku o Hawaii, 1948 · Papakilo Database |
+| Hawaiian | 1983 | An early Pūnana Leo class, 1980s · ʻAha Pūnana Leo |
+| Hawaiian | 1987 | A Kaiapuni immersion classroom, 1987 |

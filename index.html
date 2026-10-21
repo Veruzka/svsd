@@ -88,23 +88,46 @@ header.top>*{pointer-events:auto}
 #tip button:hover{border-color:var(--fg)}
 
 /* ---------- timeline ---------- */
-#time{grid-column:1;grid-row:2;max-height:200px;transition:max-height .6s cubic-bezier(.22,.61,.36,1),padding .6s cubic-bezier(.22,.61,.36,1);display:grid;grid-template-columns:auto auto minmax(0,1fr);align-items:end;gap:22px;padding:10px max(24px,env(safe-area-inset-right,0px)) 18px max(24px,env(safe-area-inset-left,0px));border-top:1px solid var(--line);background:var(--bg);position:relative;z-index:3}
-.yearbox{min-width:150px}
+#time{grid-column:1;grid-row:2;max-height:200px;transition:max-height .6s cubic-bezier(.22,.61,.36,1),padding .6s cubic-bezier(.22,.61,.36,1);display:grid;grid-template-columns:220px 46px minmax(0,1fr);align-items:end;gap:22px;padding:10px max(24px,env(safe-area-inset-right,0px)) 18px max(24px,env(safe-area-inset-left,0px));border-top:1px solid var(--line);background:var(--bg);position:relative;z-index:3}
+.yearbox{min-width:0}
 /* the timeline only exists inside a language; it slides open when the region lands */
 #app:not(.timeon) #time{max-height:0;padding-top:0;padding-bottom:0;overflow:hidden;border-top-color:transparent}
 #year{font-family:var(--serif);font-size:64px;line-height:.95;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
-#yearNote{display:flex;align-items:center;gap:7px;margin-top:6px;min-height:18px;white-space:nowrap}
+#yearNote{display:block;margin-top:6px;height:18px;line-height:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#yearNote i{margin-right:7px;vertical-align:0}
 #play{width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;margin-bottom:14px}
 #play:hover{border-color:var(--fg)}
 .trackwrap{position:relative;min-width:0}
-.trackhead{display:flex;justify-content:space-between;gap:12px;margin-bottom:2px}
+.trackhead{display:flex;justify-content:space-between;gap:12px;margin-bottom:2px;height:18px;line-height:18px}
+#trackLabel{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trackhead .keys{flex:none;white-space:nowrap}
 #track{width:100%;height:92px;display:block;touch-action:none;cursor:pointer;overflow:visible}
 #track text{font-family:var(--mono);font-size:11px;fill:var(--muted)}
-#pop{position:absolute;bottom:100px;transform:translateX(-50%);width:300px;max-width:calc(100vw - 40px);background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px 18px;z-index:6}
-#pop h5{font-family:var(--serif);font-weight:400;font-size:21px;line-height:1.2;margin:6px 0 6px;text-wrap:balance}
-#pop p{margin:0;color:var(--muted);font-size:14px}
-#pop .x{position:absolute;right:10px;top:8px;background:none;border:0;color:var(--muted);font-size:18px}
-#pop .src{margin-top:10px}
+#track .mk{transform-box:fill-box;transform-origin:center;transition:transform .3s ease,stroke .3s ease}
+#track .mk.on{stroke:var(--accent);stroke-width:2;transform:scale(1.45)}
+#track rect.mk.on{transform:rotate(45deg) scale(1.45)}
+/* fact card: follows the slider, sits over the active marker */
+#pop{position:absolute;bottom:120px;transform:translateX(-50%);width:380px;max-width:calc(100vw - 40px);background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:14px 16px;z-index:6;box-sizing:border-box;opacity:0;pointer-events:none;transition:opacity .25s ease,left .35s cubic-bezier(.22,.61,.36,1)}
+#pop.on{opacity:1;pointer-events:auto}
+#pop .fc{transition:opacity .16s ease}
+#pop.swap .fc{opacity:0}
+#pop .x{position:absolute;right:8px;top:6px;background:none;border:0;color:var(--muted);font-size:18px;line-height:1;padding:4px}
+#pop .x:hover{color:var(--fg)}
+.fc{display:grid;gap:6px;padding-right:18px}
+.fc.ev.img{grid-template-columns:118px minmax(0,1fr);gap:14px;align-items:start}
+.fc h5{font-family:var(--serif);font-weight:400;font-size:20px;line-height:1.2;margin:2px 0 0;text-wrap:balance}
+.fc p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.45}
+.fc .src{font-size:11px;line-height:1.4}
+.fthumb{aspect-ratio:4/3;margin:0;border-radius:6px;cursor:pointer}
+#pop .fthumb .drop,#pop .fthumb figcaption{display:none}
+.fc .big{font-family:var(--serif);font-size:30px;line-height:1.05;font-variant-numeric:tabular-nums}
+.fc .big small{font-family:var(--sans);font-size:13px;color:var(--muted)}
+.fc .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.delta{font-family:var(--mono);font-size:11.5px;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.delta.dn{background:color-mix(in srgb,var(--near) 15%,transparent);color:var(--near)}
+.delta.up{background:color-mix(in srgb,var(--ga) 15%,transparent);color:var(--ga)}
+.d20{display:grid;grid-template-columns:repeat(20,1fr);gap:4px;margin:4px 0 2px}
+.d20 i{aspect-ratio:1;border-radius:50%;background:var(--line)}
 
 /* ---------- panel ---------- */
 #panel{grid-column:2;grid-row:1/3;border-left:1px solid var(--line);background:var(--surface);overflow-x:hidden;overflow-y:auto;min-width:0;position:relative;z-index:4}
@@ -295,7 +318,7 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
   #panel{grid-column:1;grid-row:3;border-left:0;border-top:1px solid var(--line);overflow:visible}
   #panel .in{padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
   .ctas{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-  #time{grid-template-columns:auto 1fr;gap:12px 16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  #time{grid-template-columns:minmax(0,1fr) auto;gap:12px 16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
   .trackwrap{grid-column:1/3}
   #year{font-size:46px}
   #play{margin:0;justify-self:end}
@@ -312,6 +335,8 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
   #legend{top:auto;bottom:14px;left:max(16px,env(safe-area-inset-left,0px));font-size:11px;gap:3px}
   #legend hr,#legend .opt{display:none}
   .keys{display:none}
+  #pop{left:50%!important;width:100%;bottom:196px}
+  .fc.ev.img{grid-template-columns:84px minmax(0,1fr)}
   .intro{grid-template-columns:1fr;gap:24px}
   .lintro .intro .plate{display:none}
   .lintro{padding-top:64px}
@@ -373,7 +398,7 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
     <div class="trackwrap">
       <div class="trackhead"><span class="mono" id="trackLabel"></span><span class="mono keys">← → year · shift ×10 · space play</span></div>
       <svg id="track" role="slider" tabindex="0" aria-label="Year" aria-valuemin="1840" aria-valuemax="2025"></svg>
-      <div id="pop" hidden></div>
+      <div id="pop" aria-live="polite"></div>
     </div>
   </div>
 
@@ -517,6 +542,11 @@ LANGS.ga.intro={q:'Is fearr Gaeilge bhriste ná Béarla cliste.',tr:'Broken Iris
 LANGS.haw.intro={q:'I ka ʻōlelo nō ke ola; i ka ʻōlelo nō ka make.',tr:'In language there is life; in language there is death.',attr:'ʻŌlelo noʻeau · Hawaiian proverb',
   cap:'Portrait slot · a kupuna who spoke Hawaiian, photographed by family',voice:'a mānaleo (native speaker) reads the proverb',dur:22,
   stat:'About <b>70,000</b> people spoke Hawaiian in 1853. In 1983, fewer than <b>50</b> children did.'};
+
+// Photo slots for the timeline's fact cards (suggested archival images; drop a real photo onto a slot to preview it).
+const EV_IMG={ga:{1845:['group','“Bridget O’Donnell and her children”, Illustrated London News, 1849 · public domain'],1893:['group','A Gaelic League Irish class, c. 1900s · National Library of Ireland'],1922:['page','Constitution of the Irish Free State, 1922, Irish-language text'],1972:['portrait','Raidió na Gaeltachta studio, Casla, 1972 · RTÉ Archives']},
+  haw:{1893:['portrait','Queen Liliʻuokalani, c. 1891 · public domain'],1896:['page','Act 57, Section 30, Laws of the Republic of Hawaii, 1896'],1948:['page','Front page of Ka Hoku o Hawaii, 1948 · Papakilo Database'],1983:['group','An early Pūnana Leo class, 1980s · ʻAha Pūnana Leo'],1987:['group','A Kaiapuni immersion classroom, 1987']}};
+for(const [id,m] of Object.entries(EV_IMG))for(const e of LANGS[id].events)if(m[e.y])e.img={scene:m[e.y][0],cap:m[e.y][1]};
 
 /* ============ gaps are computed, not curated ============ */
 // A gap is any span longer than 15 years without a measurement, any change over 20% between two points, or a change in what the census counted.
@@ -687,10 +717,10 @@ function openLang(id){hideTip(true);closePop();if(S.mode==='region'&&S.lang===id
   const L=LANGS[id];togglePlay(false);S.lang=id;S.mode='zoom';$('#app').classList.add('away');
   setYear(L.series[0].pts[0].y);
   fly(3600,()=>[...bboxCenter(L),fitZ(L),1],landRegion)}
-function landRegion(){S.mode='region';$('#app').classList.add('timeon');const L=LANGS[S.lang];$('#crumb').hidden=false;$('#crumbHere').textContent=L.place;
+function landRegion(){S.mode='region';$('#app').classList.add('timeon');FACT.off=false;FACT.id=undefined;const L=LANGS[S.lang];$('#crumb').hidden=false;$('#crumbHere').textContent=L.place;
   renderLegend();renderTrack();updateYearNote();dirty=true;showLangIntro(L,openPanel)}
 function openPanel(){if(S.mode!=='region')return;$('#app').classList.add('region');$('#panel').hidden=false;renderPanel()}
-function toWorld(done){if(S.mode==='globe'||S.flying)return;hideLangIntro(true);closePop();
+function toWorld(done){if(S.mode==='globe'||S.flying)return;hideLangIntro(true);FACT.off=false;$('#pop').classList.remove('on');
   togglePlay(false);$('#app').classList.remove('region','timeon');$('#panel').hidden=true;$('#crumb').hidden=true;S.mode='zoom';S.year=Y1;
   fly(2400,()=>[S.cLon,24,1,0],()=>{S.mode='globe';S.lang=null;$('#app').classList.remove('away');renderLegend();renderTrack();updateYearNote();done&&done()})}
 $('#crumbWorld').addEventListener('click',()=>toWorld());$('#home').addEventListener('click',()=>toWorld());
@@ -705,26 +735,26 @@ function renderLegend(){const el=$('#legend');
 /* ============ timeline ============ */
 const track=$('#track');let TX=null;
 function txScale(){const w=track.clientWidth||600;return{w,x:y=>12+(y-Y0)/(Y1-Y0)*(w-24),inv:x=>Math.round(Y0+(x-12)/(w-24)*(Y1-Y0))}}
+// The static layer (ticks, gaps, markers) is rebuilt only when the language, width or theme changes; moving the year only moves the playhead.
 function renderTrack(){if(!track.clientWidth)return;TX=txScale();const {w,x}=TX;const base=60;let s='';
   s+=`<defs><pattern id="hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" stroke="${C.faint}" stroke-width="1.4"/></pattern></defs>`;
   for(let yy=1850;yy<=2025;yy+=25)s+=`<text x="${x(yy)}" y="${base+26}" text-anchor="middle">${yy}</text>`;
   s+=`<line x1="${x(Y0)}" x2="${x(Y1)}" y1="${base}" y2="${base}" stroke="${C.faint}" stroke-width="1.4" stroke-dasharray="1.5 4" stroke-linecap="round"/>`;
-  if(S.mode!=='region'){const mx=Math.max(...bins);const bw=(w-24)/bins.length;
-    bins.forEach((b,i)=>{if(!b)return;const hgt=4+b/mx*34;s+=`<rect x="${x(Y0+i*5)+1}" y="${base-6-hgt}" width="${Math.max(1,bw-2)}" height="${hgt}" rx="1" fill="${C.ext}" opacity="${S.year>=Y0+i*5?.75:.25}"/>`});
-    $('#trackLabel').textContent='Languages last recorded, per five years · Glottolog'}
-  else{const L=LANGS[S.lang];$('#trackLabel').textContent=`${L.name}: diamonds are events, dots are counts, hatched spans are gaps`;
-    for(const g of L.gapList){if(g.id==='daily')continue;s+=`<g class="mk" data-gap="${g.id}" style="cursor:pointer"><rect x="${x(g.from)+5}" y="${base-7}" width="${Math.max(4,x(g.to)-x(g.from)-10)}" height="14" rx="3" fill="url(#hatch)"/><rect x="${x(g.from)+5}" y="${base-7}" width="${Math.max(4,x(g.to)-x(g.from)-10)}" height="14" rx="3" fill="transparent"/></g>`}
-    const pts=L.series[0].pts;for(const p of pts){s+=`<circle class="mk" data-pt="${p.y}" cx="${x(p.y)}" cy="${base}" r="4.5" fill="${p.k==='meas'?C.fg:C.bg}" stroke="${C.fg}" stroke-width="1.4" style="cursor:pointer"/>`}
-    for(const ev of L.events){const ex=x(ev.y);s+=`<rect class="mk" data-ev="${ev.y}" x="${ex-5}" y="${base-38}" width="10" height="10" transform="rotate(45 ${ex} ${base-33})" fill="${C.surface}" stroke="${C.fg}" stroke-width="1.3" style="cursor:pointer"/>`}}
-  const hx=x(S.year);s+=`<line x1="${hx}" x2="${hx}" y1="${base-46}" y2="${base}" stroke="${C.fg}" stroke-width="1.2"/><circle cx="${hx}" cy="${base}" r="8" fill="${C.surface}" stroke="${C.fg}" stroke-width="1.4"/><circle cx="${hx}" cy="${base}" r="3.5" fill="${C.accent}"/>`;
-  track.setAttribute('viewBox',`0 0 ${w} 92`);track.innerHTML=s;track.setAttribute('aria-valuenow',S.year)}
+  s+=`<line id="tPlayed" x1="${x(Y0)}" x2="${x(S.year)}" y1="${base}" y2="${base}" stroke="${C.fg}" stroke-width="1.6" stroke-linecap="round" opacity=".55"/>`;
+  if(S.mode==='region'&&S.lang){const L=LANGS[S.lang];$('#trackLabel').textContent=`${L.name}: diamonds are events, dots are counts, hatched spans are gaps`;
+    for(const g of L.gapList){if(g.id==='daily')continue;const gw=Math.max(4,x(g.to)-x(g.from)-10);s+=`<g class="gp" data-gap="${g.id}" style="cursor:pointer"><rect x="${x(g.from)+5}" y="${base-7}" width="${gw}" height="14" rx="3" fill="url(#hatch)"/><rect x="${x(g.from)+5}" y="${base-7}" width="${gw}" height="14" rx="3" fill="transparent"/></g>`}
+    for(const p of L.series[0].pts)s+=`<circle class="mk" data-pt="${p.y}" cx="${x(p.y)}" cy="${base}" r="4.5" fill="${p.k==='meas'?C.fg:C.bg}" stroke="${C.fg}" stroke-width="1.4" style="cursor:pointer"/>`;
+    for(const ev of L.events){const ex=x(ev.y);s+=`<rect class="mk" data-ev="${ev.y}" x="${ex-5}" y="${base-38}" width="10" height="10" style="cursor:pointer;transform:rotate(45deg)" fill="${C.surface}" stroke="${C.fg}" stroke-width="1.3"/>`}}
+  s+=`<g id="tHead" transform="translate(${x(S.year)} 0)"><line x1="0" x2="0" y1="${base-46}" y2="${base}" stroke="${C.fg}" stroke-width="1.2"/><circle cx="0" cy="${base}" r="8" fill="${C.surface}" stroke="${C.fg}" stroke-width="1.4"/><circle cx="0" cy="${base}" r="3.5" fill="${C.accent}"/></g>`;
+  track.setAttribute('viewBox',`0 0 ${w} 92`);track.innerHTML=s;track.setAttribute('aria-valuenow',S.year);FACT.id=undefined;updateFact()}
+function moveHead(){if(!TX)return;const hx=TX.x(S.year),h=track.querySelector('#tHead'),pl=track.querySelector('#tPlayed');if(h)h.setAttribute('transform',`translate(${hx} 0)`);if(pl)pl.setAttribute('x2',hx);track.setAttribute('aria-valuenow',S.year)}
 let tdrag=false;
-track.addEventListener('pointerdown',e=>{const mk=e.target.closest('.mk');if(mk){openMarker(mk);return}tdrag=true;track.setPointerCapture(e.pointerId);scrubTo(e)});
+track.addEventListener('pointerdown',e=>{const mk=e.target.closest('.mk,.gp');if(mk){openMarker(mk);return}tdrag=true;track.setPointerCapture(e.pointerId);scrubTo(e)});
 track.addEventListener('pointermove',e=>{if(tdrag)scrubTo(e)});
 track.addEventListener('pointerup',()=>{tdrag=false});
-function scrubTo(e){const r=track.getBoundingClientRect();setYear(Math.max(Y0,Math.min(Y1,TX.inv((e.clientX-r.left)*(TX.w/r.width)))));closePop()}
+function scrubTo(e){const r=track.getBoundingClientRect();setYear(Math.max(Y0,Math.min(Y1,TX.inv((e.clientX-r.left)*(TX.w/r.width)))))}
 function setYear(y){y=Math.max(Y0,Math.min(Y1,Math.round(y)));const prev=S.year;if(y===prev)return;S.year=y;
-  $('#year').textContent=y;renderTrack();updateYearNote();if(S.mode==='region')updatePanelYear();dirty=true}
+  $('#year').textContent=y;moveHead();updateFact();updateYearNote();if(S.mode==='region')updatePanelYear();dirty=true}
 function updateYearNote(){const el=$('#yearNote');
   if(S.mode!=='region'){el.innerHTML=`<span>Status today · last-recorded dates</span>`;return}
   const L=LANGS[S.lang];const v=seriesAt(L,'can',S.year);let h='';
@@ -736,7 +766,7 @@ function updateYearNote(){const el=$('#yearNote');
   el.innerHTML=h}
 let playT=null;
 function togglePlay(force){S.playing=force??!S.playing;$('#playIcon').setAttribute('d',S.playing?'M3 2h3v10H3zM8 2h3v10H8z':'M3 1.5v11l9-5.5z');$('#play').setAttribute('aria-label',S.playing?'Pause':'Play through time');
-  clearInterval(playT);if(S.playing){if(S.year>=Y1)setYear(Y0);playT=setInterval(()=>{if(S.year>=Y1){togglePlay(false);return}setYear(S.year+1)},S.mode==='region'?140:90)}}
+  clearInterval(playT);if(S.playing){if(S.year>=Y1)setYear(Y0);S.hold=0;playT=setInterval(()=>{if(S.year>=Y1){togglePlay(false);return}if(performance.now()<S.hold)return;const before=FACT.id;setYear(S.year+1);if(FACT.id&&FACT.id!==before&&FACT.kind!=='gap')S.hold=performance.now()+1400},140)}}
 $('#play').addEventListener('click',()=>togglePlay());
 document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,select')||!$('#modal').hidden)return;
   if(!$('#story').hidden){if(e.key==='Escape')closeStory();return}
@@ -745,15 +775,37 @@ document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,sele
   if(e.key==='ArrowRight'){setYear(S.year+(e.shiftKey?10:1));e.preventDefault()}else if(e.key==='ArrowLeft'){setYear(S.year-(e.shiftKey?10:1));e.preventDefault()}
   else if(e.key===' '){togglePlay();e.preventDefault()}else if(e.key==='Escape'){closePop();hideTip(true)}});
 
-/* popovers on timeline markers */
-function openMarker(mk){const L=LANGS[S.lang];const pop=$('#pop');let h='',yr;
+/* fact card: follows the slider */
+const FACT={id:undefined,kind:null,off:false,t:0};
+function factsFor(L){if(L._facts)return L._facts;const f=[];
+  L.series[0].pts.forEach((p,i)=>f.push({k:'pt',y:p.y,id:'pt'+p.y,p,prev:L.series[0].pts[i-1]}));L.events.forEach(e=>f.push({k:'ev',y:e.y,id:'ev'+e.y,ev:e}));
+  f.sort((a,b)=>a.y-b.y||(a.k==='pt'?-1:1));return L._facts=f}
+// The latest event or count at or before the year; inside a gap, once the last marker is more than 2 years behind, the gap itself.
+function activeFact(L,y){let a=null;for(const f of factsFor(L))if(f.y<=y)a=f;
+  const g=L.gapList.find(g=>g.id!=='daily'&&y>g.from&&y<g.to);if(g&&(!a||y-a.y>2))return{k:'gap',y:(g.from+g.to)/2,id:'gap'+g.id,g};return a}
+function factHTML(L,f){
+  if(f.k==='ev'){const e=f.ev,im=e.img;return`<div class="fc ev${im?' img':''}">${im?`<figure class="plate fthumb" data-plate="ev-${L.id}-${e.y}" data-scene="${im.scene}" data-cap="${esc(im.cap)}" title="Drop or click to add a photo"></figure>`:''}<div class="fc"><div class="cap">◆ ${e.y} · Event</div><h5>${esc(e.t)}</h5><p>${esc(e.d)}</p>${im?`<div class="mono src">Photo slot · ${esc(im.cap)}</div>`:''}</div></div>`}
+  if(f.k==='pt'){const p=f.p,sh=p.v/p.pop,n=Math.round(sh*20),pr=f.prev;let dl='';
+    if(pr){const c=(p.v-pr.v)/pr.v;dl=`<span class="delta ${c<0?'dn':'up'}">${c<0?'▼':'▲'} ${Math.abs(Math.round(c*100))}% since ${pr.y}</span>`}
+    return`<div class="fc pt"><div class="cap">${p.k==='meas'?'● '+p.y+' · Measured':'○ '+p.y+' · Estimate'}</div><div class="big">${p.k==='meas'?'':'~'}${fmt(p.v)} <small>${esc(L.unit)}</small></div>
+      <div class="row">${dl}<span class="mono">${sh<.01?(sh*100).toFixed(1):Math.round(sh*100)}% of everyone counted</span></div>
+      <div class="d20" aria-hidden="true">${Array.from({length:20},(_,i)=>`<i style="${i<n?`background:var(${L.color})${p.k==='meas'?'':';opacity:.5'}`:''}"></i>`).join('')}</div><div class="mono src">${esc(p.src)}</div></div>`}
+  const g=f.g;return`<div class="fc gp"><div class="cap">┄ ${g.from} → ${g.to} · Gap in the record</div><h5>${esc(gapTitle(g))}</h5><div class="row">${stateHTML(gapState(g))}</div><div><button class="linkish" type="button" data-gapopen="${g.id}">See possible reasons →</button></div></div>`}
+function updateFact(){const pop=$('#pop');if(S.mode!=='region'||!S.lang||!TX){pop.classList.remove('on');FACT.id=undefined;return}
+  const L=LANGS[S.lang],f=activeFact(L,S.year),id=f?f.id:null;if(id===FACT.id)return;FACT.id=id;FACT.kind=f&&f.k;
+  track.querySelectorAll('.mk.on').forEach(m=>m.classList.remove('on'));
+  if(f&&f.k!=='gap'){const m=track.querySelector(f.k==='ev'?`[data-ev="${f.y}"]`:`[data-pt="${f.y}"]`);if(m)m.classList.add('on')}
+  if(!f||FACT.off){pop.classList.remove('on');return}
+  const show=()=>{pop.innerHTML=factHTML(L,f)+'<button class="x" type="button" aria-label="Hide facts">×</button>';initPlates(pop);
+    pop.querySelectorAll('.fthumb').forEach(fg=>fg.addEventListener('click',()=>{const inp=fg.querySelector('input');if(inp)inp.click()}));
+    const x=TX.x(f.y)*(track.getBoundingClientRect().width/TX.w),pw=pop.offsetWidth||380;pop.style.left=Math.max(pw/2,Math.min(track.clientWidth-pw/2,x))+'px';
+    pop.classList.remove('swap');pop.classList.add('on')};
+  clearTimeout(FACT.t);if(pop.classList.contains('on')&&!reduce){pop.classList.add('swap');FACT.t=setTimeout(show,160)}else show()}
+function openMarker(mk){const L=LANGS[S.lang];
   if(mk.dataset.gap){openGap(L.gapList.find(g=>g.id===mk.dataset.gap));return}
-  if(mk.dataset.ev){const ev=L.events.find(e=>e.y==mk.dataset.ev);yr=ev.y;h=`<div class="cap">◆ ${ev.y} · Event</div><h5>${esc(ev.t)}</h5><p>${esc(ev.d)}</p>`}
-  if(mk.dataset.pt){const p=L.series[0].pts.find(p=>p.y==mk.dataset.pt);yr=p.y;h=`<div class="cap">${p.k==='meas'?'●':'○'} ${p.y} · ${p.k==='meas'?'Measured':'Estimate'}</div><h5>${p.k==='meas'?'':'~'}${fmt(p.v)} ${esc(L.unit)}</h5><p>${Math.round(p.v/p.pop*100)}% of the population counted</p><div class="mono src">${esc(p.src)}</div>`}
-  pop.innerHTML=h+'<button class="x" aria-label="Close">×</button>';pop.hidden=false;setYear(yr);
-  const x=TX.x(yr)*(track.getBoundingClientRect().width/TX.w);const pw=Math.min(300,innerWidth-40);pop.style.left=Math.max(pw/2,Math.min(track.clientWidth-pw/2,x))+'px'}
-function closePop(){$('#pop').hidden=true}
-$('#pop').addEventListener('click',e=>{if(e.target.closest('.x'))closePop()});
+  FACT.off=false;FACT.id=undefined;togglePlay(false);setYear(+(mk.dataset.ev||mk.dataset.pt));updateFact()}
+function closePop(){FACT.off=true;$('#pop').classList.remove('on')}
+$('#pop').addEventListener('click',e=>{if(e.target.closest('.x')){closePop();return}const g=e.target.closest('[data-gapopen]');if(g)openGap(LANGS[S.lang].gapList.find(x=>x.id===g.dataset.gapopen))});
 
 /* ============ panel ============ */
 function chartSVG(L,opts){const w=opts.w||380,h=opts.h||170,ml=44,mr=opts.mr??92,mt=10,mb=24;const all=L.series.flatMap(s=>s.pts.map(p=>p.v));
@@ -769,7 +821,7 @@ function chartSVG(L,opts){const w=opts.w||380,h=opts.h||170,ml=44,mr=opts.mr??92
       s+=`<line x1="${X(a.y)}" y1="${Yv(a.v)}" x2="${X(b.y)}" y2="${Yv(b.v)}" stroke="${c}" stroke-width="1.6" ${dashed?'stroke-dasharray="2 4" stroke-linecap="round"':''}/>`}
     for(const q of p)s+=`<circle cx="${X(q.y)}" cy="${Yv(q.v)}" r="3.2" fill="${q.k==='meas'?c:C.surface}" stroke="${c}" stroke-width="1.4"/>`;
     const last=p[p.length-1];s+=`<text x="${X(last.y)+8}" y="${Yv(last.v)+3.5}" style="fill:${c}">${si===0?(L.id==='ga'?'can speak':'speakers'):'daily'}</text>`});
-  s+='</g>';if(opts.yearLine)s+=`<line class="yl" x1="${X(S.year)}" x2="${X(S.year)}" y1="${mt}" y2="${h-mb}" stroke="${C.accent}" stroke-width="1"/>`;
+  s+='</g>';if(opts.yearLine)s+=`<line class="yl" data-x0="${ml}" data-x1="${w-mr}" x1="${X(S.year)}" x2="${X(S.year)}" y1="${mt}" y2="${h-mb}" stroke="${C.accent}" stroke-width="1"/>`;
   return s+'</svg>'}
 function renderPanel(){const L=LANGS[S.lang];const p=$('#panel');const crit=L.glotto==='Moribund';
   p.innerHTML=`<button class="close" aria-label="Back to the world map">×</button><div class="in">
@@ -786,7 +838,8 @@ function renderPanel(){const L=LANGS[S.lang];const p=$('#panel');const crit=L.gl
 function updatePanelYear(){const L=LANGS[S.lang];if(!L||!$('#now'))return;const v=seriesAt(L,'can',S.year),d=seriesAt(L,'daily',S.year);
   const k=v.kind==='meas'?'Measured':v.kind==='est'?'Estimate':v.kind==='interp'?'Estimated':v.kind==='before'?'Before the first count':'Latest count';
   $('#now').innerHTML=`<span class="cap">${S.year} · ${k}</span><div class="big">${v.kind==='meas'?'':'~'}${fmt(v.v)} <small>${esc(L.unit)} · ${(v.share*100).toFixed(v.share<.01?1:0)}%</small></div>${d?`<div class="mono">${d.kind==='meas'?'':'~'}${fmt(d.v)} spoke it daily outside school</div>`:''}<div class="mono">${esc(v.a.src)}</div>`;
-  $('#pchart').innerHTML=chartSVG(L,{id:'p',yearLine:true});
+  const pc=$('#pchart');if(!pc.firstElementChild||pc.dataset.lang!==L.id){pc.innerHTML=chartSVG(L,{id:'p',yearLine:true});pc.dataset.lang=L.id}
+  const yl=pc.querySelector('.yl');if(yl){const x=yl.dataset.x0*1+(S.year-Y0)/(Y1-Y0)*(yl.dataset.x1-yl.dataset.x0);yl.setAttribute('x1',x);yl.setAttribute('x2',x)}
 }
 
 /* ============ community rendering ============ */
@@ -882,6 +935,7 @@ function sceneLum(kind,x,y,ar){const X=(x-.5)*ar+.5;let v=.88-.3*Math.hypot(x-.5
   else if(kind==='ship'){const sea=.6;if(y>sea)v=.5+.05*Math.sin(y*160+Math.sin(x*9)*3);else v=mix(.93,.78,y/sea);
     if(X>.36&&X<.64&&y>.54&&y<.61&&Math.abs(X-.5)<.14-(y-.54)*.6)v=.12;if((Math.abs(X-.44)<.004||Math.abs(X-.56)<.004)&&y>.24&&y<.55)v=.12;
     if(X>.41&&X<.47&&y>.28&&y<.5)v=Math.min(v,.7);if(X>.53&&X<.59&&y>.3&&y<.5)v=Math.min(v,.72)}
+  else if(kind==='page'){v=.9;if(y>.07&&y<.15&&x>.1&&x<.9)v=.3;else{const r=Math.floor((y-.22)/.055),fy=(y-.22)/.055-r,e=.62+.28*(Math.sin(r*12.9898)*.5+.5);if(y>.22&&y<.93&&fy<.4&&x>.1&&x<(r%6===5?.45:e))v=.48}}
   else{const h=.52+.05*Math.sin(x*6+1)+.03*Math.sin(x*17);if(y>h)v=mix(.42,.22,sstep(h,1,y))+.06*Math.sin(x*40+y*25);else v=mix(.95,.8,y/h);if(y>h-.012&&y<h+.012&&x>.6)v=.62}
   return v}
 function drawPlate(fig){const cvs=fig.querySelector('canvas');const r=fig.getBoundingClientRect();if(!r.width)return;const dpr=Math.min(2,devicePixelRatio||1);
