@@ -343,7 +343,7 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
   #time{max-height:280px}
   .brand b{font-size:18px;white-space:nowrap}
   #legend{top:auto;bottom:14px;left:max(16px,env(safe-area-inset-left,0px));font-size:11px;gap:3px}
-  #legend hr,#legend .opt{display:none}
+  #legend .opt{display:none}
   .keys{display:none}
   #pop{left:50%!important;width:100%;bottom:196px}
   .fc.ev.img{grid-template-columns:84px minmax(0,1fr)}
@@ -375,7 +375,7 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
     <canvas id="map" aria-label="Map of endangered and extinct languages"></canvas>
     <header class="top">
       <div class="brand">
-        <b><button class="linkish" id="home" style="text-decoration:none;font:inherit;display:flex;align-items:center;gap:10px"><span class="dot"></span>Endangered Languages</button></b>
+        <b><button class="linkish" id="home" style="text-decoration:none;font:inherit;display:flex;align-items:center;gap:10px">Endangered Languages</button></b>
         <div class="crumb" id="crumb" hidden><button id="crumbWorld">World</button> / <span id="crumbHere"></span></div>
       </div>
     </header>
@@ -441,7 +441,7 @@ ga:{id:'ga',name:'Irish',endo:'Gaeilge',place:'Éire · Ireland',color:'--ga',la
  unit:'could speak Irish',
  series:[
   {key:'can',label:'Can speak Irish',pts:[
-   {y:1840,v:3500000,pop:8175124,k:'est',src:'Historians’ reconstruction from later censuses; range 3–4 million'},
+   {y:1840,v:3500000,pop:8175124,k:'est',census:false,src:'Historians’ reconstruction from later censuses; range 3–4 million'},
    {y:1851,v:1524286,pop:6552385,k:'meas',src:'Census of Ireland 1851 · whole island'},
    {y:1861,v:1105536,pop:5798967,k:'meas',src:'Census of Ireland 1861'},
    {y:1871,v:817875,pop:5412377,k:'meas',src:'Census of Ireland 1871'},
@@ -468,6 +468,7 @@ ga:{id:'ga',name:'Irish',endo:'Gaeilge',place:'Éire · Ireland',color:'--ga',la
    {y:2016,v:73803,pop:4761865,k:'meas',src:'Census 2016 · CSO'},
    {y:2022,v:71968,pop:5149139,k:'meas',src:'Census 2022 · CSO'}]}],
  events:[
+  {y:1840,t:'About 3.5 million people speak Irish',d:'No census asks about the language yet. Historians reconstruct the number from later counts: between 3 and 4 million.'},
   {y:1845,t:'The Great Famine begins',d:'About a million people die and a million more emigrate by 1852. Irish-speaking districts in the west and south are hit hardest.'},
   {y:1893,t:'Conradh na Gaeilge founded',d:'The Gaelic League sets out to keep Irish spoken, through classes, publishing and festivals.'},
   {y:1922,t:'Irish Free State',d:'Irish becomes a compulsory school subject. The census after 1926 counts the 26 counties only.'},
@@ -512,7 +513,7 @@ haw:{id:'haw',name:'Hawaiian',endo:'ʻŌlelo Hawaiʻi',place:'Hawaiʻi',color:'-
   {key:'can',label:'Hawaiian speakers',pts:[
    {y:1853,v:70000,pop:73138,k:'est',src:'Kingdom census 1853: 70,036 Native Hawaiians; nearly all assumed speakers'},
    {y:1896,v:39500,pop:109020,k:'est',src:'Census 1896: 39,504 Native and part-Hawaiian people; speakers assumed'},
-   {y:1983,v:2000,pop:1000000,k:'meas',src:'Reported by ʻAha Pūnana Leo founders: ~2,000 native speakers, fewer than 50 under 18'},
+   {y:1983,v:2000,pop:1000000,k:'meas',census:false,src:'Reported by ʻAha Pūnana Leo founders: ~2,000 native speakers, fewer than 50 under 18'},
    {y:1990,v:8872,pop:1108229,k:'meas',src:'US Census 1990 · speak Hawaiian at home, age 5+'},
    {y:2013,v:18600,pop:1404054,k:'meas',src:'American Community Survey 2009–13 · speak Hawaiian at home (verify)'}]}],
  events:[
@@ -522,7 +523,7 @@ haw:{id:'haw',name:'Hawaiian',endo:'ʻŌlelo Hawaiʻi',place:'Hawaiʻi',color:'-
   {y:1898,t:'Annexation by the United States',d:'Hawaiʻi becomes a US territory.'},
   {y:1948,t:'Last Hawaiian-language newspaper closes',d:'Ka Hoku o Hawaii stops printing, ending more than a century of Hawaiian-language press.'},
   {y:1978,t:'Official state language',d:'The state constitution makes Hawaiian an official language of Hawaiʻi.'},
-  {y:1983,t:'ʻAha Pūnana Leo founded',d:'Parents and teachers start Hawaiian-language preschools.'},
+  {y:1983,t:'ʻAha Pūnana Leo founded',d:'Parents and teachers start Hawaiian-language preschools. Its founders count about 2,000 native speakers left, fewer than 50 of them children.'},
   {y:1987,t:'Immersion in public schools',d:'Ka Papahana Kaiapuni brings Hawaiian-medium classes into state schools.'}],
  gaps:{
   '1853-1896':{q:'Which island did your family live on in the 1880s? Do you know who in the family survived the epidemics?',hyps:[
@@ -762,7 +763,7 @@ $('#crumbWorld').addEventListener('click',()=>toWorld());$('#home').addEventList
 function renderLegend(){const el=$('#legend');
   if(S.mode!=='region'){el.innerHTML='';return}
   const L=LANGS[S.lang];const c=`var(${L.color})`;
-  el.innerHTML=`<div class="row"><i class="dot" style="color:${c}"></i>${L.id==='ga'?'Speaks Irish (daily use, once counted)':'Speaks '+L.name}</div>${L.id==='ga'?`<div class="row"><i class="ring" style="color:${c}"></i>Can speak, not daily (1996 on)</div>`:''}<div class="row"><i class="dot" style="color:var(--faint)"></i>English</div>${L.id==='ga'?'<div class="row"><i class="ring" style="color:var(--land)"></i>Not counted after 1922</div>':''}<hr class="opt"><div class="row opt"><i class="dot" style="color:var(--fg)"></i>Measured year</div><div class="row opt"><i class="dot" style="color:var(--fg);opacity:.45"></i>Estimated between counts</div><div class="row opt k" style="max-width:220px;line-height:1.4">Dots show share of speakers, placed nearest the Gaeltacht-style heartlands. A model, not a survey.</div>`}
+  el.innerHTML=`<div class="row"><i class="dot" style="color:${c}"></i>${L.id==='ga'?'Speaks Irish (daily use, once counted)':'Speaks '+L.name}</div>${L.id==='ga'?`<div class="row"><i class="ring" style="color:${c}"></i>Can speak, not daily (1996 on)</div>`:''}<div class="row"><i class="dot" style="color:var(--faint)"></i>English</div>${L.id==='ga'?'<div class="row"><i class="ring" style="color:var(--land)"></i>Not counted after 1922</div>':''}<hr><div class="row"><i class="dot" style="color:var(--fg)"></i>Census data</div><div class="row"><svg width="9" height="9" viewBox="0 0 10 10" aria-hidden="true" style="flex:none"><rect x="2" y="2" width="6" height="6" transform="rotate(45 5 5)" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>Historical event</div>`}
 
 
 /* ============ timeline ============ */
@@ -774,9 +775,9 @@ function renderTrack(){if(!track.clientWidth)return;TX=txScale();const {w,x}=TX;
   for(let yy=1850;yy<=2025;yy+=25)s+=`<text x="${x(yy)}" y="${base+26}" text-anchor="middle">${yy}</text>`;
   s+=`<line x1="${x(Y0)}" x2="${x(Y1)}" y1="${base}" y2="${base}" stroke="${C.faint}" stroke-width="1.4" stroke-dasharray="1.5 4" stroke-linecap="round"/>`;
   s+=`<line id="tPlayed" x1="${x(Y0)}" x2="${x(S.year)}" y1="${base}" y2="${base}" stroke="${C.fg}" stroke-width="1.6" stroke-linecap="round" opacity=".55"/>`;
-  if(S.mode==='region'&&S.lang){const L=LANGS[S.lang];$('#trackLabel').textContent=`${L.name}: diamonds are events, dots are counts, hatched spans are gaps`;
+  if(S.mode==='region'&&S.lang){const L=LANGS[S.lang];$('#trackLabel').textContent=`${L.name}: dots are census data, diamonds are historical events, hatched spans are gaps`;
     for(const g of L.gapList){if(g.id==='daily')continue;const gw=Math.max(4,x(g.to)-x(g.from)-10);s+=`<g class="gp" data-gap="${g.id}" style="cursor:pointer"><rect x="${x(g.from)+5}" y="${base-7}" width="${gw}" height="14" rx="3" fill="url(#hatch)"/><rect x="${x(g.from)+5}" y="${base-7}" width="${gw}" height="14" rx="3" fill="transparent"/></g>`}
-    for(const p of L.series[0].pts)s+=`<circle class="mk" data-pt="${p.y}" cx="${x(p.y)}" cy="${base}" r="4.5" fill="${p.k==='meas'?C.fg:C.bg}" stroke="${C.fg}" stroke-width="1.4" style="cursor:pointer"/>`;
+    for(const p of censusPts(L))s+=`<circle class="mk" data-pt="${p.y}" cx="${x(p.y)}" cy="${base}" r="4.5" fill="${C.fg}" stroke="${C.fg}" stroke-width="1.4" style="cursor:pointer"/>`;
     for(const ev of L.events){const ex=x(ev.y);s+=`<rect class="mk" data-ev="${ev.y}" x="${ex-5}" y="${base-38}" width="10" height="10" style="cursor:pointer;transform:rotate(45deg)" fill="${C.surface}" stroke="${C.fg}" stroke-width="1.3"/>`}}
   s+=`<g id="tHead" transform="translate(${x(S.year)} 0)"><line x1="0" x2="0" y1="${base-46}" y2="${base}" stroke="${C.fg}" stroke-width="1.2"/><circle cx="0" cy="${base}" r="8" fill="${C.surface}" stroke="${C.fg}" stroke-width="1.4"/><circle cx="0" cy="${base}" r="3.5" fill="${C.accent}"/></g>`;
   track.setAttribute('viewBox',`0 0 ${w} 92`);track.innerHTML=s;track.setAttribute('aria-valuenow',S.year);FACT.id=undefined;updateFact()}
@@ -824,8 +825,10 @@ document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,sele
 
 /* fact card: follows the slider */
 const FACT={id:undefined,kind:null,off:false,t:0};
-function factsFor(L){if(L._facts)return L._facts;const f=[];
-  L.series[0].pts.forEach((p,i)=>f.push({k:'pt',y:p.y,id:'pt'+p.y,p,prev:L.series[0].pts[i-1]}));L.events.forEach(e=>f.push({k:'ev',y:e.y,id:'ev'+e.y,ev:e}));
+// Timeline markers: dots are census counts, diamonds are historical events.
+const censusPts=L=>L.series[0].pts.filter(p=>p.census!==false);
+function factsFor(L){if(L._facts)return L._facts;const f=[],cp=censusPts(L);
+  cp.forEach((p,i)=>f.push({k:'pt',y:p.y,id:'pt'+p.y,p,prev:cp[i-1]}));L.events.forEach(e=>f.push({k:'ev',y:e.y,id:'ev'+e.y,ev:e}));
   f.sort((a,b)=>a.y-b.y||(a.k==='pt'?-1:1));return L._facts=f}
 // The latest event or count at or before the year; inside a gap, once the last marker is more than 2 years behind, the gap itself.
 function activeFact(L,y){let a=null;for(const f of factsFor(L))if(f.y<=y)a=f;
@@ -834,7 +837,7 @@ function factHTML(L,f){
   if(f.k==='ev'){const e=f.ev,im=e.img;return`<div class="fc ev${im?' img':''}">${im?`<figure class="plate fthumb" data-plate="ev-${L.id}-${e.y}" data-scene="${im.scene}" data-cap="${esc(im.cap)}" title="Drop or click to add a photo"></figure>`:''}<div class="fc"><div class="cap">◆ ${e.y} · Event</div><h5>${esc(e.t)}</h5><p>${esc(e.d)}</p>${im?`<div class="mono src">Photo slot · ${esc(im.cap)}</div>`:''}</div></div>`}
   if(f.k==='pt'){const p=f.p,sh=p.v/p.pop,n=Math.round(sh*20),pr=f.prev;let dl='';
     if(pr){const c=(p.v-pr.v)/pr.v;dl=`<span class="delta ${c<0?'dn':'up'}">${c<0?'▼':'▲'} ${Math.abs(Math.round(c*100))}% since ${pr.y}</span>`}
-    return`<div class="fc pt"><div class="cap">${p.k==='meas'?'● '+p.y+' · Measured':'○ '+p.y+' · Estimate'}</div><div class="big">${p.k==='meas'?'':'~'}${fmt(p.v)} <small>${esc(L.unit)}</small></div>
+    return`<div class="fc pt"><div class="cap">${'● '+p.y+(p.k==='meas'?' · Census':' · Census-based estimate')}</div><div class="big">${p.k==='meas'?'':'~'}${fmt(p.v)} <small>${esc(L.unit)}</small></div>
       <div class="row">${dl}<span class="mono">${sh<.01?(sh*100).toFixed(1):Math.round(sh*100)}% of everyone counted</span></div>
       <div class="d20" aria-hidden="true">${Array.from({length:20},(_,i)=>`<i style="${i<n?`background:var(${L.color})${p.k==='meas'?'':';opacity:.5'}`:''}"></i>`).join('')}</div><div class="mono src">${esc(p.src)}</div></div>`}
   const g=f.g;return`<div class="fc gp"><div class="cap">┄ ${g.from} → ${g.to} · Gap in the record</div><h5>${esc(gapTitle(g))}</h5><div class="row">${stateHTML(gapState(g))}</div><div><button class="linkish" type="button" data-gapopen="${g.id}">See possible reasons →</button></div></div>`}
@@ -1124,7 +1127,7 @@ function drawMapCore(c,W,H,o){const L=o.lang?LANGS[o.lang]:null,R=o.R,cx=o.cx,cy
     for(let k=0;k<rlit.length;k+=4){const p=rlit[k+3],g=rlit[k+2],i=M.rk.get(p),spk=p.home&&!(M.afterPartition&&p.out)&&i<M.nSolid+M.nPale;
       c.globalAlpha=regA*g*GLOW.alpha;c.fillStyle=spk?col:C.fg;c.beginPath();c.arc(rlit[k],rlit[k+1],rd*(.7+GLOW.grow*g),0,6.283);c.fill()}
     if(L.id==='haw'&&year>=1940){const q=P(-160.15,21.9),a=regA*clamp01((year-1940)/25),rr=Math.max(26,R*.004);c.globalAlpha=a;c.beginPath();c.arc(q[0],q[1],rr,0,6.283);c.strokeStyle=col;c.lineWidth=1.4;c.setLineDash([3,4]);c.stroke();c.setLineDash([]);
-      c.font='italic 15px Spectral,Georgia,serif';c.fillStyle=C.fg;c.fillText('Niʻihau',q[0]-rr-8-c.measureText('Niʻihau').width,q[1]-4);c.font='11px "IBM Plex Mono",monospace';c.fillStyle=C.muted;const t='Hawaiian still spoken at home';c.fillText(t,q[0]-rr-8-c.measureText(t).width,q[1]+12)}
+      c.textAlign='center';c.font='italic 15px Spectral,Georgia,serif';c.fillStyle=C.fg;c.fillText('Niʻihau',q[0],q[1]+rr+20);c.font='11px "IBM Plex Mono",monospace';c.fillStyle=C.muted;c.fillText('Hawaiian still spoken at home',q[0],q[1]+rr+36);c.textAlign='start'}
     c.globalAlpha=regA*clamp01((z-8)/4);c.font='11px "IBM Plex Mono",monospace';c.fillStyle=C.muted;
     for(const [lo,la,t] of L.labels){const q=P(lo,la);if(q[2]>0&&on(q[0],q[1]))c.fillText(t.toUpperCase()===t?t.split('').join(' '):t,q[0],q[1])}}
   else if(!o.markers){const q=P(L.lon,L.lat);if(q[2]>0){c.globalAlpha=1;c.beginPath();c.arc(q[0],q[1],9,0,6.283);c.fillStyle=rgba(col,.18);c.fill();c.beginPath();c.arc(q[0],q[1],4,0,6.283);c.fillStyle=col;c.fill()}}
@@ -1169,7 +1172,7 @@ function cardHTML(L,ST,s){
   return`<div class="sx-card"><div class="k cap">${mark}${esc(s.k)}</div><h3>${esc(s.h)}</h3>${s.p.map(t=>`<p>${esc(t)}</p>`).join('')}</div>`}
 function openStory(id){const L=LANGS[id],ST=STORIES[id];const el=$('#story');togglePlay(false);SX.el=el;SX.lang=id;SX.steps=ST.steps;SX.i=-1;
   const other=id==='ga'?'haw':'ga';
-  el.innerHTML=`<div class="bar"><div class="brand"><b><span class="dot"></span>Endangered Languages</b><span class="crumb">${esc(L.name)} · the story</span></div><button class="btn ghost sm" id="sClose">Back to the map</button><div class="prog"></div></div>
+  el.innerHTML=`<div class="bar"><div class="brand"><b>Endangered Languages</b><span class="crumb">${esc(L.name)} · the story</span></div><button class="btn ghost sm" id="sClose">Back to the map</button><div class="prog"></div></div>
    <div class="sx-stage"><canvas class="sx-map" aria-hidden="true"></canvas>
     <div class="sx-hud off"><div class="y"></div><div class="k mono"></div><div class="lg mono"><span><i class="dot" style="color:var(${L.color})"></i>${id==='ga'?'speaks Irish':'speaks Hawaiian'}</span>${id==='ga'?`<span><i class="ring" style="color:var(${L.color})"></i>can speak, not daily</span>`:''}<span><i class="dot" style="color:var(--faint)"></i>English</span></div></div>
     ${ST.steps.map((s,i)=>sceneHTML(L,s,i)).join('')}</div>
