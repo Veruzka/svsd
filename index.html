@@ -606,8 +606,8 @@ let C={};
 function readColors(){const s=getComputedStyle(document.documentElement);for(const n of['bg','fg','muted','faint','land','line','accent','ga','haw','mori','near','ext','surface'])C[n]=s.getPropertyValue('--'+n).trim()}
 function rgba(hex,a){const h=hex.replace('#','');const n=parseInt(h.length===3?h.split('').map(x=>x+x).join(''):h,16);return`rgba(${n>>16&255},${n>>8&255},${n&255},${a})`}
 readColors();
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{readColors();dirty=true;renderTrack()});
-new MutationObserver(()=>{readColors();dirty=true;renderTrack()}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{readColors();dirty=true;renderTrack();paintGrid()});
+new MutationObserver(()=>{readColors();dirty=true;renderTrack();paintGrid()}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
 /* ============ state ============ */
 const S={mode:'globe',year:Y1,lang:null,cLon:-25,cLat:28,R:300,z:1,k:0,playing:false,flying:false};
@@ -647,7 +647,7 @@ function bboxCenter(L){const[[a,b],[c,d]]=L.bbox;return[(a+c)/2,(b+d)/2]}
 function drawMain(){const L=S.lang?LANGS[S.lang]:null;
   if(S.mode==='region'&&!S.flying&&L){S.z=fitZ(L);[S.cLon,S.cLat]=bboxCenter(L)}
   hits=[];const g=gcy();
-  drawMapCore(ctx,W,H,{hx:BG.sx,hy:BG.sy,hr:S.mode==='globe'&&!S.dragging&&!reduce?Math.max(70,S.R*.24):0,lon:S.cLon,lat:S.cLat,z:S.z,R:S.R*S.z,cx:gcx()+((L?regionCX():gcx())-gcx())*S.k,cy:g+((L?regionCY():g)-g)*S.k,year:S.year,lang:S.lang,path:0,critA:1,critR:1.25,markers:true,hits:S.mode==='globe'?hits:null})}
+  drawMapCore(ctx,W,H,{hx:CURSOR.sx,hy:CURSOR.sy,hr:S.mode==='globe'&&!S.dragging?GLOW.radius():0,lon:S.cLon,lat:S.cLat,z:S.z,R:S.R*S.z,cx:gcx()+((L?regionCX():gcx())-gcx())*S.k,cy:g+((L?regionCY():g)-g)*S.k,year:S.year,lang:S.lang,path:0,critA:1,critR:1.25,markers:true,hits:S.mode==='globe'?hits:null})}
 /* region dot model */
 const REG={};
 function prepRegions(){for(const L of Object.values(LANGS)){const g=GRIDS[L.grid];const pts=[];
@@ -666,46 +666,26 @@ function seriesAt(L,key,y){const s=L.series.find(x=>x.key===key);if(!s)return nu
   for(let i=1;i<p.length;i++)if(y<p[i].y){const a=p[i-1],b=p[i],t=(y-a.y)/(b.y-a.y);
     const v=Math.exp(Math.log(a.v)+(Math.log(b.v)-Math.log(a.v))*t),pop=a.pop+(b.pop-a.pop)*t;return{v,share:v/pop,kind:'interp',a,b}}}
 /* ============ landing background ============ */
-// A faint dot grid behind the world view. Dots near the cursor light up and fade slowly behind it; now and then a thin
-// trace runs along the grid with a spark at its head, lighting the dots it passes. Hidden inside a language.
+// A still, faint dot grid behind the world view (hidden inside a language). Painted on resize and theme change only.
 const bgc=$('#bg'),bctx=bgc.getContext('2d');
-const BG={g:28,cols:0,rows:0,ox:0,oy:0,glow:null,traces:[],next:0,mx:-1e4,my:-1e4,sx:-1e4,sy:-1e4,last:0};
-function bgResize(){if(!W)return;bgc.width=W*DPR;bgc.height=H*DPR;bctx.setTransform(DPR,0,0,DPR,0,0);const g=BG.g;
-  BG.cols=Math.ceil(W/g)+1;BG.rows=Math.ceil(H/g)+1;BG.ox=(W-(BG.cols-1)*g)/2;BG.oy=(H-(BG.rows-1)*g)/2;BG.glow=new Float32Array(BG.cols*BG.rows);BG.traces=[]}
-$('#stage').addEventListener('pointermove',e=>{const r=$('#stage').getBoundingClientRect();BG.mx=e.clientX-r.left;BG.my=e.clientY-r.top;if(BG.sx<-1e3){BG.sx=BG.mx;BG.sy=BG.my}if(reduce)dirty=true});
-$('#stage').addEventListener('pointerleave',()=>{BG.mx=BG.my=-1e4;BG.sx=BG.sy=-1e4;dirty=true});
-const inGlobe=(x,y,m)=>(x-GX)**2+(y-GY)**2<(S.R+m)**2;
-// Traces stay clear of the title, the status key and the search.
-function uiBoxes(){const st=$('#stage').getBoundingClientRect();return['#side h1','#side .sub','#sideKey','#find'].map(q=>{const r=$(q).getBoundingClientRect();return[r.left-st.left-16,r.top-st.top-16,r.right-st.left+16,r.bottom-st.top+16]}).filter(b=>b[2]-b[0]>40)}
-function spawnTrace(now){const g=BG.g;for(let tries=0;tries<14;tries++){
-  const i0=Math.floor(Math.random()*BG.cols),j0=Math.floor(Math.random()*BG.rows),dx=Math.random()<.5?-1:1,dy=Math.random()<.5?-1:1,a=3+Math.floor(Math.random()*5),b=2+Math.floor(Math.random()*4);
-  const pts=[[i0,j0],[i0+dx*a,j0],[i0+dx*a,j0+dy*b]];if(pts.some(([i,j])=>i<0||j<0||i>=BG.cols||j>=BG.rows))continue;
-  const px=pts.map(([i,j])=>[BG.ox+i*g,BG.oy+j*g]);let bad=false;for(let k=0;k<2&&!bad;k++)for(let t=0;t<=1;t+=.1){const x=px[k][0]+(px[k+1][0]-px[k][0])*t,y=px[k][1]+(px[k+1][1]-px[k][1])*t;if(inGlobe(x,y,30)){bad=true;break}}
-  if(!bad){const ub=uiBoxes();for(let k=0;k<2&&!bad;k++)for(let t=0;t<=1;t+=.05){const x=px[k][0]+(px[k+1][0]-px[k][0])*t,y=px[k][1]+(px[k+1][1]-px[k][1])*t;if(ub.some(b=>x>b[0]&&x<b[2]&&y>b[1]&&y<b[3])){bad=true;break}}}
-  if(bad)continue;BG.traces.push({px,len:(a+b)*g,t0:now,done:0});return}}
-function bgFrame(now){const dt=Math.min(.05,(now-(BG.last||now))/1000);BG.last=now;
-  if(BG.mx>-1e3){const k=Math.min(1,dt*10);BG.sx+=(BG.mx-BG.sx)*k;BG.sy+=(BG.my-BG.sy)*k}
-  if(S.mode!=='globe'||!W||!BG.glow){if(BG.drawn){bctx.clearRect(0,0,W,H);BG.drawn=false}return}
-  if(!reduce&&now>BG.next){spawnTrace(now);BG.next=now+700+Math.random()*1100}
-  const g=BG.g,glow=BG.glow,R=Math.max(90,g*3.6),R2=R*R,dec=dt*1.4;bctx.clearRect(0,0,W,H);BG.drawn=true;
-  // traces: a line that grows behind a spark, then fades
-  for(let n=BG.traces.length-1;n>=0;n--){const T=BG.traces[n],head=Math.min(T.len,(now-T.t0)*.24);if(head>=T.len&&!T.done)T.done=now;
-    const fade=T.done?1-(now-T.done)/900:1;if(fade<=0){BG.traces.splice(n,1);continue}
-    let left=head,hx=T.px[0][0],hy=T.px[0][1];bctx.beginPath();bctx.moveTo(hx,hy);
-    for(let k=0;k<2&&left>0;k++){const [x0,y0]=T.px[k],[x1,y1]=T.px[k+1],L=Math.hypot(x1-x0,y1-y0),u=Math.min(1,left/L);hx=x0+(x1-x0)*u;hy=y0+(y1-y0)*u;bctx.lineTo(hx,hy);left-=L}
-    bctx.globalAlpha=.32*fade;bctx.strokeStyle=C.fg;bctx.lineWidth=1;bctx.stroke();
-    const ci=Math.round((hx-BG.ox)/g),cj=Math.round((hy-BG.oy)/g);if(ci>=0&&cj>=0&&ci<BG.cols&&cj<BG.rows)glow[cj*BG.cols+ci]=Math.max(glow[cj*BG.cols+ci],.9);
-    if(!T.done){bctx.globalAlpha=.95;bctx.fillStyle=C.fg;bctx.beginPath();bctx.moveTo(hx,hy-5);bctx.lineTo(hx+1.1,hy-1.1);bctx.lineTo(hx+5,hy);bctx.lineTo(hx+1.1,hy+1.1);bctx.lineTo(hx,hy+5);bctx.lineTo(hx-1.1,hy+1.1);bctx.lineTo(hx-5,hy);bctx.lineTo(hx-1.1,hy-1.1);bctx.closePath();bctx.fill()}}
-  // grid dots: base pass, then the lit ones on top
-  const lit=[];bctx.fillStyle=C.faint;bctx.globalAlpha=.5;bctx.beginPath();
-  for(let j=0;j<BG.rows;j++)for(let i=0;i<BG.cols;i++){const x=BG.ox+i*g,y=BG.oy+j*g;if(inGlobe(x,y,14))continue;const k=j*BG.cols+i;
-    const dx=x-BG.sx,dy=y-BG.sy,d2=dx*dx+dy*dy;let tg=0;if(d2<R2){const t=1-Math.sqrt(d2)/R;tg=t*t*(3-2*t)}
-    glow[k]=Math.max(tg,glow[k]-dec);bctx.moveTo(x+1,y);bctx.arc(x,y,1,0,6.283);if(glow[k]>.02)lit.push(x,y,glow[k])}
-  bctx.fill();bctx.fillStyle=C.fg;
-  for(let k=0;k<lit.length;k+=3){const v=lit[k+2];bctx.globalAlpha=v*.9;bctx.beginPath();bctx.arc(lit[k],lit[k+1],1+1.3*v,0,6.283);bctx.fill()}
-  bctx.globalAlpha=1}
+function bgResize(){if(!W)return;bgc.width=W*DPR;bgc.height=H*DPR;bctx.setTransform(DPR,0,0,DPR,0,0);paintGrid()}
+function paintGrid(){if(!W)return;const g=28,cols=Math.ceil(W/g)+1,rows=Math.ceil(H/g)+1,ox=(W-(cols-1)*g)/2,oy=(H-(rows-1)*g)/2,rr=(S.R+14)**2;
+  bctx.clearRect(0,0,W,H);bctx.fillStyle=C.faint;bctx.globalAlpha=.5;bctx.beginPath();
+  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const x=ox+i*g,y=oy+j*g;if((x-GX)**2+(y-GY)**2<rr)continue;bctx.moveTo(x+1,y);bctx.arc(x,y,1,0,6.283)}
+  bctx.fill();bctx.globalAlpha=1}
+
+/* ============ cursor and hover glow ============ */
+// Shared hover glow: use for any dot field that should react to the cursor. Dots within GLOW radius of the smoothed
+// cursor get brighter (alpha) and bigger (grow), fading out with a smoothstep curve.
+const GLOW={alpha:.85,grow:.9,radius:()=>Math.max(70,S.R*.24)};
+function dotGlow(x,y,cx,cy,r){const dx=x-cx,dy=y-cy,d2=dx*dx+dy*dy;if(!r||d2>=r*r)return 0;const t=1-Math.sqrt(d2)/r;return t*t*(3-2*t)}
+const CURSOR={mx:-1e4,my:-1e4,sx:-1e4,sy:-1e4,last:0};
+$('#stage').addEventListener('pointermove',e=>{const r=$('#stage').getBoundingClientRect();CURSOR.mx=e.clientX-r.left;CURSOR.my=e.clientY-r.top;if(CURSOR.sx<-1e3){CURSOR.sx=CURSOR.mx;CURSOR.sy=CURSOR.my}if(reduce)dirty=true});
+$('#stage').addEventListener('pointerleave',()=>{CURSOR.mx=CURSOR.my=CURSOR.sx=CURSOR.sy=-1e4;dirty=true});
+function trackCursor(now){const dt=Math.min(.05,(now-(CURSOR.last||now))/1000);CURSOR.last=now;
+  if(CURSOR.mx>-1e3){const k=reduce?1:Math.min(1,dt*10);CURSOR.sx+=(CURSOR.mx-CURSOR.sx)*k;CURSOR.sy+=(CURSOR.my-CURSOR.sy)*k}}
 function frame(now){if(SX.el&&!SX.el.hidden){requestAnimationFrame(frame);return}
-  bgFrame(now);
+  trackCursor(now);
   if(S.mode==='globe'&&!S.dragging&&!reduce&&!S.paused&&$('#tip').hidden){S.cLon+=.02;dirty=true}
   if(S.flying||S.mode==='globe'&&!reduce)dirty=true;
   if(dirty&&W){ctx.clearRect(0,0,W,H);
@@ -1097,11 +1077,11 @@ function drawMapCore(c,W,H,o){const L=o.lang?LANGS[o.lang]:null,R=o.R,cx=o.cx,cy
   if(z<3){c.globalAlpha=1-clamp01((z-1.6)/1.4);c.beginPath();c.arc(cx,cy,R,0,6.283);c.strokeStyle=C.line;c.lineWidth=1;c.stroke()}
   const ds=Math.min(2.4,Math.max(1.15,R/190));
   if(worldA>0){const w=GRIDS.world;c.fillStyle=C.land;
-    const hr=o.hr||0,hr2=hr*hr,lit=[];const glowAt=(x,y)=>{if(!hr)return 0;const dx=x-o.hx,dy=y-o.hy,d2=dx*dx+dy*dy;if(d2>=hr2)return 0;const t=1-Math.sqrt(d2)/hr;return t*t*(3-2*t)};
+    const lit=[],glowAt=(x,y)=>dotGlow(x,y,o.hx,o.hy,o.hr||0);
     for(let k=0;k<w.length;k+=2){const q=P(w[k],w[k+1]);if(q[2]<=0||!on(q[0],q[1]))continue;c.globalAlpha=worldA*(.25+.75*q[2]);c.beginPath();c.arc(q[0],q[1],ds*(.55+.45*q[2]),0,6.283);c.fill();
       const g=glowAt(q[0],q[1]);if(g>0)lit.push(q[0],q[1],g*q[2])}
-    if(lit.length){c.fillStyle=C.fg;for(let k=0;k<lit.length;k+=3){const g=lit[k+2];c.globalAlpha=worldA*g*.85;c.beginPath();c.arc(lit[k],lit[k+1],ds*(.6+.9*g),0,6.283);c.fill()}c.fillStyle=C.land}
-    for(let i=0;i<CRIT.length;i++){const d=CRIT[i];const q=P(d[2],d[1]);if(q[2]<=.02||!on(q[0],q[1]))continue;const g=glowAt(q[0],q[1]);c.globalAlpha=Math.min(1,worldA*o.critA*(.35+.65*q[2])+g*.6);c.beginPath();c.arc(q[0],q[1],ds*o.critR*(1+.9*g),0,6.283);
+    if(lit.length){c.fillStyle=C.fg;for(let k=0;k<lit.length;k+=3){const g=lit[k+2];c.globalAlpha=worldA*g*GLOW.alpha;c.beginPath();c.arc(lit[k],lit[k+1],ds*(.6+GLOW.grow*g),0,6.283);c.fill()}c.fillStyle=C.land}
+    for(let i=0;i<CRIT.length;i++){const d=CRIT[i];const q=P(d[2],d[1]);if(q[2]<=.02||!on(q[0],q[1]))continue;const g=glowAt(q[0],q[1]);c.globalAlpha=Math.min(1,worldA*o.critA*(.35+.65*q[2])+g*.6);c.beginPath();c.arc(q[0],q[1],ds*o.critR*(1+GLOW.grow*g),0,6.283);
       if(d[3]===4){if(!d[5]||year>=d[5]){c.strokeStyle=C.ext;c.lineWidth=1;c.stroke()}else{c.fillStyle=C.ext;c.fill()}}else{c.fillStyle=d[3]===2?C.mori:C.near;c.fill()}
       if(o.hits&&worldA>.6)o.hits.push([q[0],q[1],i])}}
   if(o.markers){const t=performance.now()/1000;for(const M of Object.values(LANGS)){const q=P(M.lon,M.lat);const a=(1-regA)*q[2];if(q[2]<=0||a<=0)continue;const mc=C[M.color.slice(2)];
