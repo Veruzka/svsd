@@ -50,7 +50,7 @@ header.top>*{pointer-events:auto}
 #side{position:absolute;top:34px;left:max(32px,env(safe-area-inset-left,0px));width:340px;z-index:3;display:grid;gap:16px;transition:opacity .4s}
 #app.away #side{opacity:0;pointer-events:none}
 #side h1{font-family:var(--serif);font-weight:400;font-size:52px;line-height:1;margin:0;letter-spacing:-.015em;text-wrap:balance}
-#side .sub{margin:0;font-family:var(--serif);font-size:21px;line-height:1.45;color:var(--fg);max-width:30ch}
+#side .sub{margin:0;font-family:var(--serif);font-size:18px;line-height:1.5;color:color-mix(in srgb,var(--fg) 62%,var(--bg));max-width:30ch}
 #side .key{position:fixed;top:40px;right:max(32px,env(safe-area-inset-right,0px));width:250px;display:grid;gap:12px}
 .krow{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:10px;align-items:start}
 .krow .dot,.krow .ring{margin-top:6px}
@@ -303,7 +303,7 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
   #app:not(.away) #stage{height:100svh;min-height:680px}
   #side{top:18px;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));width:auto;gap:8px}
   #side h1{font-size:34px}
-  #side .sub{font-size:17px}
+  #side .sub{font-size:16px}
   #side .key{position:static;width:auto;margin-top:6px;padding-top:10px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px 16px}
   #side .key .cap,#side .key .src{flex-basis:100%}
   .krow{display:flex;align-items:center;gap:6px;white-space:nowrap}.krow .dot,.krow .ring{margin-top:0}.krow small{display:none}.krow b{font-size:13px}.krow .n{padding-top:0;color:var(--muted)}
