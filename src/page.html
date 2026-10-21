@@ -104,6 +104,12 @@ header.top>*{pointer-events:auto}
 .chip{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line)}
 .chip.warn{border-color:transparent;background:color-mix(in srgb,var(--mori) 18%,transparent);color:var(--fg)}
 .chip.crit{border-color:transparent;background:color-mix(in srgb,var(--near) 15%,transparent)}
+/* hover / focus explanation on panel chips */
+.chips:has(.tipb){position:relative}
+.chip[tabindex]{cursor:help}
+.tipb{position:absolute;top:calc(100% + 8px);left:0;z-index:6;width:max-content;max-width:260px;display:grid;gap:4px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--fg);box-shadow:var(--shadow);font-family:var(--sans);font-size:12.5px;line-height:1.45;text-transform:none;letter-spacing:0;white-space:normal;opacity:0;transform:translateY(-4px);transition:opacity .18s,transform .18s;pointer-events:none}
+.tipb b{font-family:var(--mono);font-weight:400;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.chip[tabindex]:hover .tipb,.chip[tabindex]:focus-visible .tipb{opacity:1;transform:none}
 .lede{font-family:var(--serif);font-size:18px;line-height:1.6;margin:0}
 .now{display:grid;gap:4px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .now .big{font-family:var(--serif);font-size:30px;line-height:1.1;font-variant-numeric:tabular-nums}
@@ -375,7 +381,7 @@ const STATUS={2:'Moribund',3:'Nearly extinct',4:'Extinct'};
 /* ============ curated language data ============ */
 const LANGS={
 ga:{id:'ga',name:'Irish',endo:'Gaeilge',place:'Éire · Ireland',color:'--ga',lat:53.22,lon:-7.62,grid:'ireland',
- glotto:'Shifting',unesco:'Definitely endangered',family:'Celtic',
+ glotto:'Shifting',unesco:'Definitely endangered',family:'Celtic',familyTip:'Irish is in the Celtic branch of the Indo-European family, alongside Scottish Gaelic, Manx, Welsh and Breton.',
  lede:'Irish was the everyday language of most of the island until the 1840s. Famine, emigration and English-only schools broke the chain between parents and children within two generations. Today almost two million people say they can speak it. About seventy thousand use it every day.',
  unit:'could speak Irish',
  series:[
@@ -444,7 +450,7 @@ ga:{id:'ga',name:'Irish',endo:'Gaeilge',place:'Éire · Ireland',color:'--ga',la
  bbox:[[-10.8,51.3],[-5.3,55.5]]
 },
 haw:{id:'haw',name:'Hawaiian',endo:'ʻŌlelo Hawaiʻi',place:'Hawaiʻi',color:'--haw',lat:19.63,lon:-155.43,grid:'hawaii',
- glotto:'Moribund',unesco:'Critically endangered',family:'Austronesian',
+ glotto:'Moribund',unesco:'Critically endangered',family:'Austronesian',familyTip:'Hawaiian belongs to the Austronesian family, through its Polynesian branch, alongside Tahitian, Māori, Samoan, Tagalog and Malagasy.',
  lede:'In the 1850s nearly everyone in the islands spoke Hawaiian, and it filled over a hundred newspapers. After the overthrow of the kingdom, an 1896 law made English the only language of instruction. By 1983 fewer than fifty children could speak it. Families and teachers have been bringing it back since.',
  unit:'spoke Hawaiian',
  series:[
@@ -746,7 +752,7 @@ function chartSVG(L,opts){const w=opts.w||380,h=opts.h||170,ml=44,mr=opts.mr??92
 function renderPanel(){const L=LANGS[S.lang];const p=$('#panel');const crit=L.glotto==='Moribund';
   p.innerHTML=`<button class="close" aria-label="Back to the world map">×</button><div class="in">
    <h2>${L.name} <em>· ${L.endo}</em></h2>
-   <div class="chips"><span class="chip"><i class="dot" style="color:var(${L.color})"></i>${L.family}</span><span class="chip ${crit?'crit':'warn'}"><i class="dot" style="color:var(${crit?'--near':'--mori'})"></i>Glottolog: ${L.glotto}</span><span class="chip">UNESCO: ${L.unesco}</span></div>
+   <div class="chips"><span class="chip" tabindex="0" aria-describedby="tipFam"><i class="dot" style="color:var(${L.color})"></i>${L.family}<span class="tipb" role="tooltip" id="tipFam"><b>Language family</b>${esc(L.familyTip)}</span></span><span class="chip ${crit?'crit':'warn'}" tabindex="0" aria-describedby="tipStatus"><i class="dot" style="color:var(${crit?'--near':'--mori'})"></i>Status: ${L.glotto}<span class="tipb" role="tooltip" id="tipStatus"><b>Source</b>Glottolog 5 (glottolog.org), its endangerment status for this language. Loaded through the languages-of-the-world dataset. Scale: not endangered, threatened, shifting, moribund, nearly extinct, extinct.</span></span></div>
    <p class="lede">${esc(L.lede)}</p>
    <div class="now" id="now"></div>
    <div class="sec chart"><div class="head"><span class="cap">Speakers over time</span><span class="mono">log scale</span></div><div id="pchart"></div>
@@ -768,8 +774,8 @@ function renderGaps(L,el){el.innerHTML=L.gapList.map(g=>`<button class="gapbtn" 
 const EXAMPLES={ga:[{type:'voice',title:'Counting rhyme, as my grandmother said it',when:'1950s · Conamara'},{type:'text',title:'Why my great-grandfather stopped speaking Irish in Boston',when:'1890s · Boston'}],
  haw:[{type:'voice',title:'Mele my tūtū sang while cooking',when:'1940s · Molokaʻi'},{type:'photo',title:'Pūnana Leo first class',when:'1985 · Hilo'}]};
 function renderComm(){const L=LANGS[S.lang];const mine=store.stories.filter(s=>s.lang===L.id||s.langName===L.name).sort((a,b)=>(b.at||0)-(a.at||0));
-  let h='';if(!mine.length)h+=`<div class="empty">No stories yet for ${L.name}. Families hold what the census missed: who stopped speaking, and why. <button class="linkish" id="firstAdd">Add the first one</button></div>`;
-  h+=`<div class="stories" style="margin-top:${mine.length?0:14}px">`+mine.slice(0,6).map(storyCard).join('')+(mine.length<2?EXAMPLES[L.id].map(x=>`<div class="story"><div class="thumb"><span class="chip ex">Example</span>${x.type==='voice'?waveSVG():x.type==='photo'?'<span class="mono">photo</span>':'<span class="q">“…”</span>'}</div><b>${esc(x.title)}</b><span class="mono">${esc(x.when)}</span></div>`).join(''):'')+`</div>`;
+  const empty=mine.length?'':`<div class="empty" style="margin-top:14px">No stories yet for ${L.name}. Families hold what the census missed: who stopped speaking, and why. <button class="linkish" id="firstAdd">Add the first one</button></div>`;
+  let h=`<div class="stories">`+mine.slice(0,6).map(storyCard).join('')+(mine.length<2?EXAMPLES[L.id].map(x=>`<div class="story"><div class="thumb"><span class="chip ex">Example</span>${x.type==='voice'?waveSVG():x.type==='photo'?'<span class="mono">photo</span>':'<span class="q">“…”</span>'}</div><b>${esc(x.title)}</b><span class="mono">${esc(x.when)}</span></div>`).join(''):'')+`</div>`+empty;
   if(store.local)h+=`<div class="mono" style="margin-top:10px">Preview mode: stories you add are saved in this browser only.</div>`;
   $('#comm').innerHTML=h;const fa=$('#firstAdd');if(fa)fa.onclick=()=>openForm({lang:L.id})}
 function waveSVG(){let s='<svg width="70%" height="40" viewBox="0 0 140 40" aria-hidden="true">';for(let i=0;i<28;i++){const a=Math.abs(Math.sin(i*1.7)*Math.cos(i*.4))*14+2;for(let j=-a;j<=a;j+=5)s+=`<circle cx="${i*5+2}" cy="${20+j}" r="1.3" fill="${C.accent}"/>`}return s+'</svg>'}
