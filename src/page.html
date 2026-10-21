@@ -47,12 +47,11 @@ header.top>*{pointer-events:auto}
 /* world view: title, subtitle and status key in a left column; the header brand only shows inside a language */
 #app:not(.away) header.top .brand{visibility:hidden}
 #app:not(.away) #legend{display:none}
-#side{position:absolute;top:30px;left:max(32px,env(safe-area-inset-left,0px));width:300px;z-index:3;display:grid;gap:12px;transition:opacity .4s}
+#side{position:absolute;top:34px;left:max(32px,env(safe-area-inset-left,0px));width:340px;z-index:3;display:grid;gap:16px;transition:opacity .4s}
 #app.away #side{opacity:0;pointer-events:none}
-#side h1{font-family:var(--serif);font-weight:400;font-size:36px;line-height:1.05;margin:0;letter-spacing:-.01em;display:flex;gap:12px;align-items:baseline;text-wrap:balance}
-#side h1 .dot{color:var(--accent);flex:none;transform:translateY(-6px)}
-#side .sub{margin:0;font-size:15px;line-height:1.55;color:var(--muted);max-width:32ch}
-#side .key{display:grid;gap:12px;margin-top:12px;padding-top:16px;border-top:1px solid var(--line)}
+#side h1{font-family:var(--serif);font-weight:400;font-size:52px;line-height:1;margin:0;letter-spacing:-.015em;text-wrap:balance}
+#side .sub{margin:0;font-family:var(--serif);font-size:21px;line-height:1.45;color:var(--fg);max-width:30ch}
+#side .key{position:fixed;top:40px;right:max(32px,env(safe-area-inset-right,0px));width:250px;display:grid;gap:12px}
 .krow{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:10px;align-items:start}
 .krow .dot,.krow .ring{margin-top:6px}
 .krow b{display:block;font-weight:500;font-size:14px}
@@ -181,8 +180,6 @@ header.top>*{pointer-events:auto}
 .vplay:hover{border-color:var(--fg)}
 .vwave{width:100%;height:56px;display:block}
 .vtime{font-variant-numeric:tabular-nums;white-space:nowrap}
-.globestat{font-size:14px;text-align:center;color:var(--fg)}
-.globestat b{font-family:var(--serif);font-weight:500;font-size:17px}
 .intro{width:min(980px,100%);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:48px;align-items:center}
 .intro .plate{aspect-ratio:4/5}
 .intro blockquote{margin:0;font-family:var(--serif);font-size:clamp(28px,3.6vw,44px);line-height:1.15;text-wrap:balance}
@@ -305,8 +302,9 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
   header.top{padding:16px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px))}
   #app:not(.away) #stage{height:100svh;min-height:680px}
   #side{top:18px;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));width:auto;gap:8px}
-  #side h1{font-size:28px}
-  #side .key{margin-top:6px;padding-top:10px;display:flex;flex-wrap:wrap;gap:6px 16px}
+  #side h1{font-size:34px}
+  #side .sub{font-size:17px}
+  #side .key{position:static;width:auto;margin-top:6px;padding-top:10px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px 16px}
   #side .key .cap,#side .key .src{flex-basis:100%}
   .krow{display:flex;align-items:center;gap:6px;white-space:nowrap}.krow .dot,.krow .ring{margin-top:0}.krow small{display:none}.krow b{font-size:13px}.krow .n{padding-top:0;color:var(--muted)}
   #time{max-height:280px}
@@ -346,7 +344,7 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
       </div>
     </header>
     <div id="side">
-      <h1><span class="dot"></span>Endangered Languages</h1>
+      <h1>Endangered Languages</h1>
       <p class="sub" id="sideSub"></p>
       <div class="key" id="sideKey"></div>
     </div>
@@ -363,7 +361,6 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
         <button data-open="ga"><i class="dot" style="color:var(--ga)"></i><span>Start with Irish</span> →</button>
         <button data-open="haw"><i class="dot" style="color:var(--haw)"></i><span>Start with Hawaiian</span> →</button>
       </div>
-      <div class="globestat" id="globeStat"></div>
     </div>
   </div>
 
@@ -581,8 +578,6 @@ new MutationObserver(()=>{readColors();dirty=true;renderTrack()}).observe(docume
 
 /* ============ state ============ */
 const S={mode:'globe',year:Y1,lang:null,cLon:-25,cLat:28,R:300,z:1,k:0,playing:false,flying:false};
-const lastRec=CRIT.filter(d=>d[3]===4&&d[5]&&d[5]>=Y0).length;
-const elderCount=CRIT.filter(d=>d[3]===2||d[3]===3).length;
 const nStatus=k=>CRIT.filter(d=>d[3]===k).length;
 $('#sideSub').textContent=`Explore ${fmt(CRIT.length)} languages that are fading or already silent, and add what your family remembers.`;
 $('#sideKey').innerHTML=`<div class="cap">Language status</div>
@@ -590,7 +585,6 @@ $('#sideKey').innerHTML=`<div class="cap">Language status</div>
   <div class="krow"><i class="dot" style="color:var(--near)"></i><span><b>Nearly extinct</b><small>A few elderly speakers left</small></span><span class="n">${fmt(nStatus(3))}</span></div>
   <div class="krow"><i class="ring" style="color:var(--ext)"></i><span><b>Extinct</b><small>No speakers left</small></span><span class="n">${fmt(nStatus(4))}</span></div>
   <div class="mono src">Source: <a href="https://glottolog.org" target="_blank" rel="noopener">Glottolog 5</a></div>`;
-$('#globeStat').innerHTML=`<b>${fmt(lastRec)}</b> languages here were last recorded after 1840. <b>${fmt(elderCount)}</b> more are spoken today mostly by elders.`;
 const bins=new Array(Math.ceil((Y1-Y0)/5)).fill(0);CRIT.forEach(d=>{if(d[3]===4&&d[5]>=Y0&&d[5]<=Y1)bins[Math.min(bins.length-1,Math.floor((d[5]-Y0)/5))]++});
 
 /* ============ map canvas ============ */
@@ -604,7 +598,8 @@ function gcx(){return GX}function gcy(){return GY}
 // Globe as large as the space allows: left of it the title column (desktop) or above it (phone), below it the search.
 function layoutGlobe(){const find=$('#find'),side=$('#side'),fh=find.offsetHeight||150;let R;
   if(W<820){const top=side.offsetTop+side.offsetHeight+18;R=Math.max(120,Math.min(W/2-14,(H-top-fh-40)/2));GX=W/2;GY=top+R}
-  else{const sideR=side.offsetLeft+side.offsetWidth+28;R=Math.max(150,Math.min((H-fh-76)/2,(W-24-sideR)/2));GX=Math.max(W/2,sideR+R);GY=28+R}
+  else{const sideR=side.offsetLeft+side.offsetWidth+28,key=$('#sideKey').getBoundingClientRect(),keyL=key.left-cv.getBoundingClientRect().left-28;
+    R=Math.max(150,Math.min((H-fh-76)/2,(keyL-sideR)/2));GX=W/2-R>=sideR&&W/2+R<=keyL?W/2:(sideR+keyL)/2;GY=28+R}
   S.R=R;find.style.left=GX+'px';find.style.top=(GY+R+(W<820?14:22))+'px'}
 function proj(lon,lat,R){const l=(lon-S.cLon)*RAD,p=lat*RAD,cp=Math.cos(p),sp=Math.sin(p),cl=Math.cos(l);
   return[gcx()+R*cp*Math.sin(l),gcy()-R*(cosP0*sp-sinP0*cp*cl),sinP0*sp+cosP0*cp*cl]}
