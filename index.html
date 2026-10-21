@@ -98,7 +98,9 @@ header.top>*{pointer-events:auto}
 @media (min-width:821px){#panel .in,#panel .ctas{width:min(440px,38vw);box-sizing:border-box;margin-left:auto}}
 #panel .in{padding:28px 30px 120px;display:grid;gap:22px}
 #panel h2{font-family:var(--serif);font-weight:400;font-size:38px;line-height:1.05;margin:0;text-wrap:balance}
-#panel h2 em{color:var(--muted);font-style:normal}
+#panel .title{display:grid;gap:8px;padding-right:28px}
+#panel .endo{margin:0;font-size:14px;color:var(--muted)}
+#panel .endo span{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--fg)}
 .close{position:absolute;right:18px;top:18px;background:none;border:0;font-size:22px;color:var(--muted);line-height:1}
 .chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .chip{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line)}
@@ -751,7 +753,7 @@ function chartSVG(L,opts){const w=opts.w||380,h=opts.h||170,ml=44,mr=opts.mr??92
   return s+'</svg>'}
 function renderPanel(){const L=LANGS[S.lang];const p=$('#panel');const crit=L.glotto==='Moribund';
   p.innerHTML=`<button class="close" aria-label="Back to the world map">×</button><div class="in">
-   <h2>${L.name} <em>· ${L.endo}</em></h2>
+   <div class="title"><h2>${L.name}</h2><p class="endo">Its speakers call it <span lang="${L.id==='ga'?'ga':'haw'}">${L.endo}</span></p></div>
    <div class="chips"><span class="chip" tabindex="0" aria-describedby="tipFam"><i class="dot" style="color:var(${L.color})"></i>${L.family}<span class="tipb" role="tooltip" id="tipFam"><b>Language family</b>${esc(L.familyTip)}</span></span><span class="chip ${crit?'crit':'warn'}" tabindex="0" aria-describedby="tipStatus"><i class="dot" style="color:var(${crit?'--near':'--mori'})"></i>Status: ${L.glotto}<span class="tipb" role="tooltip" id="tipStatus"><b>Source</b>Glottolog 5 (glottolog.org), its endangerment status for this language. Loaded through the languages-of-the-world dataset. Scale: not endangered, threatened, shifting, moribund, nearly extinct, extinct.</span></span></div>
    <p class="lede">${esc(L.lede)}</p>
    <div class="now" id="now"></div>
