@@ -313,6 +313,7 @@ header.top>*{pointer-events:auto}
 .pg2.signed .pet-name{opacity:.93;filter:blur(.2px)}
 .pg2.signed .pcount{font-variant-numeric:tabular-nums}
 .sx-card.sig-card{margin-top:30vh}
+.sx-card.doc-card{position:sticky;top:calc(50vh - 110px)}
 .sig{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
 .sig .tabs{display:flex;gap:14px;margin-bottom:8px}
 .sig .tabs button{background:none;border:0;padding:0 0 3px;font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--muted);cursor:pointer;border-bottom:1px solid transparent}
@@ -1251,7 +1252,7 @@ function sceneHTML(L,s,i){
 function cardHTML(L,ST,s){
   if(s.hero)return`<div class="sx-card hero"><div class="cap">${esc(L.place)} · ${esc(L.endo)}</div><h1>${esc(ST.title)}</h1><p>${esc(ST.dek)}</p><div class="mono" style="margin-top:20px">Scroll ↓</div></div>`;
   if(!s.h)return'';const mark=/unexplained|estimate/.test(s.k)?'<i class="ring" style="border-style:dashed"></i>':/measured/.test(s.k)?'<i class="dot" style="color:var(--fg)"></i>':'<i class="dot" style="color:var(--accent)"></i>';
-  return`<div class="sx-card${s.sig?' sig-card':''}"><div class="k cap">${mark}${esc(s.k)}</div><h3>${s.sig?esc(s.h).replace('21,269','<span class="pcount">21,269</span>'):esc(s.h)}</h3>${s.p.map(t=>`<p>${esc(t)}</p>`).join('')}${s.sig?`<div class="sig"><div class="tabs"><button type="button" data-m="draw" class="on">Draw</button><button type="button" data-m="type">Type</button></div><canvas class="sig-cv" aria-label="Sign with mouse or touch"></canvas><input class="sig-in" type="text" maxlength="36" placeholder="Your name" autocomplete="off" hidden><div class="sig-row"><button class="btn sm" type="button" data-a="inscribe"><span class="dot"></span>[ Inscribe Name ]</button><button class="btn ghost sm" type="button" data-a="clear">[ Clear ]</button></div><div class="sig-fb" aria-live="polite"></div></div>`:''}</div>`}
+  return`<div class="sx-card${s.sig?' sig-card':''}${s.t==='doc'?' doc-card':''}"><div class="k cap">${mark}${esc(s.k)}</div><h3>${s.sig?esc(s.h).replace('21,269','<span class="pcount">21,269</span>'):esc(s.h)}</h3>${s.p.map(t=>`<p>${esc(t)}</p>`).join('')}${s.sig?`<div class="sig"><div class="tabs"><button type="button" data-m="draw" class="on">Draw</button><button type="button" data-m="type">Type</button></div><canvas class="sig-cv" aria-label="Sign with mouse or touch"></canvas><input class="sig-in" type="text" maxlength="36" placeholder="Your name" autocomplete="off" hidden><div class="sig-row"><button class="btn sm" type="button" data-a="inscribe"><span class="dot"></span>[ Inscribe Name ]</button><button class="btn ghost sm" type="button" data-a="clear">[ Clear ]</button></div><div class="sig-fb" aria-live="polite"></div></div>`:''}</div>`}
 function openStory(id){const L=LANGS[id],ST=STORIES[id];const el=$('#story');togglePlay(false);SX.el=el;SX.lang=id;SX.steps=ST.steps;SX.i=-1;
   const other=id==='ga'?'haw':'ga';
   el.innerHTML=`<div class="bar"><div class="brand"><b>Endangered Languages</b><span class="crumb">${esc(L.name)} · the story</span></div><button class="btn ghost sm" id="sClose">Back to the map</button><div class="prog"></div></div>
