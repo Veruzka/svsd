@@ -1,4 +1,4 @@
-<title>Mother Tongues</title>
+<title>Endangered Languages</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,16 +44,28 @@ header.top>*{pointer-events:auto}
 .crumb button{background:none;border:0;padding:0;color:var(--muted);font:inherit}
 .crumb button:hover{color:var(--fg)}
 .crumb span{color:var(--fg)}
-.counter{text-align:right;max-width:280px}
-.counter .n{font-family:var(--serif);font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
-.counter .mono{display:block;margin-top:4px;line-height:1.4}
+/* world view: title, subtitle and status key in a left column; the header brand only shows inside a language */
+#app:not(.away) header.top .brand{visibility:hidden}
+#app:not(.away) #legend{display:none}
+#side{position:absolute;top:30px;left:max(32px,env(safe-area-inset-left,0px));width:300px;z-index:3;display:grid;gap:12px;transition:opacity .4s}
+#app.away #side{opacity:0;pointer-events:none}
+#side h1{font-family:var(--serif);font-weight:400;font-size:36px;line-height:1.05;margin:0;letter-spacing:-.01em;display:flex;gap:12px;align-items:baseline;text-wrap:balance}
+#side h1 .dot{color:var(--accent);flex:none;transform:translateY(-6px)}
+#side .sub{margin:0;font-size:15px;line-height:1.55;color:var(--muted);max-width:32ch}
+#side .key{display:grid;gap:12px;margin-top:12px;padding-top:16px;border-top:1px solid var(--line)}
+.krow{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:10px;align-items:start}
+.krow .dot,.krow .ring{margin-top:6px}
+.krow b{display:block;font-weight:500;font-size:14px}
+.krow small{display:block;font-size:12.5px;line-height:1.4;color:var(--muted)}
+.krow .n{font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;padding-top:2px}
+#side .src a{color:var(--fg);text-underline-offset:3px}
 #legend{position:absolute;left:max(24px,env(safe-area-inset-left,0px));top:78px;display:grid;gap:6px;z-index:2;font-family:var(--mono);font-size:12px;color:var(--fg)}
 #legend .row{display:flex;align-items:center;gap:9px}
 #legend hr{border:0;border-top:1px solid var(--line);margin:6px 0;width:150px}
 #legend .k{color:var(--muted)}
 
 /* globe-mode search */
-#find{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);width:min(560px,calc(100% - 32px));display:grid;gap:12px;justify-items:center;z-index:3;transition:opacity .4s}
+#find{position:absolute;left:50%;top:70%;transform:translateX(-50%);width:min(560px,calc(100% - 32px));display:grid;gap:12px;justify-items:center;z-index:3;transition:opacity .4s}
 #app.away #find{opacity:0;pointer-events:none}
 .search{position:relative;width:100%}
 .search input[type=text]{width:100%;box-sizing:border-box;height:56px;border-radius:28px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;font-size:17px;padding:0 20px 0 54px;box-shadow:var(--shadow)}
@@ -77,8 +89,10 @@ header.top>*{pointer-events:auto}
 #tip button:hover{border-color:var(--fg)}
 
 /* ---------- timeline ---------- */
-#time{grid-column:1;grid-row:2;display:grid;grid-template-columns:auto auto minmax(0,1fr);align-items:end;gap:22px;padding:10px max(24px,env(safe-area-inset-right,0px)) 18px max(24px,env(safe-area-inset-left,0px));border-top:1px solid var(--line);background:var(--bg);position:relative;z-index:3}
+#time{grid-column:1;grid-row:2;max-height:200px;transition:max-height .6s cubic-bezier(.22,.61,.36,1),padding .6s cubic-bezier(.22,.61,.36,1);display:grid;grid-template-columns:auto auto minmax(0,1fr);align-items:end;gap:22px;padding:10px max(24px,env(safe-area-inset-right,0px)) 18px max(24px,env(safe-area-inset-left,0px));border-top:1px solid var(--line);background:var(--bg);position:relative;z-index:3}
 .yearbox{min-width:150px}
+/* the timeline only exists inside a language; it slides open when the region lands */
+#app:not(.timeon) #time{max-height:0;padding-top:0;padding-bottom:0;overflow:hidden;border-top-color:transparent}
 #year{font-family:var(--serif);font-size:64px;line-height:.95;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 #yearNote{display:flex;align-items:center;gap:7px;margin-top:6px;min-height:18px;white-space:nowrap}
 #play{width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;margin-bottom:14px}
@@ -289,7 +303,13 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
   #year{font-size:46px}
   #play{margin:0;justify-self:end}
   header.top{padding:16px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px))}
-  .counter .n{font-size:22px}.counter{max-width:160px}
+  #app:not(.away) #stage{height:100svh;min-height:680px}
+  #side{top:18px;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));width:auto;gap:8px}
+  #side h1{font-size:28px}
+  #side .key{margin-top:6px;padding-top:10px;display:flex;flex-wrap:wrap;gap:6px 16px}
+  #side .key .cap,#side .key .src{flex-basis:100%}
+  .krow{display:flex;align-items:center;gap:6px;white-space:nowrap}.krow .dot,.krow .ring{margin-top:0}.krow small{display:none}.krow b{font-size:13px}.krow .n{padding-top:0;color:var(--muted)}
+  #time{max-height:280px}
   .brand b{font-size:18px;white-space:nowrap}
   #legend{top:auto;bottom:14px;left:max(16px,env(safe-area-inset-left,0px));font-size:11px;gap:3px}
   #legend hr,#legend .opt{display:none}
@@ -321,14 +341,15 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
     <canvas id="map" aria-label="Map of endangered and extinct languages"></canvas>
     <header class="top">
       <div class="brand">
-        <b><button class="linkish" id="home" style="text-decoration:none;font:inherit;display:flex;align-items:center;gap:10px"><span class="dot"></span>Mother Tongues</button></b>
+        <b><button class="linkish" id="home" style="text-decoration:none;font:inherit;display:flex;align-items:center;gap:10px"><span class="dot"></span>Endangered Languages</button></b>
         <div class="crumb" id="crumb" hidden><button id="crumbWorld">World</button> / <span id="crumbHere"></span></div>
       </div>
-      <div class="counter" aria-live="polite">
-        <div class="n" id="cnt">0</div>
-        <span class="mono" id="cntNote">languages last recorded since 1840</span>
-      </div>
     </header>
+    <div id="side">
+      <h1><span class="dot"></span>Endangered Languages</h1>
+      <p class="sub" id="sideSub"></p>
+      <div class="key" id="sideKey"></div>
+    </div>
     <div id="legend"></div>
     <div id="tip" hidden></div>
     <div id="lintro" class="lintro" hidden></div>
@@ -343,7 +364,6 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
         <button data-open="haw"><i class="dot" style="color:var(--haw)"></i><span>Start with Hawaiian</span> →</button>
       </div>
       <div class="globestat" id="globeStat"></div>
-      <div class="hint">Coloured dots mark languages Glottolog rates moribund, nearly extinct or extinct</div>
     </div>
   </div>
 
@@ -560,23 +580,35 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{readCo
 new MutationObserver(()=>{readColors();dirty=true;renderTrack()}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
 /* ============ state ============ */
-const S={mode:'globe',year:Y0,lang:null,cLon:-25,cLat:28,R:300,z:1,k:0,playing:false,flying:false};
+const S={mode:'globe',year:Y1,lang:null,cLon:-25,cLat:28,R:300,z:1,k:0,playing:false,flying:false};
 const lastRec=CRIT.filter(d=>d[3]===4&&d[5]&&d[5]>=Y0).length;
 const elderCount=CRIT.filter(d=>d[3]===2||d[3]===3).length;
+const nStatus=k=>CRIT.filter(d=>d[3]===k).length;
+$('#sideSub').textContent=`Explore ${fmt(CRIT.length)} languages that are fading or already silent, and add what your family remembers.`;
+$('#sideKey').innerHTML=`<div class="cap">Language status</div>
+  <div class="krow"><i class="dot" style="color:var(--mori)"></i><span><b>Moribund</b><small>Spoken only by older generations</small></span><span class="n">${fmt(nStatus(2))}</span></div>
+  <div class="krow"><i class="dot" style="color:var(--near)"></i><span><b>Nearly extinct</b><small>A few elderly speakers left</small></span><span class="n">${fmt(nStatus(3))}</span></div>
+  <div class="krow"><i class="ring" style="color:var(--ext)"></i><span><b>Extinct</b><small>No speakers left</small></span><span class="n">${fmt(nStatus(4))}</span></div>
+  <div class="mono src">Source: <a href="https://glottolog.org" target="_blank" rel="noopener">Glottolog 5</a></div>`;
 $('#globeStat').innerHTML=`<b>${fmt(lastRec)}</b> languages here were last recorded after 1840. <b>${fmt(elderCount)}</b> more are spoken today mostly by elders.`;
 const bins=new Array(Math.ceil((Y1-Y0)/5)).fill(0);CRIT.forEach(d=>{if(d[3]===4&&d[5]>=Y0&&d[5]<=Y1)bins[Math.min(bins.length-1,Math.floor((d[5]-Y0)/5))]++});
 
 /* ============ map canvas ============ */
 const cv=$('#map'),ctx=cv.getContext('2d');let W=0,H=0,DPR=1,dirty=true;
-function resize(){const r=cv.getBoundingClientRect();DPR=Math.min(2,devicePixelRatio||1);W=r.width;H=r.height;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);S.R=Math.max(140,Math.min(W*.42,(H-(W<820?120:210))/2));renderTrack();if(W&&!(SX.el&&!SX.el.hidden)){drawMain();dirty=false}else dirty=true}
-new ResizeObserver(resize).observe($('#stage'));
+function resize(){const r=cv.getBoundingClientRect();DPR=Math.min(2,devicePixelRatio||1);W=r.width;H=r.height;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);layoutGlobe();renderTrack();if(W&&!(SX.el&&!SX.el.hidden)){drawMain();dirty=false}else dirty=true}
+{const ro=new ResizeObserver(()=>resize());ro.observe($('#stage'));ro.observe($('#side'));ro.observe($('#find'))}
 let sinP0,cosP0;
 function setCenter(){sinP0=Math.sin(S.cLat*RAD);cosP0=Math.cos(S.cLat*RAD)}
-function gcx(){return W/2}function gcy(){return W<820?H/2-10:H/2-48}
+let GX=0,GY=0;
+function gcx(){return GX}function gcy(){return GY}
+// Globe as large as the space allows: left of it the title column (desktop) or above it (phone), below it the search.
+function layoutGlobe(){const find=$('#find'),side=$('#side'),fh=find.offsetHeight||150;let R;
+  if(W<820){const top=side.offsetTop+side.offsetHeight+18;R=Math.max(120,Math.min(W/2-14,(H-top-fh-40)/2));GX=W/2;GY=top+R}
+  else{const sideR=side.offsetLeft+side.offsetWidth+28;R=Math.max(150,Math.min((H-fh-76)/2,(W-24-sideR)/2));GX=Math.max(W/2,sideR+R);GY=28+R}
+  S.R=R;find.style.left=GX+'px';find.style.top=(GY+R+(W<820?14:22))+'px'}
 function proj(lon,lat,R){const l=(lon-S.cLon)*RAD,p=lat*RAD,cp=Math.cos(p),sp=Math.sin(p),cl=Math.cos(l);
   return[gcx()+R*cp*Math.sin(l),gcy()-R*(cosP0*sp-sinP0*cp*cl),sinP0*sp+cosP0*cp*cl]}
 let hits=[];
-const drifts=[];
 // Region framing leaves room for the legend on the left (desktop) and the header on top.
 function regionBox(){const n=W<820;return{l:n?18:250,r:n?18:48,t:n?64:92,b:26}}
 function regionCX(){const m=regionBox();return m.l+(W-m.l-m.r)/2}
@@ -605,21 +637,13 @@ function seriesAt(L,key,y){const s=L.series.find(x=>x.key===key);if(!s)return nu
   if(y>p[p.length-1].y){const q=p[p.length-1];return{v:q.v,share:q.v/q.pop,kind:'after',a:q}}
   for(let i=1;i<p.length;i++)if(y<p[i].y){const a=p[i-1],b=p[i],t=(y-a.y)/(b.y-a.y);
     const v=Math.exp(Math.log(a.v)+(Math.log(b.v)-Math.log(a.v))*t),pop=a.pop+(b.pop-a.pop)*t;return{v,share:v/pop,kind:'interp',a,b}}}
-function drawDrifts(now){for(let i=drifts.length-1;i>=0;i--){const d=drifts[i];const t=(now-d.t0)/2600;if(t>=1){drifts.splice(i,1);continue}
-  ctx.globalAlpha=(1-t)*(t<.15?t/.15:1);ctx.font='italic 13px Spectral,Georgia,serif';ctx.fillStyle=C.fg;ctx.fillText(d.name,d.x+6,d.y-6-t*34);
-  ctx.font='10px "IBM Plex Mono",monospace';ctx.fillStyle=C.muted;ctx.fillText('last recorded '+d.yr,d.x+6,d.y+8-t*34)}ctx.globalAlpha=1}
-let lastFrameYear=S.year;
 function frame(now){if(SX.el&&!SX.el.hidden){requestAnimationFrame(frame);return}
   if(S.mode==='globe'&&!S.dragging&&!reduce&&!S.paused&&$('#tip').hidden){S.cLon+=.02;dirty=true}
-  if(drifts.length||S.flying||S.mode==='globe'&&!reduce)dirty=true;
+  if(S.flying||S.mode==='globe'&&!reduce)dirty=true;
   if(dirty&&W){ctx.clearRect(0,0,W,H);
-    drawMain();
-    drawDrifts(now);dirty=false}
+    drawMain();dirty=false}
   requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
-function spawnDrifts(from,to){if(S.mode!=='globe'||to<=from)return;let n=0;const R=S.R;setCenter();
-  for(const d of CRIT){if(d[3]!==4||!d[5]||d[5]<=from||d[5]>to)continue;const p=proj(d[2],d[1],R);if(p[2]<.2)continue;
-    if(drifts.length>7||n>2)break;if(drifts.some(q=>Math.hypot(q.x-p[0],q.y-p[1])<90))continue;drifts.push({name:d[0],yr:d[5],x:p[0],y:p[1],t0:performance.now()+n*120});n++}}
 
 /* ============ interaction on map ============ */
 let drag=null;
@@ -666,22 +690,22 @@ function fly(ms,target,done){const l0=S.cLon,p0=S.cLat,z0=S.z,k0=S.k;S.flying=tr
 function openLang(id){hideTip(true);closePop();if(S.mode==='region'&&S.lang===id)return;
   if(S.mode!=='globe'){toWorld(()=>openLang(id));return}
   const L=LANGS[id];togglePlay(false);S.lang=id;S.mode='zoom';$('#app').classList.add('away');
-  if(S.year<L.series[0].pts[0].y-5)setYear(L.series[0].pts[0].y);
+  setYear(L.series[0].pts[0].y);
   fly(3600,()=>[...bboxCenter(L),fitZ(L),1],landRegion)}
-function landRegion(){S.mode='region';const L=LANGS[S.lang];$('#crumb').hidden=false;$('#crumbHere').textContent=L.place;
+function landRegion(){S.mode='region';$('#app').classList.add('timeon');const L=LANGS[S.lang];$('#crumb').hidden=false;$('#crumbHere').textContent=L.place;
   renderLegend();renderTrack();updateYearNote();dirty=true;showLangIntro(L,openPanel)}
 function openPanel(){if(S.mode!=='region')return;$('#app').classList.add('region');$('#panel').hidden=false;renderPanel()}
 function toWorld(done){if(S.mode==='globe'||S.flying)return;hideLangIntro(true);closePop();
-  $('#app').classList.remove('region');$('#panel').hidden=true;$('#crumb').hidden=true;S.mode='zoom';
+  togglePlay(false);$('#app').classList.remove('region','timeon');$('#panel').hidden=true;$('#crumb').hidden=true;S.mode='zoom';S.year=Y1;
   fly(2400,()=>[S.cLon,24,1,0],()=>{S.mode='globe';S.lang=null;$('#app').classList.remove('away');renderLegend();renderTrack();updateYearNote();done&&done()})}
 $('#crumbWorld').addEventListener('click',()=>toWorld());$('#home').addEventListener('click',()=>toWorld());
 
-/* ============ legend & counter ============ */
+/* ============ legend ============ */
 function renderLegend(){const el=$('#legend');
-  if(S.mode!=='region'){el.innerHTML=`<div class="row"><i class="dot" style="color:var(--mori)"></i>Moribund</div><div class="row"><i class="dot" style="color:var(--near)"></i>Nearly extinct</div><div class="row"><i class="dot" style="color:var(--ext)"></i>Extinct, still recorded then</div><div class="row"><i class="ring" style="color:var(--ext)"></i>No longer spoken</div><hr class="opt"><div class="row opt k">Status today · Glottolog</div>`;return}
+  if(S.mode!=='region'){el.innerHTML='';return}
   const L=LANGS[S.lang];const c=`var(${L.color})`;
   el.innerHTML=`<div class="row"><i class="dot" style="color:${c}"></i>${L.id==='ga'?'Speaks Irish (daily use, once counted)':'Speaks '+L.name}</div>${L.id==='ga'?`<div class="row"><i class="ring" style="color:${c}"></i>Can speak, not daily (1996 on)</div>`:''}<div class="row"><i class="dot" style="color:var(--faint)"></i>English</div>${L.id==='ga'?'<div class="row"><i class="ring" style="color:var(--land)"></i>Not counted after 1922</div>':''}<hr class="opt"><div class="row opt"><i class="dot" style="color:var(--fg)"></i>Measured year</div><div class="row opt"><i class="dot" style="color:var(--fg);opacity:.45"></i>Estimated between counts</div><div class="row opt k" style="max-width:220px;line-height:1.4">Dots show share of speakers, placed nearest the Gaeltacht-style heartlands. A model, not a survey.</div>`}
-function updateCounter(){const n=CRIT.filter(d=>d[3]===4&&d[5]&&d[5]>=Y0&&d[5]<=S.year).length;$('#cnt').textContent=fmt(n);$('#cntNote').textContent=`languages last recorded between ${Y0} and ${S.year}`}
+
 
 /* ============ timeline ============ */
 const track=$('#track');let TX=null;
@@ -705,7 +729,7 @@ track.addEventListener('pointermove',e=>{if(tdrag)scrubTo(e)});
 track.addEventListener('pointerup',()=>{tdrag=false});
 function scrubTo(e){const r=track.getBoundingClientRect();setYear(Math.max(Y0,Math.min(Y1,TX.inv((e.clientX-r.left)*(TX.w/r.width)))));closePop()}
 function setYear(y){y=Math.max(Y0,Math.min(Y1,Math.round(y)));const prev=S.year;if(y===prev)return;S.year=y;
-  spawnDrifts(prev,y);$('#year').textContent=y;updateCounter();renderTrack();updateYearNote();if(S.mode==='region')updatePanelYear();dirty=true}
+  $('#year').textContent=y;renderTrack();updateYearNote();if(S.mode==='region')updatePanelYear();dirty=true}
 function updateYearNote(){const el=$('#yearNote');
   if(S.mode!=='region'){el.innerHTML=`<span>Status today · last-recorded dates</span>`;return}
   const L=LANGS[S.lang];const v=seriesAt(L,'can',S.year);let h='';
@@ -722,6 +746,7 @@ $('#play').addEventListener('click',()=>togglePlay());
 document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,select')||!$('#modal').hidden)return;
   if(!$('#story').hidden){if(e.key==='Escape')closeStory();return}
   if(!LI.el.hidden){if(e.key==='Escape')hideLangIntro(false);return}
+  if(S.mode!=='region'){if(e.key==='Escape')hideTip(true);return}
   if(e.key==='ArrowRight'){setYear(S.year+(e.shiftKey?10:1));e.preventDefault()}else if(e.key==='ArrowLeft'){setYear(S.year-(e.shiftKey?10:1));e.preventDefault()}
   else if(e.key===' '){togglePlay();e.preventDefault()}else if(e.key==='Escape'){closePop();hideTip(true)}});
 
@@ -1037,7 +1062,7 @@ function cardHTML(L,ST,s){
   return`<div class="sx-card"><div class="k cap">${mark}${esc(s.k)}</div><h3>${esc(s.h)}</h3>${s.p.map(t=>`<p>${esc(t)}</p>`).join('')}</div>`}
 function openStory(id){const L=LANGS[id],ST=STORIES[id];const el=$('#story');togglePlay(false);SX.el=el;SX.lang=id;SX.steps=ST.steps;SX.i=-1;
   const other=id==='ga'?'haw':'ga';
-  el.innerHTML=`<div class="bar"><div class="brand"><b><span class="dot"></span>Mother Tongues</b><span class="crumb">${esc(L.name)} · the story</span></div><button class="btn ghost sm" id="sClose">Back to the map</button><div class="prog"></div></div>
+  el.innerHTML=`<div class="bar"><div class="brand"><b><span class="dot"></span>Endangered Languages</b><span class="crumb">${esc(L.name)} · the story</span></div><button class="btn ghost sm" id="sClose">Back to the map</button><div class="prog"></div></div>
    <div class="sx-stage"><canvas class="sx-map" aria-hidden="true"></canvas>
     <div class="sx-hud off"><div class="y"></div><div class="k mono"></div><div class="lg mono"><span><i class="dot" style="color:var(${L.color})"></i>${id==='ga'?'speaks Irish':'speaks Hawaiian'}</span>${id==='ga'?`<span><i class="ring" style="color:var(${L.color})"></i>can speak, not daily</span>`:''}<span><i class="dot" style="color:var(--faint)"></i>English</span></div></div>
     ${ST.steps.map((s,i)=>sceneHTML(L,s,i)).join('')}</div>
@@ -1074,6 +1099,5 @@ function storyTick(){const el=SX.el;if(!el||el.hidden||!SX.tops.length)return;co
 function closeStory(){const el=$('#story');el.classList.add('fade');SX.ro&&SX.ro.disconnect();el.onscroll=null;setTimeout(()=>{el.hidden=true;el.innerHTML='';SX.el=null},600);document.body.style.overflow=''}
 
 /* ============ boot ============ */
-renderLegend();updateCounter();updateYearNote();resize();connect();
-if(!reduce)setTimeout(()=>{if(S.mode==='globe'&&S.year===Y0&&!S.playing)togglePlay(true)},1200);
+renderLegend();updateYearNote();resize();connect();
 </script>
