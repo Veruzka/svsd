@@ -113,6 +113,13 @@ header.top>*{pointer-events:auto}
 #pop.on{opacity:1;pointer-events:auto}
 #pop .fc{transition:opacity .16s ease}
 #pop.swap .fc{opacity:0}
+/* while playing: a bar shows how long the timeline stays on this fact */
+.fhold{display:flex;align-items:center;gap:12px;margin-top:12px}
+.fbar{flex:1;height:2px;background:var(--line);border-radius:2px;overflow:hidden}
+.fbar i{display:block;height:100%;background:var(--accent);transform-origin:left;transform:scaleX(0);animation:fhold linear forwards}
+@keyframes fhold{to{transform:scaleX(1)}}
+#pop:hover .fbar i{animation-play-state:paused}
+.fnext{font-size:13px;white-space:nowrap}
 #pop .x{position:absolute;right:8px;top:6px;background:none;border:0;color:var(--muted);font-size:18px;line-height:1;padding:4px}
 #pop .x:hover{color:var(--fg)}
 .fc{display:grid;gap:6px;padding-right:18px}
@@ -790,8 +797,13 @@ function updateYearNote(){const el=$('#yearNote');
   else h=`<i class="dot" style="color:var(--fg);opacity:.4"></i>Latest count, ${v.a.y}`;
   el.innerHTML=h}
 let playT=null;
+// Playback: one year every PLAYBACK.step ms; it stops on each new fact so it can be read (hovering the card keeps it there).
+const PLAYBACK={step:260,fact:5000,gap:3000};const holdFor=k=>k==='gap'?PLAYBACK.gap:PLAYBACK.fact;
 function togglePlay(force){S.playing=force??!S.playing;$('#playIcon').setAttribute('d',S.playing?'M3 2h3v10H3zM8 2h3v10H8z':'M3 1.5v11l9-5.5z');$('#play').setAttribute('aria-label',S.playing?'Pause':'Play through time');
-  clearInterval(playT);if(S.playing){if(S.year>=Y1)setYear(Y0);S.hold=0;playT=setInterval(()=>{if(S.year>=Y1){togglePlay(false);return}if(performance.now()<S.hold)return;const before=FACT.id;setYear(S.year+1);if(FACT.id&&FACT.id!==before&&FACT.kind!=='gap')S.hold=performance.now()+1400},140)}}
+  clearInterval(playT);const fh=$('#pop .fhold');if(fh&&!S.playing)fh.remove();
+  if(S.playing){if(S.year>=Y1)setYear(Y0);S.hold=0;playT=setInterval(()=>{const now=performance.now();if(S.year>=Y1){togglePlay(false);return}
+    if(now<S.hold){if($('#pop').matches(':hover'))S.hold+=PLAYBACK.step;return}
+    const before=FACT.id;setYear(S.year+1);if(FACT.id&&FACT.id!==before)S.hold=now+holdFor(FACT.kind)+160},PLAYBACK.step)}}
 $('#play').addEventListener('click',()=>togglePlay());
 document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,select')||!$('#modal').hidden)return;
   if(!$('#story').hidden){if(e.key==='Escape')closeStory();return}
@@ -822,7 +834,7 @@ function updateFact(){const pop=$('#pop');if(S.mode!=='region'||!S.lang||!TX||$(
   track.querySelectorAll('.mk.on').forEach(m=>m.classList.remove('on'));
   if(f&&f.k!=='gap'){const m=track.querySelector(f.k==='ev'?`[data-ev="${f.y}"]`:`[data-pt="${f.y}"]`);if(m)m.classList.add('on')}
   if(!f||FACT.off){pop.classList.remove('on');return}
-  const show=()=>{pop.innerHTML=factHTML(L,f)+'<button class="x" type="button" aria-label="Hide facts">×</button>';initPlates(pop);
+  const show=()=>{pop.innerHTML=factHTML(L,f)+(S.playing?`<div class="fhold"><span class="fbar"><i style="animation-duration:${holdFor(f.k)}ms"></i></span><button class="linkish fnext" type="button">Continue →</button></div>`:'')+'<button class="x" type="button" aria-label="Hide facts">×</button>';initPlates(pop);
     pop.querySelectorAll('.fthumb').forEach(fg=>fg.addEventListener('click',()=>{const inp=fg.querySelector('input');if(inp)inp.click()}));
     const x=TX.x(f.y)*(track.getBoundingClientRect().width/TX.w),pw=pop.offsetWidth||380;pop.style.left=Math.max(pw/2,Math.min(track.clientWidth-pw/2,x))+'px';
     pop.classList.remove('swap');pop.classList.add('on')};
@@ -831,7 +843,7 @@ function openMarker(mk){const L=LANGS[S.lang];
   if(mk.dataset.gap){openGap(L.gapList.find(g=>g.id===mk.dataset.gap));return}
   FACT.off=false;FACT.id=undefined;togglePlay(false);setYear(+(mk.dataset.ev||mk.dataset.pt));updateFact()}
 function closePop(){FACT.off=true;$('#pop').classList.remove('on')}
-$('#pop').addEventListener('click',e=>{if(e.target.closest('.x')){closePop();return}const g=e.target.closest('[data-gapopen]');if(g)openGap(LANGS[S.lang].gapList.find(x=>x.id===g.dataset.gapopen))});
+$('#pop').addEventListener('click',e=>{if(e.target.closest('.x')){closePop();return}if(e.target.closest('.fnext')){S.hold=0;const fh=$('#pop .fhold');if(fh)fh.remove();return}const g=e.target.closest('[data-gapopen]');if(g)openGap(LANGS[S.lang].gapList.find(x=>x.id===g.dataset.gapopen))});
 
 /* ============ panel ============ */
 function chartSVG(L,opts){const w=opts.w||380,h=opts.h||170,ml=44,mr=opts.mr??92,mt=10,mb=24;const all=L.series.flatMap(s=>s.pts.map(p=>p.v));
