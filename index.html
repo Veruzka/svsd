@@ -1120,11 +1120,9 @@ function drawMapCore(c,W,H,o){const L=o.lang?LANGS[o.lang]:null,R=o.R,cx=o.cx,cy
   if(regA>0){const M=regionModel(L,year),step=L.id==='ga'?.1:.03,rd=Math.max(1.1,R*step*RAD*.36);
     const rlit=[];for(const p of REG[L.id].pts){const q=P(p.lon,p.lat);if(q[2]<=0||!on(q[0],q[1]))continue;c.beginPath();c.arc(q[0],q[1],rd,0,6.283);paintRegionDot(c,p,M,col,regA,rd);
       const g=glowAt(q[0],q[1]);if(g>0)rlit.push(q[0],q[1],g,p)}
-    // Speakers pop (language colour, bigger, with a soft halo); dots without speakers only brighten a little, for continuity.
+    // speakers glow in the language colour, everyone else in the text colour
     for(let k=0;k<rlit.length;k+=4){const p=rlit[k+3],g=rlit[k+2],i=M.rk.get(p),spk=p.home&&!(M.afterPartition&&p.out)&&i<M.nSolid+M.nPale;
-      if(spk){c.fillStyle=col;c.globalAlpha=regA*g*.22;c.beginPath();c.arc(rlit[k],rlit[k+1],rd*(1.6+1.8*g),0,6.283);c.fill();
-        c.globalAlpha=regA*Math.min(1,g*1.1);c.beginPath();c.arc(rlit[k],rlit[k+1],rd*(.9+1.15*g),0,6.283);c.fill()}
-      else{c.fillStyle=C.fg;c.globalAlpha=regA*g*.28;c.beginPath();c.arc(rlit[k],rlit[k+1],rd*(.75+.3*g),0,6.283);c.fill()}}
+      c.globalAlpha=regA*g*GLOW.alpha;c.fillStyle=spk?col:C.fg;c.beginPath();c.arc(rlit[k],rlit[k+1],rd*(.7+GLOW.grow*g),0,6.283);c.fill()}
     if(L.id==='haw'&&year>=1940){const q=P(-160.15,21.9),a=regA*clamp01((year-1940)/25),rr=Math.max(26,R*.004);c.globalAlpha=a;c.beginPath();c.arc(q[0],q[1],rr,0,6.283);c.strokeStyle=col;c.lineWidth=1.4;c.setLineDash([3,4]);c.stroke();c.setLineDash([]);
       c.font='italic 15px Spectral,Georgia,serif';c.fillStyle=C.fg;c.fillText('Niʻihau',q[0]-rr-8-c.measureText('Niʻihau').width,q[1]-4);c.font='11px "IBM Plex Mono",monospace';c.fillStyle=C.muted;const t='Hawaiian still spoken at home';c.fillText(t,q[0]-rr-8-c.measureText(t).width,q[1]+12)}
     c.globalAlpha=regA*clamp01((z-8)/4);c.font='11px "IBM Plex Mono",monospace';c.fillStyle=C.muted;
