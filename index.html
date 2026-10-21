@@ -298,9 +298,12 @@ header.top>*{pointer-events:auto}
 .sx-wa.on .txt>:nth-child(1){transition-delay:.4s}.sx-wa.on .txt>:nth-child(2){transition-delay:.8s}.sx-wa.on .txt>:nth-child(3){transition-delay:1.3s}
 .sx-news,.sx-pet{background:var(--bg);display:grid;align-items:center;justify-items:end;padding:64px max(5vw,env(safe-area-inset-right,0px)) 18px 24px;overflow:hidden}
 .sx-fig{margin:0;display:flex;flex-direction:column;will-change:transform;transform-origin:50% 40%}
-.sx-fig>img{display:block;height:calc(100vh - 100px);width:auto;max-width:100%;border:12px solid #f2e8cb;background:#f2e8cb;box-shadow:var(--shadow);box-sizing:content-box}
-.sx-pet .sx-fig>img{height:calc(100vh - 176px)}
-.roll{display:flex;align-items:baseline;gap:14px;box-sizing:border-box;margin:0 0 0 0;padding:10px 18px 8px;min-height:60px;background:#f2e8cb;border:12px solid #f2e8cb;border-top:0;box-shadow:var(--shadow);background-image:linear-gradient(90deg,transparent 56px,rgba(180,90,90,.45) 56px,rgba(180,90,90,.45) 57px,transparent 57px),linear-gradient(transparent 38px,rgba(180,90,90,.35) 38px,rgba(180,90,90,.35) 39px,transparent 39px)}
+.sx-fig>img{display:block;width:auto;max-width:100%}
+.sx-news{display:block;padding:0}
+.sx-news .sx-fig{position:absolute;left:0;top:0;width:100%}
+.sx-news .sx-fig>img{width:100%;height:auto;max-width:none}
+.sx-pet .sx-fig>img{height:calc(100vh - 176px);box-shadow:var(--shadow)}
+.roll{display:flex;align-items:baseline;gap:14px;box-sizing:border-box;margin:0 0 0 0;padding:10px 18px 8px;min-height:60px;background-color:#e9dcc2;box-shadow:var(--shadow);background-image:linear-gradient(90deg,transparent 56px,rgba(180,90,90,.45) 56px,rgba(180,90,90,.45) 57px,transparent 57px),linear-gradient(transparent 38px,rgba(180,90,90,.35) 38px,rgba(180,90,90,.35) 39px,transparent 39px)}
 .roll .rn{font-family:var(--serif);font-size:15px;color:#6b5a45;min-width:42px}
 .roll .rname{position:relative;flex:1;min-height:44px;color:#23263f;font-family:var(--serif);font-style:italic;font-size:30px;line-height:1.1;mix-blend-mode:multiply;opacity:0;filter:blur(3px);transition:opacity 1.4s ease,filter 1.4s ease}
 .roll .rname img{height:44px;width:auto;display:block}
@@ -1120,7 +1123,7 @@ haw:{title:'Eighty-seven years without a count',dek:'Hawaiian went from the lang
  steps:[
   {t:'photo',hero:true,key:'haw-hero',scene:'ship',cap:'Image slot · suggested: Honolulu harbour, c. 1890 · Hawaiʻi State Archives',ken:[0,-3]},
   {t:'wa',h0:620},
-  {t:'news',h0:260,k:'[ The Quiet Resistance · 1924 ]',h:'Sanctuary in Ink',p:['Decades after the language was banned in schools, Hawaiian survived in weekly newsprint. Native elders and editors preserved genealogies, chants, and cultural knowledge in print before living voices could be forgotten.']},
+  {t:'news',h0:380,k:'[ The Quiet Resistance · 1924 ]',h:'Sanctuary in Ink',p:['Decades after the language was banned in schools, Hawaiian survived in weekly newsprint. Native elders and editors preserved genealogies, chants, and cultural knowledge in print before living voices could be forgotten.']},
   {t:'pet',h0:420,sig:true,k:'[ Paper Resistance · 1897 Kūʻē Petitions ]',h:'21,269 Names Against Annexation',p:['In 1897, over 21,000 native Hawaiians—more than half the remaining population—signed this petition to reject American annexation. They inscribed their indigenous names onto paper as an enduring act of civil defiance.']},
   {t:'map',cam:{lon:-168,lat:14,z:1.1,year:1853},k:'1853 · estimate',h:'In the middle of the Pacific',p:['Hawaiʻi is 3,800 km from the nearest continent. Hawaiian’s closest relatives, Tahitian and Marquesan, are spoken more than 3,000 km to the south.']},
   {t:'map',cam:{...HAW,year:1853},k:'1853 · estimate',h:'Almost everyone spoke Hawaiian',p:['The Kingdom’s census counted about 70,000 Native Hawaiians. Hawaiian was the language of government, church and the press.','Each blue dot stands for a share of the islands’ people who spoke it.']},
@@ -1264,7 +1267,7 @@ function storyTick(){const el=SX.el;if(!el||el.hidden||!SX.tops.length)return;co
   if(!sc)return;
   if(s.t==='photo'){const kb=sc.querySelector('.kb'),k=s.ken||[0,0];if(!reduce)kb.style.transform=`scale(${1.04+.16*p}) translate(${(p-.5)*k[0]}%,${(p-.5)*k[1]+(s.hero?p*6:0)}%)`;
     const a=sc.querySelector('.ann');if(a){const t=reduce?(p>.3?1:0):smooth((p-.3)/.18);a.querySelector('circle').setAttribute('stroke-dashoffset',100*(1-t));a.querySelector('.lb').style.opacity=t>=1?1:0}}
-  if(s.t==='news'&&!reduce)sc.querySelector('.sx-fig').style.transform=`scale(${1+.05*p})`;
+  if(s.t==='news'){const f=sc.querySelector('.sx-fig'),pr=clamp01((el.scrollTop-SX.tops[i].top)/Math.max(1,SX.tops[i].h-vh));f.style.transform=`translateY(${-pr*Math.max(0,f.offsetHeight-vh)}px)`}
   if(s.t==='chapter'&&!reduce){sc.querySelector('.big').style.transform=`translateY(${(.5-p)*28}vh)`;sc.querySelector('.ti').style.transform=`translateY(${(.5-p)*10}vh)`}
   if(s.t==='doc'){const z=reduce?1:1+.22*smooth((p-.12)/.45);sc.querySelector('.paper').style.transform=`scale(${z})`;
     sc.querySelectorAll('mark').forEach((m,j)=>m.style.backgroundSize=`${(reduce?(p>.2?1:0):smooth((p-.2-j*.1)/.1))*100}% 100%`);
