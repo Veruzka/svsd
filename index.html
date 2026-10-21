@@ -118,7 +118,7 @@ header.top>*{pointer-events:auto}
 .fbar{flex:1;height:2px;background:var(--line);border-radius:2px;overflow:hidden}
 .fbar i{display:block;height:100%;background:var(--accent);transform-origin:left;transform:scaleX(0);animation:fhold linear forwards}
 @keyframes fhold{to{transform:scaleX(1)}}
-#pop:hover .fbar i{animation-play-state:paused}
+#pop:hover .fbar i,#pop.frozen .fbar i{animation-play-state:paused}
 .fnext{font-size:13px;white-space:nowrap}
 #pop .x{position:absolute;right:8px;top:6px;background:none;border:0;color:var(--muted);font-size:18px;line-height:1;padding:4px}
 #pop .x:hover{color:var(--fg)}
@@ -751,8 +751,9 @@ function openLang(id){hideTip(true);closePop();if(S.mode==='region'&&S.lang===id
   fly(3600,()=>[...bboxCenter(L),fitZ(L),1],landRegion,()=>showLangIntro(L,()=>{S.introDone=true;openPanel()}))}
 function landRegion(){S.mode='region';FACT.off=false;FACT.id=undefined;const L=LANGS[S.lang];$('#crumb').hidden=false;$('#crumbHere').textContent=L.place;
   renderLegend();renderTrack();updateYearNote();dirty=true;if(S.introDone)openPanel()}
-function openPanel(){if(S.mode!=='region')return;$('#app').classList.add('region');$('#panel').hidden=false;renderPanel();FACT.id=undefined;updateFact()}
-function toWorld(done){if(S.mode==='globe'||S.flying)return;hideLangIntro(true);FACT.off=false;$('#pop').classList.remove('on');
+function openPanel(){if(S.mode!=='region')return;$('#app').classList.add('region');$('#panel').hidden=false;renderPanel();FACT.id=undefined;updateFact();
+  clearTimeout(S.autoT);if(!reduce)S.autoT=setTimeout(()=>{if(S.mode==='region'&&!S.playing&&$('#modal').hidden)togglePlay(true)},900)}
+function toWorld(done){if(S.mode==='globe'||S.flying)return;clearTimeout(S.autoT);hideLangIntro(true);FACT.off=false;$('#pop').classList.remove('on');
   togglePlay(false);$('#app').classList.remove('region','timeon');$('#panel').hidden=true;$('#crumb').hidden=true;S.mode='zoom';S.year=Y1;
   fly(2400,()=>[S.cLon,24,1,0],()=>{S.mode='globe';S.lang=null;$('#app').classList.remove('away');renderLegend();renderTrack();updateYearNote();done&&done()})}
 $('#crumbWorld').addEventListener('click',()=>toWorld());$('#home').addEventListener('click',()=>toWorld());
@@ -784,7 +785,7 @@ let tdrag=false;
 track.addEventListener('pointerdown',e=>{const mk=e.target.closest('.mk,.gp');if(mk){openMarker(mk);return}tdrag=true;track.setPointerCapture(e.pointerId);scrubTo(e)});
 track.addEventListener('pointermove',e=>{if(tdrag)scrubTo(e)});
 track.addEventListener('pointerup',()=>{tdrag=false});
-function scrubTo(e){const r=track.getBoundingClientRect();setYear(Math.max(Y0,Math.min(Y1,TX.inv((e.clientX-r.left)*(TX.w/r.width)))))}
+function scrubTo(e){if(S.playing)togglePlay(false);const r=track.getBoundingClientRect();setYear(Math.max(Y0,Math.min(Y1,TX.inv((e.clientX-r.left)*(TX.w/r.width)))))}
 function setYear(y){y=Math.max(Y0,Math.min(Y1,Math.round(y)));const prev=S.year;if(y===prev)return;S.year=y;
   $('#year').textContent=y;moveHead();updateFact();updateYearNote();if(S.mode==='region')updatePanelYear();dirty=true}
 function updateYearNote(){const el=$('#yearNote');
@@ -797,13 +798,22 @@ function updateYearNote(){const el=$('#yearNote');
   else h=`<i class="dot" style="color:var(--fg);opacity:.4"></i>Latest count, ${v.a.y}`;
   el.innerHTML=h}
 let playT=null;
-// Playback: one year every PLAYBACK.step ms; it stops on each new fact so it can be read (hovering the card keeps it there).
-const PLAYBACK={step:260,fact:5000,gap:3000};const holdFor=k=>k==='gap'?PLAYBACK.gap:PLAYBACK.fact;
+// Playback: the slider moves one year every PLAYBACK.step ms. At each dot or diamond it stops, opens that fact's card for
+// PLAYBACK.fact ms (hovering the card keeps it open, Continue skips), closes it and moves on. While a dialog opened from a
+// card (or anything else) is on screen, playback waits and then resumes where it left off.
+const PLAYBACK={step:260,fact:5000};
+function pointAt(y){if(!S.lang)return null;let h=null;for(const f of factsFor(LANGS[S.lang]))if(f.y===y)h=f;return h}
+function beginHold(f){S.inHold=true;S.hold=performance.now()+PLAYBACK.fact+160;FACT.off=false;FACT.id=f.id;FACT.kind=f.k;highlightFact(f);renderFact(LANGS[S.lang],f,true)}
+function endHold(){S.inHold=false;FACT.id=undefined;highlightFact(null);$('#pop').classList.remove('on')}
+function playTick(){const now=performance.now(),pop=$('#pop'),busy=!$('#modal').hidden||!!(SX.el&&!SX.el.hidden);pop.classList.toggle('frozen',busy);
+  if(S.inHold){if(busy||pop.matches(':hover')){S.hold+=PLAYBACK.step;return}if(now>=S.hold)endHold();return}
+  if(busy)return;if(S.year>=Y1){togglePlay(false);return}
+  setYear(S.year+1);const h=S.mode==='region'&&pointAt(S.year);if(h)beginHold(h)}
 function togglePlay(force){S.playing=force??!S.playing;$('#playIcon').setAttribute('d',S.playing?'M3 2h3v10H3zM8 2h3v10H8z':'M3 1.5v11l9-5.5z');$('#play').setAttribute('aria-label',S.playing?'Pause':'Play through time');
-  clearInterval(playT);const fh=$('#pop .fhold');if(fh&&!S.playing)fh.remove();
-  if(S.playing){if(S.year>=Y1)setYear(Y0);S.hold=0;playT=setInterval(()=>{const now=performance.now();if(S.year>=Y1){togglePlay(false);return}
-    if(now<S.hold){if($('#pop').matches(':hover'))S.hold+=PLAYBACK.step;return}
-    const before=FACT.id;setYear(S.year+1);if(FACT.id&&FACT.id!==before)S.hold=now+holdFor(FACT.kind)+160},PLAYBACK.step)}}
+  clearInterval(playT);S.inHold=false;
+  if(!S.playing){const fh=$('#pop .fhold');if(fh)fh.remove();$('#pop').classList.remove('frozen');FACT.id=undefined;updateFact();return}
+  if(S.year>=Y1)setYear(Y0);const h=S.mode==='region'&&pointAt(S.year);if(h)beginHold(h);else endHold();
+  playT=setInterval(playTick,PLAYBACK.step)}
 $('#play').addEventListener('click',()=>togglePlay());
 document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,select')||!$('#modal').hidden)return;
   if(!$('#story').hidden){if(e.key==='Escape')closeStory();return}
@@ -829,12 +839,15 @@ function factHTML(L,f){
       <div class="d20" aria-hidden="true">${Array.from({length:20},(_,i)=>`<i style="${i<n?`background:var(${L.color})${p.k==='meas'?'':';opacity:.5'}`:''}"></i>`).join('')}</div><div class="mono src">${esc(p.src)}</div></div>`}
   const g=f.g;return`<div class="fc gp"><div class="cap">┄ ${g.from} → ${g.to} · Gap in the record</div><h5>${esc(gapTitle(g))}</h5><div class="row">${stateHTML(gapState(g))}</div><div><button class="linkish" type="button" data-gapopen="${g.id}">See possible reasons →</button></div></div>`}
 // Waits until the language intro has cleared (the panel opens then), so the card never shows through the intro.
+// While playing, cards only appear at dots and diamonds (see playTick); otherwise the card follows the slider.
 function updateFact(){const pop=$('#pop');if(S.mode!=='region'||!S.lang||!TX||$('#panel').hidden){pop.classList.remove('on');FACT.id=undefined;return}
-  const L=LANGS[S.lang],f=activeFact(L,S.year),id=f?f.id:null;if(id===FACT.id)return;FACT.id=id;FACT.kind=f&&f.k;
-  track.querySelectorAll('.mk.on').forEach(m=>m.classList.remove('on'));
-  if(f&&f.k!=='gap'){const m=track.querySelector(f.k==='ev'?`[data-ev="${f.y}"]`:`[data-pt="${f.y}"]`);if(m)m.classList.add('on')}
-  if(!f||FACT.off){pop.classList.remove('on');return}
-  const show=()=>{pop.innerHTML=factHTML(L,f)+(S.playing?`<div class="fhold"><span class="fbar"><i style="animation-duration:${holdFor(f.k)}ms"></i></span><button class="linkish fnext" type="button">Continue →</button></div>`:'')+'<button class="x" type="button" aria-label="Hide facts">×</button>';initPlates(pop);
+  if(S.playing)return;
+  const L=LANGS[S.lang],f=activeFact(L,S.year),id=f?f.id:null;if(id===FACT.id)return;FACT.id=id;FACT.kind=f&&f.k;highlightFact(f);
+  if(!f||FACT.off){pop.classList.remove('on');return}renderFact(L,f,false)}
+function highlightFact(f){track.querySelectorAll('.mk.on').forEach(m=>m.classList.remove('on'));
+  if(f&&f.k!=='gap'){const m=track.querySelector(f.k==='ev'?`[data-ev="${f.y}"]`:`[data-pt="${f.y}"]`);if(m)m.classList.add('on')}}
+function renderFact(L,f,holding){const pop=$('#pop');
+  const show=()=>{pop.innerHTML=factHTML(L,f)+(holding?`<div class="fhold"><span class="fbar"><i style="animation-duration:${PLAYBACK.fact}ms"></i></span><button class="linkish fnext" type="button">Continue →</button></div>`:'')+'<button class="x" type="button" aria-label="Hide facts">×</button>';initPlates(pop);
     pop.querySelectorAll('.fthumb').forEach(fg=>fg.addEventListener('click',()=>{const inp=fg.querySelector('input');if(inp)inp.click()}));
     const x=TX.x(f.y)*(track.getBoundingClientRect().width/TX.w),pw=pop.offsetWidth||380;pop.style.left=Math.max(pw/2,Math.min(track.clientWidth-pw/2,x))+'px';
     pop.classList.remove('swap');pop.classList.add('on')};
@@ -842,8 +855,8 @@ function updateFact(){const pop=$('#pop');if(S.mode!=='region'||!S.lang||!TX||$(
 function openMarker(mk){const L=LANGS[S.lang];
   if(mk.dataset.gap){openGap(L.gapList.find(g=>g.id===mk.dataset.gap));return}
   FACT.off=false;FACT.id=undefined;togglePlay(false);setYear(+(mk.dataset.ev||mk.dataset.pt));updateFact()}
-function closePop(){FACT.off=true;$('#pop').classList.remove('on')}
-$('#pop').addEventListener('click',e=>{if(e.target.closest('.x')){closePop();return}if(e.target.closest('.fnext')){S.hold=0;const fh=$('#pop .fhold');if(fh)fh.remove();return}const g=e.target.closest('[data-gapopen]');if(g)openGap(LANGS[S.lang].gapList.find(x=>x.id===g.dataset.gapopen))});
+function closePop(){if(S.inHold){S.hold=0;return}FACT.off=true;$('#pop').classList.remove('on')}
+$('#pop').addEventListener('click',e=>{if(e.target.closest('.x')){closePop();return}if(e.target.closest('.fnext')){S.hold=0;return}const g=e.target.closest('[data-gapopen]');if(g)openGap(LANGS[S.lang].gapList.find(x=>x.id===g.dataset.gapopen))});
 
 /* ============ panel ============ */
 function chartSVG(L,opts){const w=opts.w||380,h=opts.h||170,ml=44,mr=opts.mr??92,mt=10,mb=24;const all=L.series.flatMap(s=>s.pts.map(p=>p.v));
@@ -1107,9 +1120,11 @@ function drawMapCore(c,W,H,o){const L=o.lang?LANGS[o.lang]:null,R=o.R,cx=o.cx,cy
   if(regA>0){const M=regionModel(L,year),step=L.id==='ga'?.1:.03,rd=Math.max(1.1,R*step*RAD*.36);
     const rlit=[];for(const p of REG[L.id].pts){const q=P(p.lon,p.lat);if(q[2]<=0||!on(q[0],q[1]))continue;c.beginPath();c.arc(q[0],q[1],rd,0,6.283);paintRegionDot(c,p,M,col,regA,rd);
       const g=glowAt(q[0],q[1]);if(g>0)rlit.push(q[0],q[1],g,p)}
-    // speakers glow in the language colour, everyone else in the text colour
+    // Speakers pop (language colour, bigger, with a soft halo); dots without speakers only brighten a little, for continuity.
     for(let k=0;k<rlit.length;k+=4){const p=rlit[k+3],g=rlit[k+2],i=M.rk.get(p),spk=p.home&&!(M.afterPartition&&p.out)&&i<M.nSolid+M.nPale;
-      c.globalAlpha=regA*g*GLOW.alpha;c.fillStyle=spk?col:C.fg;c.beginPath();c.arc(rlit[k],rlit[k+1],rd*(.7+GLOW.grow*g),0,6.283);c.fill()}
+      if(spk){c.fillStyle=col;c.globalAlpha=regA*g*.22;c.beginPath();c.arc(rlit[k],rlit[k+1],rd*(1.6+1.8*g),0,6.283);c.fill();
+        c.globalAlpha=regA*Math.min(1,g*1.1);c.beginPath();c.arc(rlit[k],rlit[k+1],rd*(.9+1.15*g),0,6.283);c.fill()}
+      else{c.fillStyle=C.fg;c.globalAlpha=regA*g*.28;c.beginPath();c.arc(rlit[k],rlit[k+1],rd*(.75+.3*g),0,6.283);c.fill()}}
     if(L.id==='haw'&&year>=1940){const q=P(-160.15,21.9),a=regA*clamp01((year-1940)/25),rr=Math.max(26,R*.004);c.globalAlpha=a;c.beginPath();c.arc(q[0],q[1],rr,0,6.283);c.strokeStyle=col;c.lineWidth=1.4;c.setLineDash([3,4]);c.stroke();c.setLineDash([]);
       c.font='italic 15px Spectral,Georgia,serif';c.fillStyle=C.fg;c.fillText('Niʻihau',q[0]-rr-8-c.measureText('Niʻihau').width,q[1]-4);c.font='11px "IBM Plex Mono",monospace';c.fillStyle=C.muted;const t='Hawaiian still spoken at home';c.fillText(t,q[0]-rr-8-c.measureText(t).width,q[1]+12)}
     c.globalAlpha=regA*clamp01((z-8)/4);c.font='11px "IBM Plex Mono",monospace';c.fillStyle=C.muted;
