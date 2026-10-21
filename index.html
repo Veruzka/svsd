@@ -196,7 +196,8 @@ header.top>*{pointer-events:auto}
 
 /* intro */
 /* language intro: covers the map stage after the zoom, then fades back into it */
-.lintro{position:absolute;inset:0;z-index:5;display:grid;place-items:center;overflow:auto;padding:84px max(24px,env(safe-area-inset-right,0px)) 32px max(24px,env(safe-area-inset-left,0px));background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(3px);opacity:0;transition:opacity .9s ease,transform .9s ease,filter .9s ease}
+/* fades in over the end of the zoom */
+.lintro{position:absolute;inset:0;z-index:5;display:grid;place-items:center;overflow:auto;padding:84px max(24px,env(safe-area-inset-right,0px)) 32px max(24px,env(safe-area-inset-left,0px));background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(3px);opacity:0;transition:opacity 1.3s cubic-bezier(.22,.61,.36,1),transform .9s ease,filter .9s ease}
 .lintro.on{opacity:1}
 .lintro.out{opacity:0;transform:scale(.97);filter:blur(6px);pointer-events:none}
 .lbar{position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--accent)}
@@ -647,7 +648,7 @@ function bboxCenter(L){const[[a,b],[c,d]]=L.bbox;return[(a+c)/2,(b+d)/2]}
 function drawMain(){const L=S.lang?LANGS[S.lang]:null;
   if(S.mode==='region'&&!S.flying&&L){S.z=fitZ(L);[S.cLon,S.cLat]=bboxCenter(L)}
   hits=[];const g=gcy();
-  drawMapCore(ctx,W,H,{hx:CURSOR.sx,hy:CURSOR.sy,hr:S.mode==='globe'&&!S.dragging?GLOW.radius():0,lon:S.cLon,lat:S.cLat,z:S.z,R:S.R*S.z,cx:gcx()+((L?regionCX():gcx())-gcx())*S.k,cy:g+((L?regionCY():g)-g)*S.k,year:S.year,lang:S.lang,path:0,critA:1,critR:1.25,markers:true,hits:S.mode==='globe'?hits:null})}
+  drawMapCore(ctx,W,H,{hx:CURSOR.sx,hy:CURSOR.sy,hr:(S.mode==='globe'&&!S.dragging||S.mode==='region'&&LI.el.hidden)?GLOW.radius():0,lon:S.cLon,lat:S.cLat,z:S.z,R:S.R*S.z,cx:gcx()+((L?regionCX():gcx())-gcx())*S.k,cy:g+((L?regionCY():g)-g)*S.k,year:S.year,lang:S.lang,path:0,critA:1,critR:1.25,markers:true,hits:S.mode==='globe'?hits:null})}
 /* region dot model */
 const REG={};
 function prepRegions(){for(const L of Object.values(LANGS)){const g=GRIDS[L.grid];const pts=[];
@@ -688,6 +689,7 @@ function frame(now){if(SX.el&&!SX.el.hidden){requestAnimationFrame(frame);return
   trackCursor(now);
   if(S.mode==='globe'&&!S.dragging&&!reduce&&!S.paused&&$('#tip').hidden){S.cLon+=.02;dirty=true}
   if(S.flying||S.mode==='globe'&&!reduce)dirty=true;
+  if(S.mode==='region'&&CURSOR.mx>-1e3&&Math.abs(CURSOR.mx-CURSOR.sx)+Math.abs(CURSOR.my-CURSOR.sy)>.3)dirty=true;
   if(dirty&&W){ctx.clearRect(0,0,W,H);
     drawMain();dirty=false}
   requestAnimationFrame(frame)}
@@ -732,16 +734,16 @@ document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',(
 const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2,sine=t=>.5-.5*Math.cos(Math.PI*t);
 function animate(ms,step,done){if(reduce){step(1);done&&done();return}const t0=performance.now();(function f(n){const t=Math.min(1,(n-t0)/ms);step(t);if(t<1)requestAnimationFrame(f);else done&&done()})(t0)}
 // Fly the camera: pan eases in over the first 60%, zoom eases on a log scale over the rest, so there is no sudden acceleration.
-function fly(ms,target,done){const l0=S.cLon,p0=S.cLat,z0=S.z,k0=S.k;S.flying=true;dirty=true;
-  animate(ms,t=>{const [tl,tp,tz,tk]=target();const dl=((tl-l0+540)%360)-180,a=ease(Math.min(1,t/.62)),e=sine(Math.max(0,(t-.06)/.94));
-    S.cLon=l0+dl*a;S.cLat=p0+(tp-p0)*a;S.z=Math.exp(Math.log(z0)+(Math.log(tz)-Math.log(z0))*e);S.k=k0+(tk-k0)*e;dirty=true},()=>{S.flying=false;dirty=true;done&&done()})}
+function fly(ms,target,done,near){const l0=S.cLon,p0=S.cLat,z0=S.z,k0=S.k;S.flying=true;dirty=true;let nearDone=!near;
+  animate(ms,t=>{if(!nearDone&&t>=.72){nearDone=true;near()}const [tl,tp,tz,tk]=target();const dl=((tl-l0+540)%360)-180,a=ease(Math.min(1,t/.62)),e=sine(Math.max(0,(t-.06)/.94));
+    S.cLon=l0+dl*a;S.cLat=p0+(tp-p0)*a;S.z=Math.exp(Math.log(z0)+(Math.log(tz)-Math.log(z0))*e);S.k=k0+(tk-k0)*e;dirty=true},()=>{S.flying=false;dirty=true;if(!nearDone)near();done&&done()})}
 function openLang(id){hideTip(true);closePop();if(S.mode==='region'&&S.lang===id)return;
   if(S.mode!=='globe'){toWorld(()=>openLang(id));return}
   const L=LANGS[id];togglePlay(false);S.lang=id;S.mode='zoom';$('#app').classList.add('away');
-  setYear(L.series[0].pts[0].y);
-  fly(3600,()=>[...bboxCenter(L),fitZ(L),1],landRegion)}
-function landRegion(){S.mode='region';$('#app').classList.add('timeon');FACT.off=false;FACT.id=undefined;const L=LANGS[S.lang];$('#crumb').hidden=false;$('#crumbHere').textContent=L.place;
-  renderLegend();renderTrack();updateYearNote();dirty=true;showLangIntro(L,openPanel)}
+  setYear(L.series[0].pts[0].y);S.introDone=false;$('#app').classList.add('timeon');
+  fly(3600,()=>[...bboxCenter(L),fitZ(L),1],landRegion,()=>showLangIntro(L,()=>{S.introDone=true;openPanel()}))}
+function landRegion(){S.mode='region';FACT.off=false;FACT.id=undefined;const L=LANGS[S.lang];$('#crumb').hidden=false;$('#crumbHere').textContent=L.place;
+  renderLegend();renderTrack();updateYearNote();dirty=true;if(S.introDone)openPanel()}
 function openPanel(){if(S.mode!=='region')return;$('#app').classList.add('region');$('#panel').hidden=false;renderPanel();FACT.id=undefined;updateFact()}
 function toWorld(done){if(S.mode==='globe'||S.flying)return;hideLangIntro(true);FACT.off=false;$('#pop').classList.remove('on');
   togglePlay(false);$('#app').classList.remove('region','timeon');$('#panel').hidden=true;$('#crumb').hidden=true;S.mode='zoom';S.year=Y1;
@@ -1076,9 +1078,9 @@ function drawMapCore(c,W,H,o){const L=o.lang?LANGS[o.lang]:null,R=o.R,cx=o.cx,cy
   const on=(x,y)=>x>-20&&x<W+20&&y>-20&&y<H+20;
   c.clearRect(0,0,W,H);const worldA=clamp01((5.5-z)/3),regA=L?clamp01((z-3)/3.5):0,year=Math.round(o.year);
   if(z<3){c.globalAlpha=1-clamp01((z-1.6)/1.4);c.beginPath();c.arc(cx,cy,R,0,6.283);c.strokeStyle=C.line;c.lineWidth=1;c.stroke()}
-  const ds=Math.min(2.4,Math.max(1.15,R/190));
+  const ds=Math.min(2.4,Math.max(1.15,R/190)),glowAt=(x,y)=>dotGlow(x,y,o.hx,o.hy,o.hr||0);
   if(worldA>0){const w=GRIDS.world;c.fillStyle=C.land;
-    const lit=[],glowAt=(x,y)=>dotGlow(x,y,o.hx,o.hy,o.hr||0);
+    const lit=[];
     for(let k=0;k<w.length;k+=2){const q=P(w[k],w[k+1]);if(q[2]<=0||!on(q[0],q[1]))continue;c.globalAlpha=worldA*(.25+.75*q[2]);c.beginPath();c.arc(q[0],q[1],ds*(.55+.45*q[2]),0,6.283);c.fill();
       const g=glowAt(q[0],q[1]);if(g>0)lit.push(q[0],q[1],g*q[2])}
     if(lit.length){c.fillStyle=C.fg;for(let k=0;k<lit.length;k+=3){const g=lit[k+2];c.globalAlpha=worldA*g*GLOW.alpha;c.beginPath();c.arc(lit[k],lit[k+1],ds*(.6+GLOW.grow*g),0,6.283);c.fill()}c.fillStyle=C.land}
@@ -1091,7 +1093,11 @@ function drawMapCore(c,W,H,o){const L=o.lang?LANGS[o.lang]:null,R=o.R,cx=o.cx,cy
   if(!L){c.globalAlpha=1;return}
   const col=C[L.color.slice(2)];
   if(regA>0){const M=regionModel(L,year),step=L.id==='ga'?.1:.03,rd=Math.max(1.1,R*step*RAD*.36);
-    for(const p of REG[L.id].pts){const q=P(p.lon,p.lat);if(q[2]<=0||!on(q[0],q[1]))continue;c.beginPath();c.arc(q[0],q[1],rd,0,6.283);paintRegionDot(c,p,M,col,regA,rd)}
+    const rlit=[];for(const p of REG[L.id].pts){const q=P(p.lon,p.lat);if(q[2]<=0||!on(q[0],q[1]))continue;c.beginPath();c.arc(q[0],q[1],rd,0,6.283);paintRegionDot(c,p,M,col,regA,rd);
+      const g=glowAt(q[0],q[1]);if(g>0)rlit.push(q[0],q[1],g,p)}
+    // speakers glow in the language colour, everyone else in the text colour
+    for(let k=0;k<rlit.length;k+=4){const p=rlit[k+3],g=rlit[k+2],i=M.rk.get(p),spk=p.home&&!(M.afterPartition&&p.out)&&i<M.nSolid+M.nPale;
+      c.globalAlpha=regA*g*GLOW.alpha;c.fillStyle=spk?col:C.fg;c.beginPath();c.arc(rlit[k],rlit[k+1],rd*(.7+GLOW.grow*g),0,6.283);c.fill()}
     if(L.id==='haw'&&year>=1940){const q=P(-160.15,21.9),a=regA*clamp01((year-1940)/25),rr=Math.max(26,R*.004);c.globalAlpha=a;c.beginPath();c.arc(q[0],q[1],rr,0,6.283);c.strokeStyle=col;c.lineWidth=1.4;c.setLineDash([3,4]);c.stroke();c.setLineDash([]);
       c.font='italic 15px Spectral,Georgia,serif';c.fillStyle=C.fg;c.fillText('Niʻihau',q[0]-rr-8-c.measureText('Niʻihau').width,q[1]-4);c.font='11px "IBM Plex Mono",monospace';c.fillStyle=C.muted;const t='Hawaiian still spoken at home';c.fillText(t,q[0]-rr-8-c.measureText(t).width,q[1]+12)}
     c.globalAlpha=regA*clamp01((z-8)/4);c.font='11px "IBM Plex Mono",monospace';c.fillStyle=C.muted;
