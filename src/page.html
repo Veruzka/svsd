@@ -24,7 +24,7 @@
   --accent:#f0644a; --ga:#3fc485; --haw:#5a9cf0; --mori:#e2b14c; --near:#f0644a; --ext:#8c8e91;
   --paper:#24221f; --ink:#e8e2d6; --mark:rgba(240,100,74,.22); --shadow:0 10px 30px rgba(0,0,0,.4),0 1px 2px rgba(0,0,0,.3); color-scheme:dark}
 [hidden]{display:none!important}
-html,body{height:100%}
+html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5;overflow:hidden;-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit;cursor:pointer}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -324,8 +324,11 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
 
 /* ---------- design pass: globe, region maps, panel, timeline, cards ---------- */
 #app.lion #time{visibility:hidden}
+.lintro{display:flex;align-items:center;justify-content:center}
+.lintro .intro{margin:auto}
+.lintro .intro .plate{aspect-ratio:auto;height:min(58vh,500px)}
 #app.rmapon.lion #rmap,#app.lion #rmap{opacity:0;transition:none}
-.lintro{background:var(--bg);backdrop-filter:none;transition:opacity .6s ease,transform .9s ease,filter .9s ease}
+.lintro{background:var(--bg);backdrop-filter:none;padding:56px max(24px,env(safe-area-inset-right,0px)) 56px max(24px,env(safe-area-inset-left,0px));transition:opacity .6s ease,transform .9s ease,filter .9s ease}
 .lintro .lbar{display:none}
 #rmap{position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none;transition:opacity .6s ease;z-index:1}
 #app.rmapon #rmap{opacity:1;pointer-events:auto}
@@ -361,9 +364,10 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
 #tip h4{font-size:13px}
 #tip .mono{font-size:10.5px}
 /* timeline */
-#time{grid-template-columns:178px 34px minmax(0,1fr);gap:22px;padding:16px 30px 18px 36px;border-top-color:transparent;background:linear-gradient(to bottom,transparent,var(--bg) 22px)}
+#time{grid-template-columns:178px 34px minmax(0,1fr);gap:22px;padding:22px 30px 34px 36px;border-top-color:transparent;background:linear-gradient(to bottom,transparent,var(--bg) 22px)}
 #year{font-weight:300;letter-spacing:-.02em}
-#yearNote{font-size:10.5px}
+#yearNote{display:none}
+#year{margin-bottom:6px}
 #play{width:34px;height:34px;margin-bottom:25px}
 .trackhead{display:none}
 #track text{font-size:10px}
@@ -410,6 +414,93 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
 .story>.mono{font-size:10px}
 .story .ex{display:none}
 .btn{height:48px;border-radius:24px;font-size:14px}
+
+/* world key: hover the Key link under the title */
+#wkey{position:absolute;top:62px;left:max(24px,env(safe-area-inset-left,0px));z-index:4;transition:opacity .3s}
+#app.away #wkey{opacity:0;pointer-events:none}
+.wkbtn{background:none;border:0;padding:4px 0;font:400 11px var(--mono);letter-spacing:.03em;color:var(--muted);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--faint);cursor:help}
+.wkbtn:hover,#wkey:focus-within .wkbtn{color:var(--fg)}
+#wkeyPop{position:absolute;top:28px;left:0;width:270px;display:grid;gap:12px;padding:16px 18px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity .18s,transform .18s}
+#wkey:hover #wkeyPop,#wkey:focus-within #wkeyPop{opacity:1;transform:none;pointer-events:auto}
+#wkeyPop .krow b{font-size:13px}
+#wkeyPop .krow small,#wkeyPop .krow .n{font-size:11.5px}
+#wkeyPop .src a{color:var(--fg);text-underline-offset:3px}
+
+/* story: no top bar, one link top right */
+#story .bar{position:sticky;top:0;height:0;padding:0;border:0;background:none;backdrop-filter:none;justify-content:flex-end;overflow:visible;z-index:6}
+#story .bar .prog{display:none}
+#story .sback{position:absolute;top:calc(22px + env(safe-area-inset-top,0px));right:max(28px,env(safe-area-inset-right,0px));font:400 12px var(--mono);letter-spacing:.03em;color:var(--fg);text-decoration-color:var(--faint)}
+#story .sback:hover{color:var(--accent)}
+
+/* type scale: popups, panel and stories one step smaller, to sit with the map's legend */
+#rtip{width:232px;padding:12px 14px;font-size:11.5px}
+#rtip h4{font-size:12px}
+#rtip .sub,#rtip .src{font-size:10px}
+#rtip .row{font-size:11.5px}
+#rtip .val{font-size:17px}
+#rtip .val span{font-size:11.5px}
+#tip{width:232px;font-size:11.5px}
+#tip h4{font-size:12px}
+#pop{width:270px;padding:14px 16px 15px}
+.fc h5{font-size:17px}
+.fc p{font-size:12.5px}
+.fc .cap{font-size:10px}
+.fc .big{font-size:24px}
+#panel h2{font-size:30px}
+.chip{font-size:10.5px;padding:4px 10px}
+.lede{font-size:14px;line-height:1.6}
+.now .big{font-size:28px}
+.now .big small{font-size:12px}
+.now .mono,.now .cap{font-size:10px}
+.sec>.head .cap,.sec>.head .mono{font-size:10px}
+.story b{font-size:11.5px}
+.btn{height:44px;font-size:13.5px}
+.intro blockquote{font-size:clamp(24px,2.9vw,36px)}
+.intro .stat{font-size:14.5px}
+.intro .stat b{font-size:17px}
+.sx-card{width:min(360px,100%);padding:20px 22px}
+.sx-card h3{font-size:clamp(20px,1.8vw,25px)}
+.sx-card p{font-size:16px;line-height:1.6}
+.sx-card.hero h1{font-size:clamp(36px,4.8vw,64px)}
+.sx-card.hero p{font-size:clamp(16px,1.4vw,19px)}
+.sx-ch .big{font-size:clamp(72px,12vw,176px)}
+.sx-ch .big.word{font-size:clamp(52px,8vw,120px)}
+.sx-ch .ti{font-size:clamp(20px,2vw,28px)}
+.sx-doc .paper{font-size:clamp(15px,1.2vw,18px);padding:36px 40px}
+.sx-gap .yrs{font-size:clamp(72px,9vw,128px)}
+.sx-hud .y{font-size:clamp(44px,6vw,84px)}
+.end h2{font-size:clamp(28px,3.2vw,40px)}
+.end p{font-size:17px}
+.sheet h3{font-size:24px}
+.sheet .q{font-size:16px}
+
+/* middle type sizes: halfway between the first and second reductions */
+#rtip .val{font-size:16px}
+.fc h5{font-size:16.5px}
+.fc p{font-size:12.25px}
+#panel h2{font-size:28px}
+.lede{font-size:13.75px}
+.now .big{font-size:26px}
+.intro blockquote{font-size:clamp(23px,2.65vw,33px)}
+.intro .stat{font-size:14px}
+.intro .stat b{font-size:16px}
+.sx-card{width:min(350px,100%);padding:19px 21px}
+.sx-card h3{font-size:clamp(19px,1.65vw,23.5px)}
+.sx-card p{font-size:15.25px;line-height:1.6}
+.sx-card.hero h1{font-size:clamp(34px,4.4vw,58px)}
+.sx-card.hero p{font-size:clamp(15.5px,1.33vw,18px)}
+.sx-ch .big{font-size:clamp(68px,11vw,163px)}
+.sx-ch .big.word{font-size:clamp(48px,7.25vw,110px)}
+.sx-ch .ti{font-size:clamp(19px,1.85vw,26px)}
+.sx-doc .paper{font-size:clamp(14.5px,1.12vw,17px);padding:34px 38px}
+.sx-gap .yrs{font-size:clamp(68px,8.25vw,118px)}
+.sx-hud .y{font-size:clamp(42px,5.5vw,78px)}
+.end h2{font-size:clamp(27px,3vw,37px)}
+.end p{font-size:16.25px}
+.sheet h3{font-size:23px}
+.sheet .q{font-size:15.5px}
+/* desktop: pin the app to the window so nothing can scroll it out of line */
+@media (min-width:821px){html,body{overflow:hidden}#app{position:fixed;inset:0;height:auto}#panel{align-self:stretch;margin:0}}
 
 /* ---------- small screens ---------- */
 @media (max-width:820px){
@@ -481,6 +572,7 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
       <div class="key" id="sideKey"></div>
     </div>
     <div id="legend"></div>
+    <div id="wkey"><button type="button" class="wkbtn" aria-describedby="wkeyPop">Key</button><div id="wkeyPop" role="tooltip"></div></div>
     <div id="tip" hidden></div>
     <div id="lintro" class="lintro" hidden></div>
     <div id="find">
@@ -751,13 +843,16 @@ function rmShow(id){if(!window.d3||!id)return;RM.lang=id;if(id==='haw'&&!RM.us){
   RM.W=r.width;RM.H=r.height;RM.cv.width=r.width*dpr;RM.cv.height=r.height*dpr;RM.x.setTransform(dpr,0,0,dpr,0,0);
   try{rmBuild(id)}catch(e){console.warn('region map',e);return}RM.on=true;$('#app').classList.add('rmapon');rmDraw()}
 function rmHide(){RM.on=false;RM.vw=0;RM.pending=false;RM.hov=null;$('#app').classList.remove('rmapon');$('#rtip').hidden=$('#rring').hidden=true}
-function rmBuild(id){const W=RM.W,H=RM.H,m={...regionBox()},lg=$('#legend').getBoundingClientRect(),sr=RM.cv.getBoundingClientRect();if(innerWidth>820&&lg.width)m.l=Math.max(m.l,lg.right-sr.left+16);m.r+=RM.padR||0;m.b+=RM.padB||0;const ext=[[m.l,m.t],[W-m.r,H-m.b]],ga=id==='ga';
+function rmBuild(id){const m={...regionBox()},lg=$('#legend').getBoundingClientRect(),sr=RM.cv.getBoundingClientRect();if(innerWidth>820&&lg.width)m.l=Math.max(m.l,lg.right-sr.left+16);m.r+=RM.padR||0;m.b+=RM.padB||0;RM.geo=rmGeo(id,RM.W,RM.H,m)}
+// story maps: the same dots, built once at a fixed size and re-projected by the story camera
+function rmStoryGeo(id){RM.sg=RM.sg||{};if(RM.sg[id])return RM.sg[id];if(!window.d3||(id==='haw'&&!RM.us))return null;try{RM.sg[id]=rmGeo(id,1000,1000,{l:10,r:10,t:16,b:10})}catch(e){return null}return RM.sg[id]}
+function rmGeo(id,W,H,m){const ext=[[m.l,m.t],[W-m.r,H-m.b]],ga=id==='ga';
   const feats=ga?RMD.ga.cty.features:[RM.us];const proj=d3.geoMercator().fitExtent(ext,ga?RMD.ga.cty:{type:'MultiPoint',coordinates:[[-160.3,22.3],[-154.8,18.9]]});
   const cc=document.createElement('canvas');cc.width=Math.ceil(W);cc.height=Math.ceil(H);const cx=cc.getContext('2d',{willReadFrequently:true}),cp=d3.geoPath(proj,cx);
   feats.forEach((f,i)=>{cx.fillStyle='rgb('+(i+1)+',200,0)';cx.beginPath();cp(f);cx.fill()});const cw=cc.width,cd=cx.getImageData(0,0,cw,cc.height).data;
   const SP=ga?8.4:6.4,RY=SP*.866,OX=4,OY=m.t-6,pts=[],grid={};
   for(let j=0,y=OY;y<H-m.b+6;j++,y+=RY)for(let i=0,xx=OX+(j%2?SP/2:0);xx<W-2;i++,xx+=SP){const k=(Math.round(y)*cw+Math.round(xx))*4;if(k<0||k>=cd.length||cd[k+3]<128||cd[k+1]<150)continue;const f=feats[cd[k]-1];if(!f)continue;
-    grid[j+','+i]=pts.length;pts.push({x:xx,y,c:ga?f.properties.c:'HI',b:ga?(B4[j%4][i%4]+.5)/16:(B8[j%8][i%8]+.5)/64,pop:0,r:1.3})}
+    const ll=proj.invert([xx,y]);grid[j+','+i]=pts.length;pts.push({lon:ll[0],lat:ll[1],x:xx,y,c:ga?f.properties.c:'HI',b:ga?(B4[j%4][i%4]+.5)/16:(B8[j%8][i%8]+.5)/64,pop:0,r:1.3})}
   const ref=ga?[-8,53]:[-157,21],sig=Math.abs(proj(ref)[1]-proj([ref[0],ref[1]+.04])[1]),cut=81*sig*sig;
   for(const[lo,la,pop]of(ga?RMD.ga.towns:HTOWNS)){const[tx,ty]=proj([lo,la]);for(const p of pts){const d2=(p.x-tx)**2+(p.y-ty)**2;if(d2<cut)p.pop+=pop*Math.exp(-d2/(2*sig*sig))}}
   for(const p of pts)p.r=1.25+Math.max(0,Math.min(1.75,(Math.log10(p.pop+1)-2.4)*.62));
@@ -766,18 +861,20 @@ function rmBuild(id){const W=RM.W,H=RM.H,m={...regionBox()},lg=$('#legend').getB
     geo.part=P2(topojson.mesh(topo,topo.objects.c,(a,b)=>a!==b&&NI6.includes(a.properties.c)!==NI6.includes(b.properties.c)));geo.gt=P2(RMD.ga.gt);
     geo.cities=[['Dublin',[-6.26,53.35]],['Belfast',[-5.93,54.6]],['Cork',[-8.47,51.9]],['Galway',[-9.05,53.27]]]}
   else{geo.coast=P2(RM.us);geo.cities=[['Honolulu',[-157.86,21.31]],['Hilo',[-155.09,19.71]],['Kahului',[-156.47,20.89]],['Līhuʻe',[-159.37,21.98]]]}
-  RM.geo=geo}
+  return geo}
 function st0(ST){for(const c in ST)if(ST[c].mode!=='none')return ST[c];return{her:0}}
-function rmDraw(){if(!RM.on||!RM.geo)return;const G=RM.geo,x=RM.x,W=RM.W,H=RM.H,y=S.year,ga=G.id==='ga';x.clearRect(0,0,W,H);x.fillStyle=C.bg;x.fillRect(0,0,W,H);
-  const SPK=ga?C.ga:C.haw,OTH=ga?C.en:C.eng,g={},soft={},rings=new Path2D(),add=(o,c,p)=>{(o[c]||(o[c]=new Path2D())).moveTo(p.x+p.r,p.y);o[c].arc(p.x,p.y,p.r,0,7)},ST={},hs=ga?null:hawState(y);
+function rmPaint(x,G,y,pos,A=1){const ga=G.id==='ga',SPK=ga?C.ga:C.haw,OTH=ga?C.en:C.eng,g={},soft={},rings=new Path2D(),ST={},hs=ga?null:hawState(y);
+  const add=(o,c,p)=>{const q=pos(p);if(!q)return;(o[c]||(o[c]=new Path2D())).moveTo(q[0]+q[2],q[1]);o[c].arc(q[0],q[1],q[2],0,7)},ring=p=>{const q=pos(p);if(!q)return;rings.moveTo(q[0]+q[2],q[1]);rings.arc(q[0],q[1],q[2],0,7)};
   if(ga){let n=0,sum=0;for(const p of G.pts){const st=ST[p.c]||(ST[p.c]=gaState(p.c,y));if(st.mode!=='none'&&st.rel!=null){n++;sum+=st.rel}}const k=n&&sum?st0(ST).her/(sum/n):1;
     for(const c in ST){const st=ST[c];if(st.mode!=='none')st.s=st.rel==null?st.her:Math.min(.97,st.rel*k)}}
   for(const p of G.pts){const st=hs||ST[p.c]||(ST[p.c]=gaState(p.c,y));p.st=st;
-    if((!ga&&st.mode==='pre')||(!ga&&st.mode==='none')){if(p.b<.5){rings.moveTo(p.x+p.r,p.y);rings.arc(p.x,p.y,p.r,0,7)}else add(g,C.land,p);continue}
+    if((!ga&&st.mode==='pre')||(!ga&&st.mode==='none')){if(p.b<.5)ring(p);else add(g,C.land,p);continue}
     if(st.mode==='none'){add(g,C.land,p);continue}
     add(st.mode==='exact'&&st.meas?g:soft,p.b<Math.min(.97,st.s)?SPK:OTH,p)}
-  for(const c in g){x.fillStyle=c;x.fill(g[c])}x.save();x.filter='blur(0.3px)';x.globalAlpha=.8;for(const c in soft){x.fillStyle=c;x.fill(soft[c])}x.restore();
-  x.globalAlpha=.8;x.strokeStyle=SPK;x.lineWidth=.9;x.stroke(rings);x.globalAlpha=1;
+  x.globalAlpha=A;for(const c in g){x.fillStyle=c;x.fill(g[c])}x.save();x.filter='blur(0.3px)';x.globalAlpha=.8*A;for(const c in soft){x.fillStyle=c;x.fill(soft[c])}x.restore();
+  x.globalAlpha=.8*A;x.strokeStyle=SPK;x.lineWidth=.9;x.stroke(rings);x.globalAlpha=1}
+function rmDraw(){if(!RM.on||!RM.geo)return;const G=RM.geo,x=RM.x,W=RM.W,H=RM.H,y=S.year,ga=G.id==='ga',SPK=ga?C.ga:C.haw;x.clearRect(0,0,W,H);x.fillStyle=C.bg;x.fillRect(0,0,W,H);
+  rmPaint(x,G,y,p=>[p.x,p.y,p.r]);
   if(ga){if(y>=1956){x.save();x.fillStyle=rgba(SPK,.1);x.fill(G.gt);x.setLineDash(y>=2012?[]:[3,3]);x.strokeStyle=rgba(SPK,.9);x.lineWidth=1.1;x.stroke(G.gt);x.restore()}
     x.strokeStyle=rgba(C.muted,.35);x.lineWidth=.7;x.stroke(G.lines);const pa=Math.max(0,Math.min(1,y-1920.33));if(pa>0){x.strokeStyle=rgba(C.fg,.75*pa);x.lineWidth=1.3;x.stroke(G.part)}}
   x.strokeStyle=rgba(C.muted,.3);x.lineWidth=.7;x.stroke(G.coast);
@@ -808,6 +905,7 @@ $('#sideKey').innerHTML=`<div class="cap">Language status</div>
   <div class="krow"><i class="dot" style="color:var(--near)"></i><span><b>Nearly extinct</b><small>A few elderly speakers left</small></span><span class="n">${fmt(nStatus(3))}</span></div>
   <div class="krow"><i class="ring" style="color:var(--ext)"></i><span><b>Extinct</b><small>No speakers left</small></span><span class="n">${fmt(nStatus(4))}</span></div>
   <div class="mono src">Source: <a href="https://glottolog.org" target="_blank" rel="noopener">Glottolog 5</a></div>`;
+$('#wkeyPop').innerHTML=$('#sideKey').innerHTML;
 const bins=new Array(Math.ceil((Y1-Y0)/5)).fill(0);CRIT.forEach(d=>{if(d[3]===4&&d[5]>=Y0&&d[5]<=Y1)bins[Math.min(bins.length-1,Math.floor((d[5]-Y0)/5))]++});
 
 /* ============ map canvas ============ */
@@ -934,7 +1032,7 @@ function landRegion(){S.mode='region';if(!RM.on)rmShow(S.lang);FACT.off=false;FA
   renderLegend();renderTrack();updateYearNote();dirty=true;if(S.introDone)openPanel()}
 function openPanel(){if(S.mode!=='region')return;$('#app').classList.add('region','timeon');$('#panel').hidden=false;renderPanel();FACT.id=undefined;updateFact();
   clearTimeout(S.autoT)}
-function toWorld(done){if(S.mode==='globe'||S.flying)return;rmHide();clearTimeout(S.autoT);hideLangIntro(true);FACT.off=false;$('#pop').classList.remove('on');
+function toWorld(done){if(S.mode==='globe'||S.flying)return;rmHide();$('#legend').innerHTML='';$('#rtip').hidden=$('#rring').hidden=true;clearTimeout(S.autoT);hideLangIntro(true);FACT.off=false;$('#pop').classList.remove('on');
   togglePlay(false);$('#app').classList.remove('region','timeon');$('#panel').hidden=true;$('#crumb').hidden=true;S.mode='zoom';S.year=Y1;
   fly(2400,()=>[S.cLon,24,1,0],()=>{S.mode='globe';S.lang=null;$('#app').classList.remove('away');renderLegend();renderTrack();updateYearNote();done&&done()})}
 $('#crumbWorld').addEventListener('click',()=>toWorld());$('#home').addEventListener('click',()=>toWorld());
@@ -1020,11 +1118,9 @@ function activeFact(L,y){let a=null;for(const f of factsFor(L))if(f.y<=y)a=f;
   const g=L.gapList.find(g=>g.id!=='daily'&&y>g.from&&y<g.to);if(g&&(!a||y-a.y>2))return{k:'gap',y:(g.from+g.to)/2,id:'gap'+g.id,g};return a}
 function factHTML(L,f){
   if(f.k==='ev'){const e=f.ev;return`<div class="fc ev"><div class="cap evk"><b></b>${e.y} · Event</div><h5>${esc(e.t)}</h5><p>${esc(e.d)}</p></div>`}
-  if(f.k==='pt'){const p=f.p,sh=p.v/p.pop,n=Math.round(sh*20),pr=f.prev;let dl='';
-    if(pr){const c=(p.v-pr.v)/pr.v;dl=`<span class="delta ${c<0?'dn':'up'}">${c<0?'▼':'▲'} ${Math.abs(Math.round(c*100))}% since ${pr.y}</span>`}
-    return`<div class="fc pt"><div class="cap">${'● '+p.y+(p.k==='meas'?' · Census':' · Census-based estimate')}</div><div class="big">${p.k==='meas'?'':'~'}${fmt(p.v)} <small>${esc(L.unit)}</small></div>
-      <div class="row">${dl}<span class="mono">${sh<.01?(sh*100).toFixed(1):Math.round(sh*100)}% of everyone counted</span></div>
-      <div class="d20" aria-hidden="true">${Array.from({length:20},(_,i)=>`<i style="${i<n?`background:var(${L.color})${p.k==='meas'?'':';opacity:.5'}`:''}"></i>`).join('')}</div><div class="mono src">${esc(p.src)}</div></div>`}
+  if(f.k==='pt'){const p=f.p,sh=p.v/p.pop,pr=f.prev,meas=p.k==='meas';let dl='';
+    if(pr){const c=(p.v-pr.v)/pr.v;dl=(c<0?'Down ':'Up ')+Math.abs(Math.round(c*100))+'% since '+pr.y+'. '}
+    return`<div class="fc pt"><div class="cap evk"><i style="width:6px;height:6px;border-radius:50%;display:block;${meas?'background:var(--fg)':'border:1px solid var(--fg)'}"></i>${p.y} · ${meas?'Census':'Estimate'}</div><h5>${meas?'':'~'}${fmt(p.v)} ${esc(L.unit)}</h5><p>${dl}${sh<.01?(sh*100).toFixed(1):Math.round(sh*100)}% of everyone counted.</p><div class="mono src" style="margin-top:8px">${esc(p.src)}</div></div>`}
   const g=f.g;return`<div class="fc gp"><div class="cap">┄ ${g.from} → ${g.to} · Gap in the record</div><h5>${esc(gapTitle(g))}</h5><div class="row">${stateHTML(gapState(g))}</div><div><button class="linkish" type="button" data-gapopen="${g.id}">See possible reasons →</button></div></div>`}
 // Waits until the language intro has cleared (the panel opens then), so the card never shows through the intro.
 // While playing, cards only appear at dots and diamonds (see playTick); otherwise the card follows the slider.
@@ -1035,7 +1131,7 @@ function updateFact(){const pop=$('#pop');if(S.mode!=='region'||!S.lang||!TX||$(
 function highlightFact(f){track.querySelectorAll('.mk.on').forEach(m=>m.classList.remove('on'));
   if(f&&f.k!=='gap'){const m=track.querySelector(f.k==='ev'?`[data-ev="${f.y}"]`:`[data-pt="${f.y}"]`);if(m)m.classList.add('on')}}
 function renderFact(L,f,holding){const pop=$('#pop');
-  const show=()=>{pop.innerHTML=factHTML(L,f)+(holding?`<div class="fhold"><span class="fbar"><i style="animation-duration:${PLAYBACK.fact}ms"></i></span><button class="linkish fnext" type="button">Continue →</button></div>`:'')+'<button class="x" type="button" aria-label="Hide facts">×</button>';initPlates(pop);
+  const show=()=>{pop.innerHTML=factHTML(L,f)+'<button class="x" type="button" aria-label="Hide facts">×</button>';initPlates(pop);
     pop.querySelectorAll('.fthumb').forEach(fg=>fg.addEventListener('click',()=>{const inp=fg.querySelector('input');if(inp)inp.click()}));
     const x=TX.x(f.y)*(track.getBoundingClientRect().width/TX.w),pw=pop.offsetWidth||300,cl=Math.max(pw/2,Math.min(track.clientWidth-pw/2,x));pop.style.left=cl+'px';pop.style.setProperty('--cx',(x-cl+pw/2)+'px');
     pop.classList.remove('swap');pop.classList.add('on')};
@@ -1305,8 +1401,9 @@ function drawMapCore(c,W,H,o){const L=o.lang?LANGS[o.lang]:null,R=o.R,cx=o.cx,cy
     if(o.hits&&regA===0)o.hits.push([q[0],q[1],M.id])}}
   if(!L){c.globalAlpha=1;return}
   const col=C[L.color.slice(2)];
-  if(regA>0&&!o.markers){const M=regionModel(L,year),step=L.id==='ga'?.1:.03,rd=Math.max(1.1,R*step*RAD*.36);
-    const rlit=[];for(const p of REG[L.id].pts){const q=P(p.lon,p.lat);if(q[2]<=0||!on(q[0],q[1]))continue;c.beginPath();c.arc(q[0],q[1],rd,0,6.283);paintRegionDot(c,p,M,col,regA,rd);
+  if(regA>0&&!o.markers){const SG=rmStoryGeo(L.id);if(SG){const sc=R*Math.cos(o.lat*RAD)/SG.proj.scale();rmPaint(c,SG,year,p=>{const q=P(p.lon,p.lat);return q[2]>0&&on(q[0],q[1])?[q[0],q[1],Math.max(.7,p.r*sc)]:null},regA)}
+    const M=regionModel(L,year),step=L.id==='ga'?.1:.03,rd=Math.max(1.1,R*step*RAD*.36);
+    const rlit=[];for(const p of SG?[]:REG[L.id].pts){const q=P(p.lon,p.lat);if(q[2]<=0||!on(q[0],q[1]))continue;c.beginPath();c.arc(q[0],q[1],rd,0,6.283);paintRegionDot(c,p,M,col,regA,rd);
       const g=glowAt(q[0],q[1]);if(g>0)rlit.push(q[0],q[1],g,p)}
     // speakers glow in the language colour, everyone else in the text colour
     for(let k=0;k<rlit.length;k+=4){const p=rlit[k+3],g=rlit[k+2],i=M.rk.get(p),spk=p.home&&!(M.afterPartition&&p.out)&&i<M.nSolid+M.nPale;
@@ -1357,9 +1454,9 @@ function cardHTML(L,ST,s){
   return`<div class="sx-card"><div class="k cap">${mark}${esc(s.k)}</div><h3>${esc(s.h)}</h3>${s.p.map(t=>`<p>${esc(t)}</p>`).join('')}</div>`}
 function openStory(id){const L=LANGS[id],ST=STORIES[id];const el=$('#story');togglePlay(false);SX.el=el;SX.lang=id;SX.steps=ST.steps;SX.i=-1;
   const other=id==='ga'?'haw':'ga';
-  el.innerHTML=`<div class="bar"><div class="brand"><b>Endangered Languages</b><span class="crumb">${esc(L.name)} · the story</span></div><button class="btn ghost sm" id="sClose">Back to the map</button><div class="prog"></div></div>
+  el.innerHTML=`<div class="bar"><button class="linkish sback" type="button" id="sClose">Back to the map</button><div class="prog"></div></div>
    <div class="sx-stage"><canvas class="sx-map" aria-hidden="true"></canvas>
-    <div class="sx-hud off"><div class="y"></div><div class="k mono"></div><div class="lg mono"><span><i class="dot" style="color:var(${L.color})"></i>${id==='ga'?'speaks Irish':'speaks Hawaiian'}</span>${id==='ga'?`<span><i class="ring" style="color:var(${L.color})"></i>can speak, not daily</span>`:''}<span><i class="dot" style="color:var(--faint)"></i>English</span></div></div>
+    <div class="sx-hud off"><div class="y"></div><div class="k mono"></div><div class="lg mono"><span><i class="dot" style="color:var(${L.color})"></i>${id==='ga'?'Irish':'Hawaiian'}</span><span><i class="dot" style="color:var(${id==='ga'?'--en':'--eng'})"></i>English</span></div></div>
     ${ST.steps.map((s,i)=>sceneHTML(L,s,i)).join('')}</div>
    <div class="sx-steps">${ST.steps.map((s,i)=>`<section class="sx-step" data-i="${i}" style="height:${s.h0||(s.t==='chapter'?130:s.hero?170:160)}vh">${cardHTML(L,ST,s)}</section>`).join('')}</div>
    <section class="end"><div class="in"><div class="cap">What the census never asked</div><h2>Who spoke ${esc(L.name)} at home, who stopped, and why.</h2><p>Records count people. Families remember the rest: the grandmother who switched to English for her children’s sake, the song only one aunt still knew. Add what you know to the gaps below.</p>
