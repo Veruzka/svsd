@@ -878,44 +878,41 @@ function plateHTML(key,cap,scene=''){return`<figure class="plate" data-plate="${
 function initPlates(root){root.querySelectorAll('.plate').forEach(initPlate)}
 
 /* ============ language intro ============ */
-// Shown after the zoom lands. Holds for HOLD ms, then fades slowly into the map. Playing the voice note or focusing a control with the keyboard resets the countdown.
+// Shown after the zoom lands. The voice note plays on its own; the red line follows it, and when it ends the intro fades into the map.
 const LI={el:$('#lintro'),done:null,t0:0,paused:false,fading:false,closing:false,raf:0,ft:0,audio:null,playing:false,pos:0,pt0:0,dur:0};
-const HOLD=7000,FADE=4000;
+const FADE=4000;
 const PLAY='<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg>',PAUSE='<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 2h3v10H3zM8 2h3v10H8z" fill="currentColor"/></svg>';
 const mmss=s=>{s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
-function showLangIntro(L,done){const I=L.intro,el=LI.el;LI.done=done;LI.fading=LI.closing=LI.paused=LI.playing=false;LI.pos=0;LI.dur=I.dur;
+function showLangIntro(L,done){const I=L.intro,el=LI.el;LI.done=done;LI.fading=LI.closing=LI.playing=LI.ended=false;LI.pos=0;LI.dur=I.dur;
   el.innerHTML=`<div class="intro"><figure class="plate" data-plate="${L.id}-portrait" data-scene="portrait" data-cap="${esc(I.cap)}" style="margin:0"></figure><div>
    <div class="cap">${esc(L.place)} · ${esc(L.endo)}</div>
    <blockquote style="margin-top:18px">${esc(I.q)}<i>${esc(I.tr)}</i></blockquote><div class="mono attr">${esc(I.attr)}</div>
    <div class="vnote"><button class="vplay" type="button" aria-label="Play voice note">${PLAY}</button><canvas class="vwave" aria-hidden="true"></canvas><span class="mono vtime">0:00 / ${mmss(I.dur)}</span></div>
    <div class="mono">${L.audio?'Voice note · ':'Audio slot · '}${esc(I.voice)}</div>
    <p class="stat">${I.stat}</p>
-   <div class="go"><button class="btn" type="button" id="liBack"><span class="dot"></span>Go back to region</button><span class="mono">Fades on its own in a few seconds</span></div></div></div><div class="lbar"></div>`;
+   <div class="go"><button class="btn" type="button" id="liBack"><span class="dot"></span>Go back to region</button><span class="mono">Fades when the voice note ends</span></div></div></div><div class="lbar"></div>`;
   initPlates(el);el.style.transition='';el.classList.remove('out','on');el.hidden=false;
   requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('on')));
-  LI.t0=performance.now()+900;
+  clearTimeout(LI.st);LI.st=setTimeout(()=>{if(!LI.el.hidden&&!LI.playing&&!LI.ended)toggleVoice(L)},900);
   el.querySelector('#liBack').onclick=()=>hideLangIntro(false);el.querySelector('.vplay').onclick=()=>toggleVoice(L);
-  const box=el.querySelector('.intro');
-  box.addEventListener('focusin',e=>{if(!e.target.matches(':focus-visible'))return;LI.paused=true;cancelLiFade()});box.addEventListener('focusout',()=>{LI.paused=false;LI.t0=performance.now()});
   cancelAnimationFrame(LI.raf);LI.raf=requestAnimationFrame(liTick)}
-function liTick(now){const el=LI.el;if(el.hidden)return;
-  if((LI.paused||LI.playing)&&!LI.fading)LI.t0=Math.max(LI.t0,now);
-  const held=Math.max(0,now-LI.t0);el.querySelector('.lbar').style.width=(LI.fading?100:Math.min(100,held/HOLD*100))+'%';
-  if(!LI.fading&&!LI.paused&&!LI.playing&&held>=HOLD)startLiFade(FADE);
-  drawVoice(now);LI.raf=requestAnimationFrame(liTick)}
+function liTick(now){const el=LI.el;if(el.hidden)return;drawVoice(now);
+  el.querySelector('.lbar').style.width=(LI.fading?100:LI.dur?Math.min(100,LI.pos/LI.dur*100):0)+'%';
+  if(LI.ended&&!LI.fading)startLiFade(FADE);
+  LI.raf=requestAnimationFrame(liTick)}
 function startLiFade(ms){const el=LI.el;LI.fading=true;el.style.transition=reduce?`opacity ${ms}ms linear`:`opacity ${ms}ms ease-in-out,transform ${ms}ms ease-in-out,filter ${ms}ms ease-in-out`;
   el.classList.add('out');clearTimeout(LI.ft);LI.ft=setTimeout(finishLi,ms)}
-function cancelLiFade(){if(!LI.fading||LI.closing)return;const el=LI.el;clearTimeout(LI.ft);LI.fading=false;el.style.transition='opacity .6s ease,transform .6s ease,filter .6s ease';el.classList.remove('out');LI.t0=performance.now()}
-function finishLi(){const el=LI.el;clearTimeout(LI.ft);el.hidden=true;el.classList.remove('on','out');el.style.transition='';el.innerHTML='';stopVoice();cancelAnimationFrame(LI.raf);const d=LI.done;LI.done=null;d&&d()}
+function cancelLiFade(){if(!LI.fading||LI.closing)return;const el=LI.el;clearTimeout(LI.ft);LI.fading=false;el.style.transition='opacity .6s ease,transform .6s ease,filter .6s ease';el.classList.remove('out')}
+function finishLi(){const el=LI.el;clearTimeout(LI.ft);clearTimeout(LI.st);el.hidden=true;el.classList.remove('on','out');el.style.transition='';el.innerHTML='';stopVoice();cancelAnimationFrame(LI.raf);const d=LI.done;LI.done=null;d&&d()}
 function hideLangIntro(silent){if(LI.el.hidden)return;if(silent){LI.done=null;finishLi();return}LI.closing=true;startLiFade(600)}
-function toggleVoice(L){if(LI.playing){stopVoice();return}LI.playing=true;if(LI.pos>=LI.dur)LI.pos=0;LI.pt0=performance.now()-LI.pos*1000;
-  if(L.audio){LI.audio=new Audio(L.audio);LI.audio.currentTime=LI.pos;LI.audio.onloadedmetadata=()=>{LI.dur=LI.audio.duration};LI.audio.onended=()=>{LI.pos=LI.dur;stopVoice()};LI.audio.play().catch(()=>{})}
+function toggleVoice(L){if(LI.playing){stopVoice();return}cancelLiFade();LI.ended=false;LI.playing=true;if(LI.pos>=LI.dur)LI.pos=0;LI.pt0=performance.now()-LI.pos*1000;
+  if(L.audio){LI.audio=new Audio(L.audio);LI.audio.currentTime=LI.pos;LI.audio.onloadedmetadata=()=>{LI.dur=LI.audio.duration};LI.audio.onended=()=>{LI.pos=LI.dur;LI.ended=true;stopVoice()};const a=LI.audio;a.play().catch(()=>{if(LI.audio===a)LI.audio=null})}
   const b=LI.el.querySelector('.vplay');if(b){b.innerHTML=PAUSE;b.setAttribute('aria-label','Pause voice note')}}
-function stopVoice(){LI.playing=false;if(LI.audio){LI.audio.pause();LI.audio=null}LI.t0=performance.now();
+function stopVoice(){LI.playing=false;if(LI.audio){LI.audio.pause();LI.audio=null}
   const b=LI.el.querySelector('.vplay');if(b){b.innerHTML=PLAY;b.setAttribute('aria-label','Play voice note')}}
 function drawVoice(now){const c=LI.el.querySelector('.vwave');if(!c)return;const r=c.getBoundingClientRect();if(!r.width)return;const dpr=Math.min(2,devicePixelRatio||1);
   if(c.width!==Math.round(r.width*dpr)){c.width=Math.round(r.width*dpr);c.height=Math.round(r.height*dpr)}const g=c.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,r.width,r.height);
-  if(LI.playing){LI.pos=LI.audio?LI.audio.currentTime:(now-LI.pt0)/1000;if(!LI.audio&&LI.pos>=LI.dur){LI.pos=LI.dur;stopVoice()}}
+  if(LI.playing){LI.pos=LI.audio?LI.audio.currentTime:(now-LI.pt0)/1000;if(!LI.audio&&LI.pos>=LI.dur){LI.pos=LI.dur;LI.ended=true;stopVoice()}}
   const f=LI.dur?LI.pos/LI.dur:0,n=Math.floor(r.width/7),mid=r.height/2,t=now/1000;
   for(let i=0;i<n;i++){const fx=i/n,x=i*7+3;let amp=(Math.abs(Math.sin(i*.9)*Math.sin(i*.23+1.7))*.8+.2)*(mid-6)*(1-Math.abs(fx-.5)*.5);
     if(LI.playing&&!reduce&&Math.abs(fx-f)<.04)amp*=1+.25*Math.sin(t*14+i);
