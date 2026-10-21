@@ -54,7 +54,7 @@ header.top>*{pointer-events:auto}
 
 /* globe-mode search */
 #find{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);width:min(560px,calc(100% - 32px));display:grid;gap:12px;justify-items:center;z-index:3;transition:opacity .4s}
-#app.region #find{opacity:0;pointer-events:none}
+#app.away #find{opacity:0;pointer-events:none}
 .search{position:relative;width:100%}
 .search input[type=text]{width:100%;box-sizing:border-box;height:56px;border-radius:28px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;font-size:17px;padding:0 20px 0 54px;box-shadow:var(--shadow)}
 .search input[type=text]::placeholder{color:var(--muted)}
@@ -148,13 +148,23 @@ header.top>*{pointer-events:auto}
 .layer.fade{opacity:0;pointer-events:none}
 
 /* intro */
-#intro{display:grid;place-items:center;padding:calc(32px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) 32px max(20px,env(safe-area-inset-left,0px))}
+/* language intro: covers the map stage after the zoom, then fades back into it */
+.lintro{position:absolute;inset:0;z-index:5;display:grid;place-items:center;overflow:auto;padding:84px max(24px,env(safe-area-inset-right,0px)) 32px max(24px,env(safe-area-inset-left,0px));background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(3px);opacity:0;transition:opacity .9s ease,transform .9s ease,filter .9s ease}
+.lintro.on{opacity:1}
+.lintro.out{opacity:0;transform:scale(.97);filter:blur(6px);pointer-events:none}
+.lbar{position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--accent)}
+.vnote{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;margin:26px 0 8px}
+.vplay{width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;padding:0}
+.vplay:hover{border-color:var(--fg)}
+.vwave{width:100%;height:56px;display:block}
+.vtime{font-variant-numeric:tabular-nums;white-space:nowrap}
+.globestat{font-size:14px;text-align:center;color:var(--fg)}
+.globestat b{font-family:var(--serif);font-weight:500;font-size:17px}
 .intro{width:min(980px,100%);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:48px;align-items:center}
 .intro .plate{aspect-ratio:4/5}
 .intro blockquote{margin:0;font-family:var(--serif);font-size:clamp(28px,3.6vw,44px);line-height:1.15;text-wrap:balance}
 .intro blockquote i{display:block;color:var(--muted);font-size:.62em;line-height:1.35;margin-top:14px;font-style:italic}
 .intro .attr{margin-top:12px}
-#wave{width:100%;height:64px;display:block;margin-top:28px}
 .intro .stat{font-size:16px;margin:22px 0 0;max-width:46ch}
 .intro .stat b{font-family:var(--serif);font-weight:500;font-size:20px}
 .intro .go{display:flex;gap:16px;align-items:center;margin-top:28px;flex-wrap:wrap}
@@ -275,7 +285,9 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
   #legend hr,#legend .opt{display:none}
   .keys{display:none}
   .intro{grid-template-columns:1fr;gap:24px}
-  .intro .plate{aspect-ratio:16/10}
+  .lintro .intro .plate{display:none}
+  .lintro{padding-top:64px}
+  .intro blockquote{font-size:26px}
   .sx-step{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
   .sx-card{margin-top:72vh;width:100%}
   .sx-card p{font-size:17px}
@@ -309,6 +321,7 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
     </header>
     <div id="legend"></div>
     <div id="tip" hidden></div>
+    <div id="lintro" class="lintro" hidden></div>
     <div id="find">
       <div class="search">
         <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><g fill="var(--faint)"><circle cx="2" cy="2" r="1.6"/><circle cx="8" cy="2" r="1.6"/><circle cx="14" cy="2" r="1.6"/><circle cx="2" cy="8" r="1.6"/><circle cx="14" cy="8" r="1.6"/><circle cx="2" cy="14" r="1.6"/><circle cx="8" cy="14" r="1.6"/><circle cx="14" cy="14" r="1.6"/></g><circle cx="8" cy="8" r="1.8" fill="var(--accent)"/></svg>
@@ -319,7 +332,8 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
         <button data-open="ga"><i class="dot" style="color:var(--ga)"></i><span>Start with Irish</span> →</button>
         <button data-open="haw"><i class="dot" style="color:var(--haw)"></i><span>Start with Hawaiian</span> →</button>
       </div>
-      <div class="hint">Coloured dots mark languages that are moribund, nearly extinct or extinct · Glottolog 5</div>
+      <div class="globestat" id="globeStat"></div>
+      <div class="hint">Coloured dots mark languages Glottolog rates moribund, nearly extinct or extinct</div>
     </div>
   </div>
 
@@ -337,24 +351,6 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
   </div>
 
   <aside id="panel" hidden></aside>
-</div>
-
-<div id="intro" class="layer">
-  <div class="intro">
-    <figure class="plate" data-plate="intro" data-cap="Portrait slot · a last fluent speaker, photographed by the family that recorded them" style="margin:0"></figure>
-    <div>
-      <div class="cap">Mother Tongues · an atlas of languages at risk</div>
-      <blockquote style="margin-top:18px">I ka ʻōlelo nō ke ola; i ka ʻōlelo nō ka make.<i>In language there is life; in language there is death.</i></blockquote>
-      <div class="mono attr">ʻŌlelo noʻeau · Hawaiian proverb</div>
-      <canvas id="wave" aria-hidden="true"></canvas>
-      <div class="mono">Audio slot · a voice recording plays here, then falls silent</div>
-      <p class="stat" id="introStat"></p>
-      <div class="go">
-        <button class="btn" id="enter"><span class="dot"></span>Enter the map</button>
-        <span class="mono">For families keeping a language alive, here and abroad</span>
-      </div>
-    </div>
-  </div>
 </div>
 
 <div id="story" class="layer" hidden></div>
@@ -488,6 +484,13 @@ haw:{id:'haw',name:'Hawaiian',endo:'ʻŌlelo Hawaiʻi',place:'Hawaiʻi',color:'-
  bbox:[[-160.3,18.9],[-154.8,22.25]]
 }};
 
+LANGS.ga.intro={q:'Is fearr Gaeilge bhriste ná Béarla cliste.',tr:'Broken Irish is better than clever English.',attr:'Seanfhocal · Irish proverb',
+  cap:'Portrait slot · a native speaker from Conamara or Corca Dhuibhne, photographed by family',voice:'a native speaker reads the proverb',dur:24,
+  stat:'<b>1,524,286</b> people could speak Irish in 1851. <b>71,968</b> speak it every day today.'};
+LANGS.haw.intro={q:'I ka ʻōlelo nō ke ola; i ka ʻōlelo nō ka make.',tr:'In language there is life; in language there is death.',attr:'ʻŌlelo noʻeau · Hawaiian proverb',
+  cap:'Portrait slot · a kupuna who spoke Hawaiian, photographed by family',voice:'a mānaleo (native speaker) reads the proverb',dur:22,
+  stat:'About <b>70,000</b> people spoke Hawaiian in 1853. In 1983, fewer than <b>50</b> children did.'};
+
 /* ============ gaps are computed, not curated ============ */
 // A gap is any span longer than 15 years without a measurement, any change over 20% between two points, or a change in what the census counted.
 function detectGaps(L){
@@ -547,15 +550,15 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{readCo
 new MutationObserver(()=>{readColors();dirty=true;renderTrack()}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
 /* ============ state ============ */
-const S={mode:'globe',year:Y0,lang:null,cLon:-25,cLat:28,R:300,zoomT:0,playing:false,fadeRegion:0};
+const S={mode:'globe',year:Y0,lang:null,cLon:-25,cLat:28,R:300,z:1,k:0,playing:false,flying:false};
 const lastRec=CRIT.filter(d=>d[3]===4&&d[5]&&d[5]>=Y0).length;
 const elderCount=CRIT.filter(d=>d[3]===2||d[3]===3).length;
-$('#introStat').innerHTML=`<b>${fmt(lastRec)}</b> languages in this atlas were last recorded after 1840. <b>${fmt(elderCount)}</b> more are spoken today mostly by elders.`;
+$('#globeStat').innerHTML=`<b>${fmt(lastRec)}</b> languages here were last recorded after 1840. <b>${fmt(elderCount)}</b> more are spoken today mostly by elders.`;
 const bins=new Array(Math.ceil((Y1-Y0)/5)).fill(0);CRIT.forEach(d=>{if(d[3]===4&&d[5]>=Y0&&d[5]<=Y1)bins[Math.min(bins.length-1,Math.floor((d[5]-Y0)/5))]++});
 
 /* ============ map canvas ============ */
 const cv=$('#map'),ctx=cv.getContext('2d');let W=0,H=0,DPR=1,dirty=true;
-function resize(){const r=cv.getBoundingClientRect();DPR=Math.min(2,devicePixelRatio||1);W=r.width;H=r.height;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);S.R=Math.max(140,Math.min(W*.42,(H-(W<820?120:210))/2));fitRegion();dirty=true;renderTrack()}
+function resize(){const r=cv.getBoundingClientRect();DPR=Math.min(2,devicePixelRatio||1);W=r.width;H=r.height;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);S.R=Math.max(140,Math.min(W*.42,(H-(W<820?120:210))/2));dirty=true;renderTrack()}
 new ResizeObserver(resize).observe($('#stage'));
 let sinP0,cosP0;
 function setCenter(){sinP0=Math.sin(S.cLat*RAD);cosP0=Math.cos(S.cLat*RAD)}
@@ -564,28 +567,18 @@ function proj(lon,lat,R){const l=(lon-S.cLon)*RAD,p=lat*RAD,cp=Math.cos(p),sp=Ma
   return[gcx()+R*cp*Math.sin(l),gcy()-R*(cosP0*sp-sinP0*cp*cl),sinP0*sp+cosP0*cp*cl]}
 let hits=[];
 const drifts=[];
-function drawGlobe(alpha){
-  const R=S.R*(1+S.zoomT*S.zoomT*7);setCenter();
-  ctx.globalAlpha=alpha;
-  ctx.beginPath();ctx.arc(gcx(),gcy(),R,0,Math.PI*2);ctx.strokeStyle=C.line;ctx.lineWidth=1;ctx.stroke();
-  const w=GRIDS.world,ds=Math.max(1.15,Math.min(2.2,R/190))*(1+S.zoomT*1.5);
-  ctx.fillStyle=C.land;
-  for(let i=0;i<w.length;i+=2){const p=proj(w[i],w[i+1],R);if(p[2]<=0)continue;if(p[0]<-5||p[0]>W+5||p[1]<-5||p[1]>H+5)continue;
-    ctx.globalAlpha=alpha*(.25+.75*p[2]);ctx.beginPath();ctx.arc(p[0],p[1],ds*(.55+.45*p[2]),0,6.283);ctx.fill()}
-  hits=[];const y=S.year;
-  for(let i=0;i<CRIT.length;i++){const d=CRIT[i];const p=proj(d[2],d[1],R);if(p[2]<=0.02)continue;
-    const a=alpha*(.35+.65*p[2]);ctx.globalAlpha=a;const r=ds*1.25;ctx.beginPath();ctx.arc(p[0],p[1],r,0,6.283);
-    if(d[3]===4){const gone=!d[5]||y>=d[5];if(gone){ctx.strokeStyle=C.ext;ctx.lineWidth=1;ctx.stroke()}else{ctx.fillStyle=C.ext;ctx.fill()}}
-    else{ctx.fillStyle=d[3]===2?C.mori:C.near;ctx.fill()}
-    hits.push([p[0],p[1],i])}
-  for(const L of Object.values(LANGS)){const p=proj(L.lon,L.lat,R);if(p[2]<=0)continue;const col=C[L.color.slice(2)];
-    const t=performance.now()/1000;ctx.globalAlpha=alpha*p[2];
-    ctx.beginPath();ctx.arc(p[0],p[1],ds*5+(reduce?0:Math.sin(t*2)*2),0,6.283);ctx.fillStyle=rgba(col,.16);ctx.fill();
-    ctx.beginPath();ctx.arc(p[0],p[1],ds*2.4,0,6.283);ctx.fillStyle=col;ctx.fill();
-    hits.push([p[0],p[1],L.id])}
-  ctx.globalAlpha=1;
-}
-/* region (flat) map */
+// Region framing leaves room for the legend on the left (desktop) and the header on top.
+function regionBox(){const n=W<820;return{l:n?18:250,r:n?18:48,t:n?64:92,b:26}}
+function regionCX(){const m=regionBox();return m.l+(W-m.l-m.r)/2}
+function regionCY(){const m=regionBox();return m.t+(H-m.t-m.b)/2}
+function fitZ(L){const[[a,b],[c,d]]=L.bbox,m=regionBox(),mid=(b+d)/2;
+  return Math.min((W-m.l-m.r)/((c-a)*Math.cos(mid*RAD)*RAD),(H-m.t-m.b)/((d-b)*RAD))/S.R}
+function bboxCenter(L){const[[a,b],[c,d]]=L.bbox;return[(a+c)/2,(b+d)/2]}
+function drawMain(){const L=S.lang?LANGS[S.lang]:null;
+  if(S.mode==='region'&&!S.flying&&L){S.z=fitZ(L);[S.cLon,S.cLat]=bboxCenter(L)}
+  hits=[];const g=gcy();
+  drawMapCore(ctx,W,H,{lon:S.cLon,lat:S.cLat,z:S.z,R:S.R*S.z,cx:gcx()+((L?regionCX():gcx())-gcx())*S.k,cy:g+((L?regionCY():g)-g)*S.k,year:S.year,lang:S.lang,path:0,critA:1,critR:1.25,markers:true,hits:S.mode==='globe'?hits:null})}
+/* region dot model */
 const REG={};
 function prepRegions(){for(const L of Object.values(LANGS)){const g=GRIDS[L.grid];const pts=[];
   for(let i=0;i<g.length;i+=2){const lon=g[i],lat=g[i+1];let home=true,out=false;
@@ -594,35 +587,23 @@ function prepRegions(){for(const L of Object.values(LANGS)){const g=GRIDS[L.grid
     let dmin=1e9;for(const c of L.cores){const dx=(lon-c[0])*Math.cos(lat*RAD),dy=lat-c[1];dmin=Math.min(dmin,dx*dx+dy*dy)}
     const n=Math.sin(lon*12.9898+lat*78.233)*43758.5453;if(L.id==='haw'&&lon<-159.95&&lat<22.05)dmin=-4;pts.push({lon,lat,home,out,d:(dmin<0?-1:Math.sqrt(dmin))+((n-Math.floor(n))*.25)})}
   const hs=pts.filter(p=>p.home).sort((a,b)=>a.d-b.d);hs.forEach((p,i)=>p.rank=i);
-  REG[L.id]={pts,homeN:hs.length,inN:hs.filter(p=>!p.out).length,fit:null}}}
+  REG[L.id]={pts,homeN:hs.length,inN:hs.filter(p=>!p.out).length}}}
 prepRegions();
-const merc=lat=>Math.log(Math.tan(Math.PI/4+lat*RAD/2));
-function fitRegion(){for(const L of Object.values(LANGS)){const R=REG[L.id];if(!R)continue;const[[a,b],[c,d]]=L.bbox;
-  const pad=W<820?24:70,top=W<820?70:90,bot=W<820?40:30;const x0=a*RAD,x1=c*RAD,y0=merc(b),y1=merc(d);
-  const k=Math.min((W-pad*2)/(x1-x0),(H-top-bot)/(y1-y0));const ox=(W-(x1-x0)*k)/2-x0*k,oy=top+(H-top-bot-(y1-y0)*k)/2+y1*k;
-  R.fit={k,ox,oy,ds:Math.max(1.6,Math.min(4.2,k*(L.id==='ga'?.1:.03)*RAD*.32))}}}
-function rproj(L,lon,lat){const f=REG[L.id].fit;return[f.ox+lon*RAD*f.k,f.oy-merc(lat)*f.k]}
 function seriesAt(L,key,y){const s=L.series.find(x=>x.key===key);if(!s)return null;const p=s.pts;
   if(y<p[0].y)return key==='can'?{v:p[0].v,share:p[0].v/p[0].pop,kind:'before',a:p[0]}:null;
   for(let i=0;i<p.length;i++){if(p[i].y===y)return{v:p[i].v,share:p[i].v/p[i].pop,kind:p[i].k,a:p[i]}}
   if(y>p[p.length-1].y){const q=p[p.length-1];return{v:q.v,share:q.v/q.pop,kind:'after',a:q}}
   for(let i=1;i<p.length;i++)if(y<p[i].y){const a=p[i-1],b=p[i],t=(y-a.y)/(b.y-a.y);
     const v=Math.exp(Math.log(a.v)+(Math.log(b.v)-Math.log(a.v))*t),pop=a.pop+(b.pop-a.pop)*t;return{v,share:v/pop,kind:'interp',a,b}}}
-function drawRegion(alpha){const L=LANGS[S.lang];if(!L)return;const R=REG[L.id];if(!R.fit)fitRegion();const f=R.fit;const col=C[L.color.slice(2)];
-  const M=regionModel(L,S.year);
-  for(const p of R.pts){const [x,yy]=rproj(L,p.lon,p.lat);ctx.beginPath();ctx.arc(x,yy,f.ds,0,6.283);paintRegionDot(ctx,p,M,col,alpha,f.ds)}
-  ctx.globalAlpha=alpha;ctx.font='11px "IBM Plex Mono",monospace';ctx.fillStyle=C.muted;
-  for(const [lo,la,t] of L.labels){const [x,yy]=rproj(L,lo,la);if(x>10&&x<W-40)ctx.fillText(t.toUpperCase()===t?t.split('').join(' '):t,x,yy)}
-  ctx.globalAlpha=1}
 function drawDrifts(now){for(let i=drifts.length-1;i>=0;i--){const d=drifts[i];const t=(now-d.t0)/2600;if(t>=1){drifts.splice(i,1);continue}
   ctx.globalAlpha=(1-t)*(t<.15?t/.15:1);ctx.font='italic 13px Spectral,Georgia,serif';ctx.fillStyle=C.fg;ctx.fillText(d.name,d.x+6,d.y-6-t*34);
   ctx.font='10px "IBM Plex Mono",monospace';ctx.fillStyle=C.muted;ctx.fillText('last recorded '+d.yr,d.x+6,d.y+8-t*34)}ctx.globalAlpha=1}
 let lastFrameYear=S.year;
 function frame(now){if(SX.el&&!SX.el.hidden){requestAnimationFrame(frame);return}
   if(S.mode==='globe'&&!S.dragging&&!reduce&&!S.paused&&$('#tip').hidden){S.cLon+=.02;dirty=true}
-  if(drifts.length||S.mode!=='region'&&!reduce)dirty=true;
+  if(drifts.length||S.flying||S.mode==='globe'&&!reduce)dirty=true;
   if(dirty&&W){ctx.clearRect(0,0,W,H);
-    if(S.mode==='region'){drawRegion(1)}else{drawGlobe(1-S.fadeRegion);if(S.fadeRegion>0)drawRegion(S.fadeRegion)}
+    drawMain();
     drawDrifts(now);dirty=false}
   requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
@@ -666,19 +647,24 @@ function pick(p){res.hidden=true;q.value='';q.blur();if(p.f){openLang(p.f);retur
 document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openLang(b.dataset.open)));
 
 /* ============ transitions ============ */
-const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2,sine=t=>.5-.5*Math.cos(Math.PI*t);
 function animate(ms,step,done){if(reduce){step(1);done&&done();return}const t0=performance.now();(function f(n){const t=Math.min(1,(n-t0)/ms);step(t);if(t<1)requestAnimationFrame(f);else done&&done()})(t0)}
-function openLang(id){const L=LANGS[id];hideTip(true);closePop();if(S.mode==='region'&&S.lang===id)return;
-  if(S.mode==='region'){S.lang=id;enterRegion();return}
-  S.lang=id;S.mode='zoom';const l0=S.cLon,p0=S.cLat;let dl=L.lon-l0;dl=((dl+540)%360)-180;
-  animate(1500,t=>{const e=ease(t);S.cLon=l0+dl*e;S.cLat=p0+(L.lat-p0)*e;S.zoomT=Math.max(0,(t-.25)/.75);S.fadeRegion=Math.max(0,(t-.7)/.3);dirty=true},enterRegion)}
-function enterRegion(){S.mode='region';S.zoomT=0;S.fadeRegion=0;$('#app').classList.add('region');$('#panel').hidden=false;
-  const L=LANGS[S.lang];$('#crumb').hidden=false;$('#crumbHere').textContent=L.place;
+// Fly the camera: pan eases in over the first 60%, zoom eases on a log scale over the rest, so there is no sudden acceleration.
+function fly(ms,target,done){const l0=S.cLon,p0=S.cLat,z0=S.z,k0=S.k;S.flying=true;dirty=true;
+  animate(ms,t=>{const [tl,tp,tz,tk]=target();const dl=((tl-l0+540)%360)-180,a=ease(Math.min(1,t/.62)),e=sine(Math.max(0,(t-.06)/.94));
+    S.cLon=l0+dl*a;S.cLat=p0+(tp-p0)*a;S.z=Math.exp(Math.log(z0)+(Math.log(tz)-Math.log(z0))*e);S.k=k0+(tk-k0)*e;dirty=true},()=>{S.flying=false;dirty=true;done&&done()})}
+function openLang(id){hideTip(true);closePop();if(S.mode==='region'&&S.lang===id)return;
+  if(S.mode!=='globe'){toWorld(()=>openLang(id));return}
+  const L=LANGS[id];togglePlay(false);S.lang=id;S.mode='zoom';$('#app').classList.add('away');
   if(S.year<L.series[0].pts[0].y-5)setYear(L.series[0].pts[0].y);
-  renderLegend();renderPanel();setTimeout(()=>{resize()},520);renderTrack();dirty=true}
-function toWorld(){if(S.mode==='globe')return;S.mode='globe';S.lang=null;$('#app').classList.remove('region');$('#panel').hidden=true;$('#crumb').hidden=true;closePop();
-  renderLegend();renderTrack();setTimeout(resize,520);dirty=true}
-$('#crumbWorld').addEventListener('click',toWorld);$('#home').addEventListener('click',toWorld);
+  fly(3600,()=>[...bboxCenter(L),fitZ(L),1],landRegion)}
+function landRegion(){S.mode='region';const L=LANGS[S.lang];$('#crumb').hidden=false;$('#crumbHere').textContent=L.place;
+  renderLegend();renderTrack();updateYearNote();dirty=true;showLangIntro(L,openPanel)}
+function openPanel(){if(S.mode!=='region')return;$('#app').classList.add('region');$('#panel').hidden=false;renderPanel()}
+function toWorld(done){if(S.mode==='globe'||S.flying)return;hideLangIntro(true);closePop();
+  $('#app').classList.remove('region');$('#panel').hidden=true;$('#crumb').hidden=true;S.mode='zoom';
+  fly(2400,()=>[S.cLon,24,1,0],()=>{S.mode='globe';S.lang=null;$('#app').classList.remove('away');renderLegend();renderTrack();updateYearNote();done&&done()})}
+$('#crumbWorld').addEventListener('click',()=>toWorld());$('#home').addEventListener('click',()=>toWorld());
 
 /* ============ legend & counter ============ */
 function renderLegend(){const el=$('#legend');
@@ -725,7 +711,7 @@ function togglePlay(force){S.playing=force??!S.playing;$('#playIcon').setAttribu
 $('#play').addEventListener('click',()=>togglePlay());
 document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,select')||!$('#modal').hidden)return;
   if(!$('#story').hidden){if(e.key==='Escape')closeStory();return}
-  if(!$('#intro').classList.contains('fade')&&!$('#intro').hidden)return;
+  if(!LI.el.hidden){if(e.key==='Escape')hideLangIntro(false);return}
   if(e.key==='ArrowRight'){setYear(S.year+(e.shiftKey?10:1));e.preventDefault()}else if(e.key==='ArrowLeft'){setYear(S.year-(e.shiftKey?10:1));e.preventDefault()}
   else if(e.key===' '){togglePlay();e.preventDefault()}else if(e.key==='Escape'){closePop();hideTip(true)}});
 
@@ -767,7 +753,7 @@ function renderPanel(){const L=LANGS[S.lang];const p=$('#panel');const crit=L.gl
    <div class="sec"><div class="head"><span class="cap">Gaps in the record</span><span class="mono">${L.gapList.length} found</span></div><div class="gaps" id="gaps"></div></div>
    <div class="sec"><div class="head"><span class="cap">From the community</span></div><div id="comm"></div></div>
   </div><div class="ctas"><button class="btn" id="readBtn"><span class="dot"></span>Read the story</button><button class="btn ghost" id="addBtn">Add your story</button></div>`;
-  p.querySelector('.close').onclick=toWorld;p.querySelector('#readBtn').onclick=()=>openStory(L.id);p.querySelector('#addBtn').onclick=()=>openForm({lang:L.id});
+  p.querySelector('.close').onclick=()=>toWorld();p.querySelector('#readBtn').onclick=()=>openStory(L.id);p.querySelector('#addBtn').onclick=()=>openForm({lang:L.id});
   p.scrollTop=0;updatePanelYear();refreshCommunity()}
 function updatePanelYear(){const L=LANGS[S.lang];if(!L||!$('#now'))return;const v=seriesAt(L,'can',S.year),d=seriesAt(L,'daily',S.year);
   const k=v.kind==='meas'?'Measured':v.kind==='est'?'Estimate':v.kind==='interp'?'Estimated':v.kind==='before'?'Before the first count':'Latest count';
@@ -891,16 +877,50 @@ function loadPlate(fig,f){const im=new Image();im.onload=()=>{plateImgs[fig.data
 function plateHTML(key,cap,scene=''){return`<figure class="plate" data-plate="${esc(key)}" data-scene="${esc(scene)}" data-cap="${esc(cap)}" style="margin:0"></figure>`}
 function initPlates(root){root.querySelectorAll('.plate').forEach(initPlate)}
 
-/* ============ intro ============ */
-initPlates($('#intro'));
-(function wave(){const c=$('#wave');const g=c.getContext('2d');const t0=performance.now();
-  function f(now){const r=c.getBoundingClientRect();if(!r.width){requestAnimationFrame(f);return}const dpr=Math.min(2,devicePixelRatio||1);if(c.width!==r.width*dpr){c.width=r.width*dpr;c.height=r.height*dpr}
-    g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,r.width,r.height);const n=Math.floor(r.width/7);const t=reduce?0:(now-t0)/1000;const silence=reduce?.35:Math.min(1,Math.max(0,(t-2)/6));
-    for(let i=0;i<n;i++){const x=i*7+3;const fx=i/n;const amp=(Math.abs(Math.sin(i*.9+t*3)*Math.sin(i*.23+t*1.3))*.8+.2)*24*(fx<silence?Math.max(0,1-(silence-fx)*6):1)*(1-Math.abs(fx-.5)*.6);
-      for(let a=-amp;a<=amp+.1;a+=6){g.beginPath();g.arc(x,32+a,1.5,0,6.283);g.fillStyle=Math.abs(a)<.1?C.faint:C.accent;g.globalAlpha=Math.abs(a)<.1?1:.85;g.fill()}}
-    g.globalAlpha=1;if(!$('#intro').classList.contains('fade'))requestAnimationFrame(f)}requestAnimationFrame(f)})();
-function closeIntro(){const el=$('#intro');el.classList.add('fade');setTimeout(()=>{el.hidden=true;if(!reduce&&S.year===Y0)togglePlay(true)},650)}
-$('#enter').addEventListener('click',closeIntro);
+/* ============ language intro ============ */
+// Shown after the zoom lands. Holds for HOLD ms, then fades slowly into the map. Playing the voice note or focusing a control with the keyboard resets the countdown.
+const LI={el:$('#lintro'),done:null,t0:0,paused:false,fading:false,closing:false,raf:0,ft:0,audio:null,playing:false,pos:0,pt0:0,dur:0};
+const HOLD=7000,FADE=4000;
+const PLAY='<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg>',PAUSE='<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 2h3v10H3zM8 2h3v10H8z" fill="currentColor"/></svg>';
+const mmss=s=>{s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+function showLangIntro(L,done){const I=L.intro,el=LI.el;LI.done=done;LI.fading=LI.closing=LI.paused=LI.playing=false;LI.pos=0;LI.dur=I.dur;
+  el.innerHTML=`<div class="intro"><figure class="plate" data-plate="${L.id}-portrait" data-scene="portrait" data-cap="${esc(I.cap)}" style="margin:0"></figure><div>
+   <div class="cap">${esc(L.place)} · ${esc(L.endo)}</div>
+   <blockquote style="margin-top:18px">${esc(I.q)}<i>${esc(I.tr)}</i></blockquote><div class="mono attr">${esc(I.attr)}</div>
+   <div class="vnote"><button class="vplay" type="button" aria-label="Play voice note">${PLAY}</button><canvas class="vwave" aria-hidden="true"></canvas><span class="mono vtime">0:00 / ${mmss(I.dur)}</span></div>
+   <div class="mono">${L.audio?'Voice note · ':'Audio slot · '}${esc(I.voice)}</div>
+   <p class="stat">${I.stat}</p>
+   <div class="go"><button class="btn" type="button" id="liBack"><span class="dot"></span>Go back to region</button><span class="mono">Fades on its own in a few seconds</span></div></div></div><div class="lbar"></div>`;
+  initPlates(el);el.style.transition='';el.classList.remove('out','on');el.hidden=false;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('on')));
+  LI.t0=performance.now()+900;
+  el.querySelector('#liBack').onclick=()=>hideLangIntro(false);el.querySelector('.vplay').onclick=()=>toggleVoice(L);
+  const box=el.querySelector('.intro');
+  box.addEventListener('focusin',e=>{if(!e.target.matches(':focus-visible'))return;LI.paused=true;cancelLiFade()});box.addEventListener('focusout',()=>{LI.paused=false;LI.t0=performance.now()});
+  cancelAnimationFrame(LI.raf);LI.raf=requestAnimationFrame(liTick)}
+function liTick(now){const el=LI.el;if(el.hidden)return;
+  if((LI.paused||LI.playing)&&!LI.fading)LI.t0=Math.max(LI.t0,now);
+  const held=Math.max(0,now-LI.t0);el.querySelector('.lbar').style.width=(LI.fading?100:Math.min(100,held/HOLD*100))+'%';
+  if(!LI.fading&&!LI.paused&&!LI.playing&&held>=HOLD)startLiFade(FADE);
+  drawVoice(now);LI.raf=requestAnimationFrame(liTick)}
+function startLiFade(ms){const el=LI.el;LI.fading=true;el.style.transition=reduce?`opacity ${ms}ms linear`:`opacity ${ms}ms ease-in-out,transform ${ms}ms ease-in-out,filter ${ms}ms ease-in-out`;
+  el.classList.add('out');clearTimeout(LI.ft);LI.ft=setTimeout(finishLi,ms)}
+function cancelLiFade(){if(!LI.fading||LI.closing)return;const el=LI.el;clearTimeout(LI.ft);LI.fading=false;el.style.transition='opacity .6s ease,transform .6s ease,filter .6s ease';el.classList.remove('out');LI.t0=performance.now()}
+function finishLi(){const el=LI.el;clearTimeout(LI.ft);el.hidden=true;el.classList.remove('on','out');el.style.transition='';el.innerHTML='';stopVoice();cancelAnimationFrame(LI.raf);const d=LI.done;LI.done=null;d&&d()}
+function hideLangIntro(silent){if(LI.el.hidden)return;if(silent){LI.done=null;finishLi();return}LI.closing=true;startLiFade(600)}
+function toggleVoice(L){if(LI.playing){stopVoice();return}LI.playing=true;if(LI.pos>=LI.dur)LI.pos=0;LI.pt0=performance.now()-LI.pos*1000;
+  if(L.audio){LI.audio=new Audio(L.audio);LI.audio.currentTime=LI.pos;LI.audio.onloadedmetadata=()=>{LI.dur=LI.audio.duration};LI.audio.onended=()=>{LI.pos=LI.dur;stopVoice()};LI.audio.play().catch(()=>{})}
+  const b=LI.el.querySelector('.vplay');if(b){b.innerHTML=PAUSE;b.setAttribute('aria-label','Pause voice note')}}
+function stopVoice(){LI.playing=false;if(LI.audio){LI.audio.pause();LI.audio=null}LI.t0=performance.now();
+  const b=LI.el.querySelector('.vplay');if(b){b.innerHTML=PLAY;b.setAttribute('aria-label','Play voice note')}}
+function drawVoice(now){const c=LI.el.querySelector('.vwave');if(!c)return;const r=c.getBoundingClientRect();if(!r.width)return;const dpr=Math.min(2,devicePixelRatio||1);
+  if(c.width!==Math.round(r.width*dpr)){c.width=Math.round(r.width*dpr);c.height=Math.round(r.height*dpr)}const g=c.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,r.width,r.height);
+  if(LI.playing){LI.pos=LI.audio?LI.audio.currentTime:(now-LI.pt0)/1000;if(!LI.audio&&LI.pos>=LI.dur){LI.pos=LI.dur;stopVoice()}}
+  const f=LI.dur?LI.pos/LI.dur:0,n=Math.floor(r.width/7),mid=r.height/2,t=now/1000;
+  for(let i=0;i<n;i++){const fx=i/n,x=i*7+3;let amp=(Math.abs(Math.sin(i*.9)*Math.sin(i*.23+1.7))*.8+.2)*(mid-6)*(1-Math.abs(fx-.5)*.5);
+    if(LI.playing&&!reduce&&Math.abs(fx-f)<.04)amp*=1+.25*Math.sin(t*14+i);
+    for(let a=-amp;a<=amp+.1;a+=6){g.beginPath();g.arc(x,mid+a,1.5,0,6.283);g.fillStyle=fx<=f?C.accent:C.faint;g.fill()}}
+  const tm=LI.el.querySelector('.vtime');if(tm)tm.textContent=mmss(LI.pos)+' / '+mmss(LI.dur)}
 
 /* ============ story mode: one fixed stage, scroll drives the camera ============ */
 // Steps: map (camera keyframe), photo (full-bleed, slow zoom), chapter (full-screen title), doc (close-up of a document), gap (the unexplained span).
@@ -948,34 +968,42 @@ function camAt(i,p){const st=SX.steps;let cur=null,prev=null;
 function gcPoint(a,b,t){const v=o=>[Math.cos(o.lat*RAD)*Math.cos(o.lon*RAD),Math.cos(o.lat*RAD)*Math.sin(o.lon*RAD),Math.sin(o.lat*RAD)];
   const v1=v(a),v2=v(b);const d=Math.acos(Math.min(1,v1[0]*v2[0]+v1[1]*v2[1]+v1[2]*v2[2]));if(d<1e-6)return[a.lon,a.lat];
   const A=Math.sin((1-t)*d)/Math.sin(d),B=Math.sin(t*d)/Math.sin(d);const w=v1.map((x,k)=>A*x+B*v2[k]);return[Math.atan2(w[1],w[0])/RAD,Math.atan2(w[2],Math.hypot(w[0],w[1]))/RAD]}
-function drawStoryMap(cam){const c=SX.ctx,W=SX.W,H=SX.H;if(!W)return;const L=LANGS[SX.lang];const narrow=W<820;
-  const R=Math.min(W,H)*.42*cam.z,cx=narrow?W/2:W*.6,cy=narrow?H*.4:H*.5,s0=Math.sin(cam.lat*RAD),c0=Math.cos(cam.lat*RAD);
-  const P=(lon,lat)=>{const l=(lon-cam.lon)*RAD,p=lat*RAD,cp=Math.cos(p),sp=Math.sin(p),cl=Math.cos(l);return[cx+R*cp*Math.sin(l),cy-R*(c0*sp-s0*cp*cl),s0*sp+c0*cp*cl]};
+// One renderer for the globe, the region view and story mode, all in the same orthographic projection, so zooming never swaps maps.
+function drawMapCore(c,W,H,o){const L=o.lang?LANGS[o.lang]:null,R=o.R,cx=o.cx,cy=o.cy,z=o.z,s0=Math.sin(o.lat*RAD),c0=Math.cos(o.lat*RAD);
+  const P=(lon,lat)=>{const l=(lon-o.lon)*RAD,p=lat*RAD,cp=Math.cos(p),sp=Math.sin(p),cl=Math.cos(l);return[cx+R*cp*Math.sin(l),cy-R*(c0*sp-s0*cp*cl),s0*sp+c0*cp*cl]};
   const on=(x,y)=>x>-20&&x<W+20&&y>-20&&y<H+20;
-  c.clearRect(0,0,W,H);const worldA=clamp01((5.5-cam.z)/3),regA=clamp01((cam.z-3)/3.5),year=Math.round(cam.year);
-  if(cam.z<3){c.globalAlpha=1-clamp01((cam.z-1.6)/1.4);c.beginPath();c.arc(cx,cy,R,0,6.283);c.strokeStyle=C.line;c.lineWidth=1;c.stroke()}
-  if(worldA>0){const w=GRIDS.world,ds=Math.min(2.4,Math.max(1.15,R/190));c.fillStyle=C.land;
+  c.clearRect(0,0,W,H);const worldA=clamp01((5.5-z)/3),regA=L?clamp01((z-3)/3.5):0,year=Math.round(o.year);
+  if(z<3){c.globalAlpha=1-clamp01((z-1.6)/1.4);c.beginPath();c.arc(cx,cy,R,0,6.283);c.strokeStyle=C.line;c.lineWidth=1;c.stroke()}
+  const ds=Math.min(2.4,Math.max(1.15,R/190));
+  if(worldA>0){const w=GRIDS.world;c.fillStyle=C.land;
     for(let k=0;k<w.length;k+=2){const q=P(w[k],w[k+1]);if(q[2]<=0||!on(q[0],q[1]))continue;c.globalAlpha=worldA*(.25+.75*q[2]);c.beginPath();c.arc(q[0],q[1],ds*(.55+.45*q[2]),0,6.283);c.fill()}
-    for(const d of CRIT){const q=P(d[2],d[1]);if(q[2]<=.02||!on(q[0],q[1]))continue;c.globalAlpha=worldA*.32*q[2];c.beginPath();c.arc(q[0],q[1],ds*1.05,0,6.283);
-      if(d[3]===4){if(!d[5]||year>=d[5]){c.strokeStyle=C.ext;c.lineWidth=1;c.stroke()}else{c.fillStyle=C.ext;c.fill()}}else{c.fillStyle=d[3]===2?C.mori:C.near;c.fill()}}}
+    for(let i=0;i<CRIT.length;i++){const d=CRIT[i];const q=P(d[2],d[1]);if(q[2]<=.02||!on(q[0],q[1]))continue;c.globalAlpha=worldA*o.critA*(.35+.65*q[2]);c.beginPath();c.arc(q[0],q[1],ds*o.critR,0,6.283);
+      if(d[3]===4){if(!d[5]||year>=d[5]){c.strokeStyle=C.ext;c.lineWidth=1;c.stroke()}else{c.fillStyle=C.ext;c.fill()}}else{c.fillStyle=d[3]===2?C.mori:C.near;c.fill()}
+      if(o.hits&&worldA>.6)o.hits.push([q[0],q[1],i])}}
+  if(o.markers){const t=performance.now()/1000;for(const M of Object.values(LANGS)){const q=P(M.lon,M.lat);const a=(1-regA)*q[2];if(q[2]<=0||a<=0)continue;const mc=C[M.color.slice(2)];
+    c.globalAlpha=a;c.beginPath();c.arc(q[0],q[1],ds*5+(reduce?0:Math.sin(t*2)*2),0,6.283);c.fillStyle=rgba(mc,.16);c.fill();c.beginPath();c.arc(q[0],q[1],ds*2.4,0,6.283);c.fillStyle=mc;c.fill();
+    if(o.hits&&regA===0)o.hits.push([q[0],q[1],M.id])}}
+  if(!L){c.globalAlpha=1;return}
   const col=C[L.color.slice(2)];
-  if(regA>0){const M=regionModel(L,year),step=L.id==='ga'?.1:.03,ds=Math.max(1.1,R*step*RAD*.36);
-    for(const p of REG[L.id].pts){const q=P(p.lon,p.lat);if(q[2]<=0||!on(q[0],q[1]))continue;c.beginPath();c.arc(q[0],q[1],ds,0,6.283);paintRegionDot(c,p,M,col,regA,ds)}
-    if(L.id==='haw'&&year>=1940){const q=P(-160.15,21.9),a=regA*clamp01((year-1940)/25);c.globalAlpha=a;c.beginPath();c.arc(q[0],q[1],Math.max(26,R*.004),0,6.283);c.strokeStyle=col;c.lineWidth=1.4;c.setLineDash([3,4]);c.stroke();c.setLineDash([]);
-      c.font='italic 15px Spectral,Georgia,serif';c.fillStyle=C.fg;c.fillText('Niʻihau',q[0]-Math.max(26,R*.004)-8-c.measureText('Niʻihau').width,q[1]-4);c.font='11px "IBM Plex Mono",monospace';c.fillStyle=C.muted;const t='Hawaiian still spoken at home';c.fillText(t,q[0]-Math.max(26,R*.004)-8-c.measureText(t).width,q[1]+12)}
-    c.globalAlpha=regA*clamp01((cam.z-8)/4);c.font='11px "IBM Plex Mono",monospace';c.fillStyle=C.muted;
+  if(regA>0){const M=regionModel(L,year),step=L.id==='ga'?.1:.03,rd=Math.max(1.1,R*step*RAD*.36);
+    for(const p of REG[L.id].pts){const q=P(p.lon,p.lat);if(q[2]<=0||!on(q[0],q[1]))continue;c.beginPath();c.arc(q[0],q[1],rd,0,6.283);paintRegionDot(c,p,M,col,regA,rd)}
+    if(L.id==='haw'&&year>=1940){const q=P(-160.15,21.9),a=regA*clamp01((year-1940)/25),rr=Math.max(26,R*.004);c.globalAlpha=a;c.beginPath();c.arc(q[0],q[1],rr,0,6.283);c.strokeStyle=col;c.lineWidth=1.4;c.setLineDash([3,4]);c.stroke();c.setLineDash([]);
+      c.font='italic 15px Spectral,Georgia,serif';c.fillStyle=C.fg;c.fillText('Niʻihau',q[0]-rr-8-c.measureText('Niʻihau').width,q[1]-4);c.font='11px "IBM Plex Mono",monospace';c.fillStyle=C.muted;const t='Hawaiian still spoken at home';c.fillText(t,q[0]-rr-8-c.measureText(t).width,q[1]+12)}
+    c.globalAlpha=regA*clamp01((z-8)/4);c.font='11px "IBM Plex Mono",monospace';c.fillStyle=C.muted;
     for(const [lo,la,t] of L.labels){const q=P(lo,la);if(q[2]>0&&on(q[0],q[1]))c.fillText(t.toUpperCase()===t?t.split('').join(' '):t,q[0],q[1])}}
-  else{const q=P(L.lon,L.lat);if(q[2]>0){c.globalAlpha=1;c.beginPath();c.arc(q[0],q[1],9,0,6.283);c.fillStyle=rgba(col,.18);c.fill();c.beginPath();c.arc(q[0],q[1],4,0,6.283);c.fillStyle=col;c.fill()}}
-  const rt=ROUTES[L.id];if(rt&&cam.path>0){c.lineWidth=1.6;
-    rt.to.forEach((dst,k)=>{const prog=clamp01(cam.path*1.5-k*.12);if(prog<=0)return;const n=Math.max(2,Math.round(48*prog));let last=null;
+  else if(!o.markers){const q=P(L.lon,L.lat);if(q[2]>0){c.globalAlpha=1;c.beginPath();c.arc(q[0],q[1],9,0,6.283);c.fillStyle=rgba(col,.18);c.fill();c.beginPath();c.arc(q[0],q[1],4,0,6.283);c.fillStyle=col;c.fill()}}
+  const rt=ROUTES[L.id];if(rt&&o.path>0){c.lineWidth=1.6;
+    rt.to.forEach((dst,k)=>{const prog=clamp01(o.path*1.5-k*.12);if(prog<=0)return;const n=Math.max(2,Math.round(48*prog));let last=null;
       c.globalAlpha=.9;c.strokeStyle=col;c.setLineDash([2,5]);c.lineCap='round';c.beginPath();
       for(let s=0;s<=n;s++){const [lo,la]=gcPoint(rt.from,dst,prog*s/n);const q=P(lo,la);if(q[2]<=0){last=null;continue}if(last)c.lineTo(q[0],q[1]);else c.moveTo(q[0],q[1]);last=q}c.stroke();c.setLineDash([]);
       if(last&&prog<1){c.beginPath();c.arc(last[0],last[1],3.5,0,6.283);c.fillStyle=col;c.fill()}
       if(prog>=1){const q=P(dst.lon,dst.lat);if(q[2]>0&&on(q[0],q[1])){c.globalAlpha=1;for(let m=0;m<7;m++){const a=m*2.4,r=4+m*1.6;c.beginPath();c.arc(q[0]+Math.cos(a)*r,q[1]+Math.sin(a)*r,1.8,0,6.283);c.fillStyle=col;c.fill()}
         c.font='12px "IBM Plex Mono",monospace';c.fillStyle=C.fg;c.fillText(dst.n,q[0]+14,q[1]+4+(dst.dy||0))}}});
-    const o=P(rt.from.lon,rt.from.lat);if(o[2]>0&&cam.z<6){c.globalAlpha=1;c.font='12px "IBM Plex Mono",monospace';c.fillStyle=C.muted;c.fillText(rt.from.n,o[0]+8,o[1]-8)}}
-  c.globalAlpha=1;
-  const hud=SX.el.querySelector('.sx-hud'),v=seriesAt(L,'can',year);hud.querySelector('.y').textContent=year;
+    const f=P(rt.from.lon,rt.from.lat);if(f[2]>0&&z<6){c.globalAlpha=1;c.font='12px "IBM Plex Mono",monospace';c.fillStyle=C.muted;c.fillText(rt.from.n,f[0]+8,f[1]-8)}}
+  c.globalAlpha=1}
+function drawStoryMap(cam){const W=SX.W,H=SX.H;if(!W)return;const L=LANGS[SX.lang];const narrow=W<820;
+  drawMapCore(SX.ctx,W,H,{lon:cam.lon,lat:cam.lat,z:cam.z,R:Math.min(W,H)*.42*cam.z,cx:narrow?W/2:W*.6,cy:narrow?H*.4:H*.5,year:cam.year,lang:SX.lang,path:cam.path||0,critA:.32,critR:1.05,markers:false});
+  const year=Math.round(cam.year),hud=SX.el.querySelector('.sx-hud'),v=seriesAt(L,'can',year);hud.querySelector('.y').textContent=year;
   hud.querySelector('.k').innerHTML=v.kind==='meas'?'<i class="dot" style="color:var(--fg)"></i>Measured':v.kind==='before'?'<i class="ring" style="color:var(--muted);border-style:dashed"></i>Before the first count':`<i class="dot" style="color:var(--fg);opacity:.4"></i>Estimated · ${fmt(v.v)} speakers`}
 function regionModel(L,y){const R=REG[L.id];const can=seriesAt(L,'can',y),daily=seriesAt(L,'daily',y);
   const usesDaily=!!daily;const solidShare=usesDaily?daily.share:can.share,paleShare=usesDaily?can.share:0;
@@ -1041,4 +1069,5 @@ function closeStory(){const el=$('#story');el.classList.add('fade');SX.ro&&SX.ro
 
 /* ============ boot ============ */
 renderLegend();updateCounter();updateYearNote();resize();connect();
+if(!reduce)setTimeout(()=>{if(S.mode==='globe'&&S.year===Y0&&!S.playing)togglePlay(true)},1200);
 </script>
