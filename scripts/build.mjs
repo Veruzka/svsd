@@ -6,6 +6,7 @@ const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = f => fs.readFileSync(path.join(root, f), 'utf8');
 const page = read('src/page.html')
   .replace('/*__CRIT__*/', read('src/data/critical.json').trim())
-  .replace('/*__GRIDS__*/', read('src/data/grids.json').trim());
+  .replace('/*__GRIDS__*/', read('src/data/grids.json').trim())
+  .replace(/\/\*__FILE:([^*]+?)__\*\//g, (m, f) => read(f).trim());
 fs.writeFileSync(path.join(root, 'index.html'), page);
 console.log('Wrote index.html (' + Math.round(page.length / 1024) + ' KB)');
