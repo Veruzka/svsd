@@ -301,17 +301,17 @@ header.top>*{pointer-events:auto}
 .sx-news .sx-fig{position:absolute;left:0;top:0;width:100%}
 .sx-news .sx-fig>img{width:100%;height:auto;max-width:none}
 .pet-pages{display:flex;align-items:flex-start;gap:14px}
-.pet-pages img{display:block;width:calc((100vh - 100px)*1506/2636);height:auto;box-shadow:var(--shadow)}
+.pet-pages img{display:block;height:calc(100vh - 100px);width:auto;box-shadow:var(--shadow)}
+.pet-pages .pg2 img.pet-tot{position:absolute;inset:0;width:100%;height:100%;box-shadow:none;opacity:0;transition:opacity 1.6s ease .4s}
+.pg2.signed img.pet-tot{opacity:1}
 .pg2{position:relative}
-.pet-slot{position:absolute;left:55.4%;width:38.6%;top:94.3%;height:2.6%;border:1px dashed rgba(154,59,43,.55);border-radius:2px;animation:slot 2.4s ease-in-out infinite}
+.pet-slot{position:absolute;left:56.3%;width:36%;top:86%;height:2.5%;border:1px dashed rgba(154,59,43,.55);border-radius:2px;animation:slot 2.4s ease-in-out infinite}
 .pg2.signed .pet-slot{display:none}
 @keyframes slot{50%{opacity:.25}}
-.pet-no{position:absolute;left:49.6%;width:5.4%;top:94.1%;height:2.8%;display:grid;place-items:center;font-family:var(--serif);font-style:italic;font-size:clamp(13px,1.9vh,22px);color:#2a2a44;mix-blend-mode:multiply;opacity:0;filter:blur(2px);transition:opacity 1.2s ease .5s,filter 1.2s ease .5s}
-.pet-name{position:absolute;left:55.6%;width:38.2%;top:92.8%;height:5.4%;display:flex;align-items:center;color:#23263f;font-family:var(--serif);font-style:italic;line-height:1;white-space:nowrap;mix-blend-mode:multiply;opacity:0;filter:blur(3px);transition:opacity 1.4s ease,filter 1.4s ease}
+.pet-name{position:absolute;left:56.6%;width:35.6%;top:85.2%;height:3.4%;display:flex;align-items:center;color:#23263f;font-family:var(--serif);font-style:italic;line-height:1;white-space:nowrap;mix-blend-mode:multiply;opacity:0;filter:blur(3px);transition:opacity 1.4s ease,filter 1.4s ease}
 .pet-name img{height:100%;width:auto;max-width:100%;box-shadow:none;object-fit:contain;object-position:left center}
 .pg2.signed .pet-name{opacity:.93;filter:blur(.2px)}
-.pg2.signed .pet-no{opacity:.9;filter:blur(.15px)}
-.pcount{font-variant-numeric:tabular-nums}
+.pg2.signed .pcount{font-variant-numeric:tabular-nums}
 .sx-card.sig-card{margin-top:30vh}
 .sig{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
 .sig .tabs{display:flex;gap:14px;margin-bottom:8px}
@@ -325,6 +325,7 @@ header.top>*{pointer-events:auto}
 .sx-yr{position:absolute;right:max(28px,env(safe-area-inset-right,0px));bottom:28px;text-align:right;pointer-events:none;z-index:2;background:color-mix(in srgb,var(--bg) 78%,transparent);padding:6px 16px 8px;border-radius:6px}
 .sx-yr .y{font-family:var(--serif);font-size:clamp(44px,6vw,84px);line-height:.95;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .sx-yr .k{margin-top:6px}
+.sx-pet .sx-yr{bottom:auto;top:84px;right:auto;left:max(28px,env(safe-area-inset-left,0px));text-align:left}
 .m2-yr{opacity:0;background:none;padding:0}
 @media (max-width:820px){.sx-yr{bottom:16px;right:16px}.sx-yr .y{font-size:40px}}
 .sx-steps{position:relative;z-index:1}
@@ -1228,7 +1229,7 @@ function sceneHTML(L,s,i){
      <svg class="line" viewBox="0 0 ${W2} 56"><line x1="14" x2="${W2-14}" y1="22" y2="22" stroke="${C.faint}" stroke-width="2" stroke-dasharray="2 6" stroke-linecap="round" pathLength="100"/><circle cx="14" cy="22" r="6" fill="${g.a.k==='meas'?C.fg:C.bg}" stroke="${C.fg}" stroke-width="1.5"/><circle cx="${W2-14}" cy="22" r="6" fill="${g.b.k==='meas'?C.fg:C.bg}" stroke="${C.fg}" stroke-width="1.5"/><text x="14" y="50">${g.from} · ${fmt(g.a.v)}</text><text x="${W2-14}" y="50" text-anchor="end">${g.to} · ${fmt(g.b.v)}</text></svg>
      <div data-gapvis="${g.id}" data-lang="${L.id}">${gapHyps(g,true)}</div><div><button class="btn ghost sm" data-opengap="${g.id}">Confirm, correct or add to these</button></div></div></div>`}
   if(s.t==='news')return`<div class="sx-scene sx-news" data-sc="${i}"><figure class="sx-fig"><img src="picture_local/newspaper1_web.jpg" alt="Ka Hōkū o Hawaiʻi, Hilo, 10 July 1924"></figure>${s.yr?`<div class="sx-yr"><div class="y">${s.yr}</div><div class="k mono">${esc(s.yk||'')}</div></div>`:''}</div>`;
-  if(s.t==='pet')return`<div class="sx-scene sx-pet" data-sc="${i}"><div class="pet-pages"><img class="pg1" src="picture_local/sign1.jpg" alt="First page of the 1897 Kūʻē petition against annexation"><div class="pg2"><img src="picture_local/sign2_ext.jpg" alt="Second page of the petition, with a blank row at the end"><div class="pet-slot" aria-hidden="true"></div><span class="pet-no" aria-hidden="true">51</span><div class="pet-name"></div></div></div>${s.yr?`<div class="sx-yr"><div class="y">${s.yr}</div><div class="k mono">${esc(s.yk||'')}</div></div>`:''}</div>`;
+  if(s.t==='pet')return`<div class="sx-scene sx-pet" data-sc="${i}"><div class="pet-pages"><img class="pg1" src="picture_local/sign1.jpg" alt="A page of the 1897 Kūʻē petition against annexation"><div class="pg2"><img src="picture_local/sign3.jpg" alt="A page of the women’s Kūʻē petition against annexation, 43 signatures"><img class="pet-tot" src="picture_local/sign3_44.jpg" alt="" aria-hidden="true"><div class="pet-slot" aria-hidden="true"></div><div class="pet-name"></div></div></div>${s.yr?`<div class="sx-yr"><div class="y">${s.yr}</div><div class="k mono">${esc(s.yk||'')}</div></div>`:''}</div>`;
   if(s.t==='wa')return`<div class="sx-scene sx-wa" data-sc="${i}"><div class="a1">
     <canvas class="wa-rays" aria-hidden="true"></canvas>
     <div class="dir n">Mauka<small>toward the mountains</small></div>
