@@ -30,7 +30,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .ring{display:inline-block;width:8px;height:8px;border-radius:50%;border:1.5px solid currentColor;flex:none}
 
 /* ---------- app frame ---------- */
-#app{position:relative;height:100%;display:grid;grid-template-columns:minmax(0,1fr) 0;grid-template-rows:minmax(0,1fr) auto;transition:grid-template-columns .5s ease}
+#app{position:relative;height:100%;display:grid;grid-template-columns:minmax(0,1fr) 0;grid-template-rows:minmax(0,1fr) auto;transition:grid-template-columns .7s cubic-bezier(.22,.61,.36,1)}
 #app.region{grid-template-columns:minmax(0,1fr) min(440px,38vw)}
 #stage{position:relative;grid-column:1;grid-row:1;min-height:0;overflow:hidden}
 #map{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
@@ -94,7 +94,8 @@ header.top>*{pointer-events:auto}
 #pop .src{margin-top:10px}
 
 /* ---------- panel ---------- */
-#panel{grid-column:2;grid-row:1/3;border-left:1px solid var(--line);background:var(--surface);overflow:auto;min-width:0;position:relative;z-index:4}
+#panel{grid-column:2;grid-row:1/3;border-left:1px solid var(--line);background:var(--surface);overflow-x:hidden;overflow-y:auto;min-width:0;position:relative;z-index:4}
+@media (min-width:821px){#panel .in,#panel .ctas{width:min(440px,38vw);box-sizing:border-box;margin-left:auto}}
 #panel .in{padding:28px 30px 120px;display:grid;gap:22px}
 #panel h2{font-family:var(--serif);font-weight:400;font-size:38px;line-height:1.05;margin:0;text-wrap:balance}
 #panel h2 em{color:var(--muted);font-style:normal}
@@ -243,6 +244,7 @@ header.top>*{pointer-events:auto}
 .end h2{font-family:var(--serif);font-weight:400;font-size:clamp(32px,4vw,48px);line-height:1.1;margin:0;text-wrap:balance}
 .end p{font-family:var(--serif);font-size:20px;line-height:1.6;margin:0}
 .end .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}
+.end .sec{margin-top:18px}
 /* modal */
 .modal{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 55%,transparent);backdrop-filter:blur(3px);padding:20px max(16px,env(safe-area-inset-right,0px)) 20px max(16px,env(safe-area-inset-left,0px))}
 .sheet{width:min(620px,100%);max-height:calc(100vh - 40px);overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:28px;position:relative;box-sizing:border-box;display:grid;gap:18px}
@@ -558,7 +560,7 @@ const bins=new Array(Math.ceil((Y1-Y0)/5)).fill(0);CRIT.forEach(d=>{if(d[3]===4&
 
 /* ============ map canvas ============ */
 const cv=$('#map'),ctx=cv.getContext('2d');let W=0,H=0,DPR=1,dirty=true;
-function resize(){const r=cv.getBoundingClientRect();DPR=Math.min(2,devicePixelRatio||1);W=r.width;H=r.height;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);S.R=Math.max(140,Math.min(W*.42,(H-(W<820?120:210))/2));dirty=true;renderTrack()}
+function resize(){const r=cv.getBoundingClientRect();DPR=Math.min(2,devicePixelRatio||1);W=r.width;H=r.height;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);S.R=Math.max(140,Math.min(W*.42,(H-(W<820?120:210))/2));renderTrack();if(W&&!(SX.el&&!SX.el.hidden)){drawMain();dirty=false}else dirty=true}
 new ResizeObserver(resize).observe($('#stage'));
 let sinP0,cosP0;
 function setCenter(){sinP0=Math.sin(S.cLat*RAD);cosP0=Math.cos(S.cLat*RAD)}
@@ -749,8 +751,6 @@ function renderPanel(){const L=LANGS[S.lang];const p=$('#panel');const crit=L.gl
    <div class="now" id="now"></div>
    <div class="sec chart"><div class="head"><span class="cap">Speakers over time</span><span class="mono">log scale</span></div><div id="pchart"></div>
      <div class="mono" style="display:flex;gap:14px;flex-wrap:wrap"><span><i class="dot" style="color:var(--fg)"></i> measured</span><span><i class="ring" style="color:var(--fg)"></i> estimate</span><span>┄ assumed between counts</span></div></div>
-   <div class="sec"><div class="head"><span class="cap">What fades with it</span></div><div class="lost" id="lost">${L.lost.map((x,i)=>`<div class="it" data-i="${i}"><span class="cap k">${x.k}</span><span class="w">${esc(x.w)}</span><span class="m">${esc(x.m)}</span></div>`).join('')}</div></div>
-   <div class="sec"><div class="head"><span class="cap">Gaps in the record</span><span class="mono">${L.gapList.length} found</span></div><div class="gaps" id="gaps"></div></div>
    <div class="sec"><div class="head"><span class="cap">From the community</span></div><div id="comm"></div></div>
   </div><div class="ctas"><button class="btn" id="readBtn"><span class="dot"></span>Read the story</button><button class="btn ghost" id="addBtn">Add your story</button></div>`;
   p.querySelector('.close').onclick=()=>toWorld();p.querySelector('#readBtn').onclick=()=>openStory(L.id);p.querySelector('#addBtn').onclick=()=>openForm({lang:L.id});
@@ -759,13 +759,12 @@ function updatePanelYear(){const L=LANGS[S.lang];if(!L||!$('#now'))return;const 
   const k=v.kind==='meas'?'Measured':v.kind==='est'?'Estimate':v.kind==='interp'?'Estimated':v.kind==='before'?'Before the first count':'Latest count';
   $('#now').innerHTML=`<span class="cap">${S.year} · ${k}</span><div class="big">${v.kind==='meas'?'':'~'}${fmt(v.v)} <small>${esc(L.unit)} · ${(v.share*100).toFixed(v.share<.01?1:0)}%</small></div>${d?`<div class="mono">${d.kind==='meas'?'':'~'}${fmt(d.v)} spoke it daily outside school</div>`:''}<div class="mono">${esc(v.a.src)}</div>`;
   $('#pchart').innerHTML=chartSVG(L,{id:'p',yearLine:true});
-  const peak=L.series[0].pts[0].v/L.series[0].pts[0].pop;const share=(d||v).share;const f=Math.max(0,Math.min(1,share/peak));
-  document.querySelectorAll('#lost .it').forEach((el,i)=>{const th=(i+1)/(L.lost.length+1)*.5;el.style.opacity=f<th*.5?.22:f<th?.55:1;el.style.filter=f<th*.5?'blur(.6px)':'none'})}
+}
 
 /* ============ community rendering ============ */
-function refreshCommunity(){if(S.mode==='region'&&$('#gaps'))renderGaps();if(S.mode==='region'&&$('#comm'))renderComm();if(!$('#modal').hidden&&openGapId)renderGapSheet();document.querySelectorAll('[data-gapvis]').forEach(el=>{el.innerHTML=gapHyps(LANGS[el.dataset.lang].gapList.find(g=>g.id===el.dataset.gapvis),true)});if(SX.el)SX.i=-1,storyTick()}
-function renderGaps(){const L=LANGS[S.lang];$('#gaps').innerHTML=L.gapList.map(g=>`<button class="gapbtn" data-g="${g.id}"><svg width="28" height="10" aria-hidden="true"><line x1="2" x2="26" y1="5" y2="5" stroke="currentColor" stroke-dasharray="1.5 3.5" stroke-linecap="round" stroke-width="1.6"/></svg><span><b>${esc(gapTitle(g))}</b><span class="mono">${g.from}–${g.to}</span></span>${stateHTML(gapState(g))}</button>`).join('');
-  $('#gaps').onclick=e=>{const b=e.target.closest('[data-g]');if(b)openGap(L.gapList.find(g=>g.id===b.dataset.g))}}
+function refreshCommunity(){const sg=document.querySelector('#sGaps');if(sg&&SX.lang)renderGaps(LANGS[SX.lang],sg);if(S.mode==='region'&&$('#comm'))renderComm();if(!$('#modal').hidden&&openGapId)renderGapSheet();document.querySelectorAll('[data-gapvis]').forEach(el=>{el.innerHTML=gapHyps(LANGS[el.dataset.lang].gapList.find(g=>g.id===el.dataset.gapvis),true)});if(SX.el)SX.i=-1,storyTick()}
+function renderGaps(L,el){el.innerHTML=L.gapList.map(g=>`<button class="gapbtn" data-g="${g.id}"><svg width="28" height="10" aria-hidden="true"><line x1="2" x2="26" y1="5" y2="5" stroke="currentColor" stroke-dasharray="1.5 3.5" stroke-linecap="round" stroke-width="1.6"/></svg><span><b>${esc(gapTitle(g))}</b><span class="mono">${g.from}–${g.to}</span></span>${stateHTML(gapState(g))}</button>`).join('');
+  el.onclick=e=>{const b=e.target.closest('[data-g]');if(b)openGap(L.gapList.find(g=>g.id===b.dataset.g))}}
 const EXAMPLES={ga:[{type:'voice',title:'Counting rhyme, as my grandmother said it',when:'1950s · Conamara'},{type:'text',title:'Why my great-grandfather stopped speaking Irish in Boston',when:'1890s · Boston'}],
  haw:[{type:'voice',title:'Mele my tūtū sang while cooking',when:'1940s · Molokaʻi'},{type:'photo',title:'Pūnana Leo first class',when:'1985 · Hilo'}]};
 function renderComm(){const L=LANGS[S.lang];const mine=store.stories.filter(s=>s.lang===L.id||s.langName===L.name).sort((a,b)=>(b.at||0)-(a.at||0));
@@ -1035,11 +1034,13 @@ function openStory(id){const L=LANGS[id],ST=STORIES[id];const el=$('#story');tog
     <div class="sx-hud off"><div class="y"></div><div class="k mono"></div><div class="lg mono"><span><i class="dot" style="color:var(${L.color})"></i>${id==='ga'?'speaks Irish':'speaks Hawaiian'}</span>${id==='ga'?`<span><i class="ring" style="color:var(${L.color})"></i>can speak, not daily</span>`:''}<span><i class="dot" style="color:var(--faint)"></i>English</span></div></div>
     ${ST.steps.map((s,i)=>sceneHTML(L,s,i)).join('')}</div>
    <div class="sx-steps">${ST.steps.map((s,i)=>`<section class="sx-step" data-i="${i}" style="height:${s.h0||(s.t==='chapter'?130:s.hero?170:160)}vh">${cardHTML(L,ST,s)}</section>`).join('')}</div>
-   <section class="end"><div class="in"><div class="cap">What the census never asked</div><h2>Who spoke ${esc(L.name)} at home, who stopped, and why.</h2><p>Records count people. Families remember the rest: the grandmother who switched to English for her children’s sake, the song only one aunt still knew. Add what you know to the gaps on the timeline.</p>
+   <section class="end"><div class="in"><div class="cap">What the census never asked</div><h2>Who spoke ${esc(L.name)} at home, who stopped, and why.</h2><p>Records count people. Families remember the rest: the grandmother who switched to English for her children’s sake, the song only one aunt still knew. Add what you know to the gaps below.</p>
+    <div class="sec"><div class="head"><span class="cap">What fades with it</span></div><div class="lost">${L.lost.map(x=>`<div class="it"><span class="cap k">${esc(x.k)}</span><span class="w">${esc(x.w)}</span><span class="m">${esc(x.m)}</span></div>`).join('')}</div></div>
+    <div class="sec"><div class="head"><span class="cap">Gaps in the record</span><span class="mono">${L.gapList.length} found</span></div><div class="gaps" id="sGaps"></div></div>
     <div class="row"><button class="btn" id="sAdd"><span class="dot"></span>Add your story</button><button class="btn ghost" id="sOther">Read the ${esc(LANGS[other].name)} story</button><button class="btn ghost" id="sBack">Back to the map</button></div></div></section>`;
   el.hidden=false;el.classList.remove('fade');el.scrollTop=0;initPlates(el);document.body.style.overflow='hidden';
   el.querySelector('#sClose').onclick=closeStory;el.querySelector('#sBack').onclick=closeStory;el.querySelector('#sAdd').onclick=()=>openForm({lang:id});el.querySelector('#sOther').onclick=()=>openStory(other);
-  el.querySelectorAll('[data-opengap]').forEach(b=>b.onclick=()=>openGap(L.gapList.find(g=>g.id===b.dataset.opengap)));
+  el.querySelectorAll('[data-opengap]').forEach(b=>b.onclick=()=>openGap(L.gapList.find(g=>g.id===b.dataset.opengap)));renderGaps(L,el.querySelector('#sGaps'));
   SX.cv=el.querySelector('.sx-map');SX.ctx=SX.cv.getContext('2d');
   SX.ro&&SX.ro.disconnect();SX.ro=new ResizeObserver(()=>{storyMeasure();storyTick()});SX.ro.observe(el.querySelector('.sx-stage'));
   el.onscroll=()=>{if(!SX.raf)SX.raf=requestAnimationFrame(()=>{SX.raf=0;storyTick()})};storyMeasure();storyTick()}
