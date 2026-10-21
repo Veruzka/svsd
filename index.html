@@ -742,7 +742,7 @@ function openLang(id){hideTip(true);closePop();if(S.mode==='region'&&S.lang===id
   fly(3600,()=>[...bboxCenter(L),fitZ(L),1],landRegion)}
 function landRegion(){S.mode='region';$('#app').classList.add('timeon');FACT.off=false;FACT.id=undefined;const L=LANGS[S.lang];$('#crumb').hidden=false;$('#crumbHere').textContent=L.place;
   renderLegend();renderTrack();updateYearNote();dirty=true;showLangIntro(L,openPanel)}
-function openPanel(){if(S.mode!=='region')return;$('#app').classList.add('region');$('#panel').hidden=false;renderPanel()}
+function openPanel(){if(S.mode!=='region')return;$('#app').classList.add('region');$('#panel').hidden=false;renderPanel();FACT.id=undefined;updateFact()}
 function toWorld(done){if(S.mode==='globe'||S.flying)return;hideLangIntro(true);FACT.off=false;$('#pop').classList.remove('on');
   togglePlay(false);$('#app').classList.remove('region','timeon');$('#panel').hidden=true;$('#crumb').hidden=true;S.mode='zoom';S.year=Y1;
   fly(2400,()=>[S.cLon,24,1,0],()=>{S.mode='globe';S.lang=null;$('#app').classList.remove('away');renderLegend();renderTrack();updateYearNote();done&&done()})}
@@ -814,7 +814,8 @@ function factHTML(L,f){
       <div class="row">${dl}<span class="mono">${sh<.01?(sh*100).toFixed(1):Math.round(sh*100)}% of everyone counted</span></div>
       <div class="d20" aria-hidden="true">${Array.from({length:20},(_,i)=>`<i style="${i<n?`background:var(${L.color})${p.k==='meas'?'':';opacity:.5'}`:''}"></i>`).join('')}</div><div class="mono src">${esc(p.src)}</div></div>`}
   const g=f.g;return`<div class="fc gp"><div class="cap">┄ ${g.from} → ${g.to} · Gap in the record</div><h5>${esc(gapTitle(g))}</h5><div class="row">${stateHTML(gapState(g))}</div><div><button class="linkish" type="button" data-gapopen="${g.id}">See possible reasons →</button></div></div>`}
-function updateFact(){const pop=$('#pop');if(S.mode!=='region'||!S.lang||!TX){pop.classList.remove('on');FACT.id=undefined;return}
+// Waits until the language intro has cleared (the panel opens then), so the card never shows through the intro.
+function updateFact(){const pop=$('#pop');if(S.mode!=='region'||!S.lang||!TX||$('#panel').hidden){pop.classList.remove('on');FACT.id=undefined;return}
   const L=LANGS[S.lang],f=activeFact(L,S.year),id=f?f.id:null;if(id===FACT.id)return;FACT.id=id;FACT.kind=f&&f.k;
   track.querySelectorAll('.mk.on').forEach(m=>m.classList.remove('on'));
   if(f&&f.k!=='gap'){const m=track.querySelector(f.k==='ev'?`[data-ev="${f.y}"]`:`[data-pt="${f.y}"]`);if(m)m.classList.add('on')}
