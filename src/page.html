@@ -27,6 +27,7 @@
 html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5;overflow:hidden;-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit;cursor:pointer}
+:root{color-scheme:light}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .mono{font-family:var(--mono);font-size:12px;letter-spacing:.02em;color:var(--muted)}
 .cap{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -586,6 +587,16 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
 .sheet .q{font-size:15.5px}
 /* revision: discrete timeline, visible key, community tiles */
 #track:focus,#track:focus-visible{outline:none}
+.sx-hud .lg span{display:inline-flex;align-items:center;gap:7px}
+.lphoto{margin:0;width:min(100%,62vh,520px);aspect-ratio:1;border-radius:4px;overflow:hidden;align-self:center;justify-self:center;background:var(--paper)}
+.lphoto img{width:100%!important;height:100%!important;object-fit:cover;object-position:50% 50%}
+.sig-row .btn,.sig .tabs button{font-family:var(--serif);font-style:italic;font-weight:400;font-size:15px;letter-spacing:0}
+.sx-card.map-card{position:sticky;top:50%;transform:translateY(-50%)}
+.m2-stage{width:max(100vw,calc(100vh*1.2541))!important}
+.sx-yr .k{text-transform:uppercase;letter-spacing:.08em}
+.sx-doc .notes{gap:0;margin-top:26px;border-top:1px solid color-mix(in srgb,var(--ink) 18%,transparent)}
+.sx-doc .note{gap:14px;align-items:baseline;font-family:var(--serif);font-size:15px;line-height:1.5;padding:10px 0;border-bottom:1px solid color-mix(in srgb,var(--ink) 18%,transparent)}
+.sx-doc .note .n{border:0;border-radius:0;width:auto;height:auto;display:inline;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:color-mix(in srgb,var(--ink) 60%,transparent)}
 #panel .sec.chart{margin-bottom:16px}
 #time{grid-template-columns:178px 80px minmax(0,1fr)}
 .tnav{display:flex;gap:8px;margin:8px 0 0}
@@ -601,14 +612,16 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
 #track{cursor:grab}
 .brand b{font-size:26px}
 .brand b{transition:opacity .4s}
-#app.away:not(.landed) .brand b{opacity:0;pointer-events:none}
+#app.away:not(.region) .brand b{opacity:0;pointer-events:none}
+#legend{transition:opacity .4s}
+#app:not(.region) #legend{opacity:0;pointer-events:none}
 #crumb{display:none!important}
 #side .sub{display:none}
 .chip[tabindex]{cursor:default}
 #wkey{top:72px}
 .wkbtn{display:none}
 #wkeyPop{position:static;opacity:1;transform:none;pointer-events:auto;width:240px;padding:0;background:none;border:0;box-shadow:none}
-#wkeyPop{gap:7px;width:170px;font:400 10.5px var(--mono);color:var(--muted)}
+#wkeyPop{gap:7px;width:158px;font:400 10.5px var(--mono);color:var(--muted)}
 #wkeyPop .cap{font-size:10.5px;margin-bottom:2px}
 #wkeyPop .krow{grid-template-columns:7px minmax(0,1fr) auto;gap:8px;align-items:center}
 #wkeyPop .krow .dot,#wkeyPop .krow .ring{width:7px;height:7px;margin-top:0}
@@ -616,7 +629,7 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
 #wkeyPop .krow small{display:none}
 #wkeyPop .krow .n{font:400 10.5px var(--mono);color:var(--muted);padding-top:0}
 #wkeyPop .src{display:none}
-@media (min-width:821px){.search{width:min(360px,100%)}.search input[type=text]{height:42px;border-radius:21px;font-size:14px;padding-left:44px}.search svg{left:17px;top:13px}#results{bottom:52px}}
+@media (min-width:821px){.search{width:min(390px,100%)}.search input[type=text]{height:46px;border-radius:23px;font-size:14.5px;padding-left:46px}.search svg{left:18px;top:15px}#results{bottom:56px}}
 #wkeyPop .src a{color:var(--fg);text-decoration-color:var(--faint)}
 #pop{width:300px}
 #pop .x{background:var(--surface);z-index:1}
@@ -699,6 +712,7 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}}
 </style>
 
+<script>document.documentElement.setAttribute('data-theme','light')</script>
 <div id="app">
   <div id="stage">
     <canvas id="bg" aria-hidden="true"></canvas>
@@ -884,9 +898,10 @@ haw:{id:'haw',name:'Hawaiian',endo:'ʻŌlelo Hawaiʻi',place:'Hawaiʻi',color:'-
 LANGS.ga.intro={q:'Is fearr Gaeilge bhriste ná Béarla cliste.',tr:'Broken Irish is better than clever English.',attr:'Seanfhocal · Irish proverb',
   cap:'Portrait slot · a native speaker from Conamara or Corca Dhuibhne, photographed by family',voice:'a native speaker reads the proverb',dur:24,
   stat:'<b>1,524,286</b> people could speak Irish in 1851. <b>71,968</b> speak it every day today.'};
+LANGS.haw.audio='audio/haw-proverb.wav';
 LANGS.haw.intro={q:'I ka ʻōlelo nō ke ola; i ka ʻōlelo nō ka make.',tr:'In language there is life; in language there is death.',attr:'ʻŌlelo noʻeau · Hawaiian proverb',
-  cap:'Portrait slot · a kupuna who spoke Hawaiian, photographed by family',voice:'a mānaleo (native speaker) reads the proverb',dur:22,
-  stat:'About <b>70,000</b> people spoke Hawaiian in 1853. In 1983, fewer than <b>50</b> children did.'};
+  cap:'Portrait slot · a kupuna who spoke Hawaiian, photographed by family',photo:'img/haw-family.jpg',voice:'a mānaleo (native speaker) reads the proverb',
+  dur:4.2,stat:'About <b>70,000</b> people spoke Hawaiian in 1853. In 1983, fewer than <b>50</b> children did.'};
 
 // Photo slots for the timeline's fact cards (suggested archival images; drop a real photo onto a slot to preview it).
 const EV_IMG={ga:{1845:['group','“Bridget O’Donnell and her children”, Illustrated London News, 1849 · public domain'],1893:['group','A Gaelic League Irish class, c. 1900s · National Library of Ireland'],1922:['page','Constitution of the Irish Free State, 1922, Irish-language text'],1972:['portrait','Raidió na Gaeltachta studio, Casla, 1972 · RTÉ Archives']},
@@ -993,7 +1008,8 @@ function rmShow(id){if(!window.d3||!id)return;RM.lang=id;if(id==='haw'&&!RM.us){
 function rmHide(){RM.on=false;RM.vw=0;RM.pending=false;RM.hov=null;$('#app').classList.remove('rmapon');$('#rtip').hidden=$('#rring').hidden=true}
 function rmBuild(id){const m={...regionBox()},lg=$('#legend').getBoundingClientRect(),sr=RM.cv.getBoundingClientRect();if(innerWidth>820&&lg.width)m.l=Math.max(m.l,lg.right-sr.left+16);m.r+=RM.padR||0;m.b+=RM.padB||0;if(id==='ga'){m.t-=40;m.b-=34;m.r+=52;m.l-=80}RM.geo=rmGeo(id,RM.W,RM.H,m)}
 // story maps: the same dots, built once at a fixed size and re-projected by the story camera
-function rmStoryGeo(id){RM.sg=RM.sg||{};if(RM.sg[id])return RM.sg[id];if(!window.d3||(id==='haw'&&!RM.us))return null;try{RM.sg[id]=rmGeo(id,1000,1000,{l:10,r:10,t:16,b:10})}catch(e){return null}return RM.sg[id]}
+function rmStoryGeo(id){if(RM.geo&&RM.geo.id===id)return RM.geo;RM.sg=RM.sg||{};if(RM.sg[id])return RM.sg[id];if(!window.d3||(id==='haw'&&!RM.us))return null;
+  const W=innerWidth,H=innerHeight,m={...regionBox()};m.l=Math.max(m.l,270);m.r+=Math.min(400,W*.38);m.b+=150;if(id==='ga'){m.t-=40;m.b-=34;m.r+=52;m.l-=80}try{RM.sg[id]=rmGeo(id,W,H,m)}catch(e){return null}return RM.sg[id]}
 function rmGeo(id,W,H,m){const ext=[[m.l,m.t],[W-m.r,H-m.b]],ga=id==='ga';
   const feats=ga?RMD.ga.cty.features:[RM.us];const proj=d3.geoMercator().fitExtent(ext,ga?RMD.ga.cty:{type:'MultiPoint',coordinates:[[-160.3,22.3],[-154.8,18.9]]});
   const cc=document.createElement('canvas');cc.width=Math.ceil(W);cc.height=Math.ceil(H);const cx=cc.getContext('2d',{willReadFrequently:true}),cp=d3.geoPath(proj,cx);
@@ -1061,8 +1077,8 @@ function gcx(){return GX}function gcy(){return GY}
 // Globe as large as the space allows: left of it the title column (desktop) or above it (phone), below it the search.
 function layoutGlobe(){const find=$('#find'),side=$('#side'),fh=find.offsetHeight||150;let R;
   if(W<820){const top=side.offsetTop+side.offsetHeight+18;R=Math.max(120,Math.min(W/2-14,(H-top-fh-40)/2));GX=W/2;GY=top+R}
-  else{const gap=36,sh=find.querySelector('.search').offsetHeight||42;R=Math.max(150,Math.min(H*.34,W*.24,(H-gap-sh-60)/2));GX=W/2;GY=(H-(2*R+gap+sh))/2+R}
-  S.R=R;find.style.left=GX+'px';find.style.top=(W<820?GY+R+14:GY+R+36)+'px'}
+  else{const gap=46,sh=find.querySelector('.search').offsetHeight||46;R=Math.max(150,Math.min(H*.34,W*.24,(H-gap-sh-60)/2));GX=W/2;GY=(H-(2*R+gap+sh))/2+R}
+  S.R=R;find.style.left=GX+'px';find.style.top=(W<820?GY+R+14:GY+R+46)+'px'}
 function proj(lon,lat,R){const l=(lon-S.cLon)*RAD,p=lat*RAD,cp=Math.cos(p),sp=Math.sin(p),cl=Math.cos(l);
   return[gcx()+R*cp*Math.sin(l),gcy()-R*(cosP0*sp-sinP0*cp*cl),sinP0*sp+cosP0*cp*cl]}
 let hits=[];
@@ -1167,7 +1183,7 @@ function animate(ms,step,done){if(reduce){step(1);done&&done();return}const t0=p
 function fly(ms,target,done,near){const l0=S.cLon,p0=S.cLat,z0=S.z,k0=S.k;S.flying=true;dirty=true;let nearDone=!near;
   animate(ms,t=>{if(!nearDone&&t>=.72){nearDone=true;near()}const [tl,tp,tz,tk]=target();const dl=((tl-l0+540)%360)-180,a=ease(Math.min(1,t/.62)),e=sine(Math.max(0,(t-.06)/.94));
     S.cLon=l0+dl*a;S.cLat=p0+(tp-p0)*a;S.z=Math.exp(Math.log(z0)+(Math.log(tz)-Math.log(z0))*e);S.k=k0+(tk-k0)*e;dirty=true},()=>{S.flying=false;dirty=true;if(!nearDone)near();done&&done()})}
-function openLang(id){hideTip(true);closePop();if(S.mode==='region'&&S.lang===id)return;
+function openLang(id){hideTip(true);if(LANGS[id])preloadVoice(LANGS[id]);closePop();if(S.mode==='region'&&S.lang===id)return;
   if(S.mode!=='globe'){toWorld(()=>openLang(id));return}
   const L=LANGS[id];togglePlay(false);S.lang=id;S.mode='zoom';$('#app').classList.add('away');
   setYear(L.series[0].pts[0].y);S.introDone=false;
@@ -1315,7 +1331,7 @@ function renderPanel(){const L=LANGS[S.lang];const p=$('#panel');const crit=L.gl
    <div class="sec chart"><div class="head"><span class="cap">Speakers over time</span><span class="mono">log scale</span></div><div id="pchart"></div>
      </div>
    <div class="sec"><div class="head"><span class="cap">From the community</span></div><div id="comm"></div></div>
-  </div><div class="ctas"><button class="btn accent" id="addBtn"><span class="dot"></span>Add your story</button><button class="btn ghost" id="readBtn">Read the story</button></div>`;
+  </div><div class="ctas"><button class="btn accent" id="readBtn"><span class="dot"></span>Read the story</button><button class="btn ghost" id="addBtn">Add your story</button></div>`;
   p.querySelector('.close').onclick=()=>toWorld();p.querySelector('#readBtn').onclick=()=>openStory(L.id);p.querySelector('#addBtn').onclick=()=>openForm({lang:L.id});
   p.scrollTop=0;updatePanelYear();refreshCommunity()}
 function updatePanelYear(){const L=LANGS[S.lang];if(!L||!$('#now'))return;const v=seriesAt(L,'can',S.year),d=seriesAt(L,'daily',S.year);
@@ -1450,11 +1466,17 @@ function initPlates(root){root.querySelectorAll('.plate').forEach(initPlate)}
 /* ============ language intro ============ */
 // Shown after the zoom lands. The voice note plays on its own; the red line follows it, and when it ends the intro fades into the map.
 const LI={el:$('#lintro'),done:null,t0:0,paused:false,fading:false,closing:false,raf:0,ft:0,audio:null,playing:false,pos:0,pt0:0,dur:0};
-const FADE=4000;
+const FADE=4000,VOICE_RATE=.8; // voice notes play slightly slower, pitch kept
 const PLAY='<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg>',PAUSE='<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 2h3v10H3zM8 2h3v10H8z" fill="currentColor"/></svg>';
 const mmss=s=>{s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
-function showLangIntro(L,done){const I=L.intro,el=LI.el;LI.done=done;LI.fading=LI.closing=LI.playing=LI.ended=false;LI.pos=0;LI.dur=I.dur;
-  el.innerHTML=`<div class="intro"><figure class="plate" data-plate="${L.id}-portrait" data-scene="portrait" data-cap="${esc(I.cap)}" style="margin:0"></figure><div>
+// Safari needs range requests to stream audio; a blob URL avoids that, so voice notes are fetched up front.
+function preloadVoice(L){if(L.audio&&!L._aurl&&!L._afetch){L._afetch=fetch(L.audio).then(r=>r.blob()).then(b=>{L._aurl=URL.createObjectURL(b);return b.arrayBuffer()}).then(buf=>new OfflineAudioContext(1,1,44100).decodeAudioData(buf)).then(ab=>{
+  // the waveform is drawn from the recording itself: RMS per bin, normalised to the loudest bin
+  const d=ab.getChannelData(0),N=240,pk=new Float32Array(N),sz=Math.floor(d.length/N);let mx=0;
+  for(let i=0;i<N;i++){let e=0;for(let j=i*sz;j<(i+1)*sz;j++)e+=d[j]*d[j];pk[i]=Math.sqrt(e/Math.max(1,sz));mx=Math.max(mx,pk[i])}
+  for(let i=0;i<N;i++)pk[i]=mx?pk[i]/mx:0;L._peaks=pk;LI.dur=L===LANGS[S.lang]&&!LI.playing?ab.duration/VOICE_RATE:LI.dur}).catch(()=>{})}}
+function showLangIntro(L,done){const I=L.intro,el=LI.el;preloadVoice(L);LI.done=done;LI.fading=LI.closing=LI.playing=LI.ended=false;LI.pos=0;LI.dur=I.dur;
+  el.innerHTML=`<div class="intro">${I.photo?`<figure class="lphoto" style="margin:0"><img src="${I.photo}" alt="" style="display:block;width:100%;height:auto;filter:grayscale(1)"></figure>`:`<figure class="plate" data-plate="${L.id}-portrait" data-scene="portrait" data-cap="${esc(I.cap)}" style="margin:0"></figure>`}<div>
    <div class="cap">${esc(L.place)} · ${esc(L.endo)}</div>
    <blockquote style="margin-top:18px">${esc(I.q)}<i>${esc(I.tr)}</i></blockquote><div class="mono attr">${esc(I.attr)}</div>
    <div class="vnote"><button class="vplay" type="button" aria-label="Play voice note">${PLAY}</button><canvas class="vwave" aria-hidden="true"></canvas><span class="mono vtime">0:00 / ${mmss(I.dur)}</span></div>
@@ -1463,7 +1485,7 @@ function showLangIntro(L,done){const I=L.intro,el=LI.el;LI.done=done;LI.fading=L
    <div class="go"><button class="lgo back" type="button" id="liWorld">← Back</button><button class="lgo" type="button" id="liBack">Continue →</button></div></div></div><div class="lbar"></div>`;
   initPlates(el);el.style.transition='';el.classList.remove('out','on');el.hidden=false;$('#app').classList.add('lion');
   requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('on')));
-  clearTimeout(LI.st);LI.st=setTimeout(()=>{if(!LI.el.hidden&&!LI.playing&&!LI.ended)toggleVoice(L)},900);
+  clearTimeout(LI.st);LI.st=setTimeout(()=>{if(!LI.el.hidden&&!LI.playing&&!LI.ended)toggleVoice(L)},600);
   el.querySelector('#liBack').onclick=()=>hideLangIntro(false);el.querySelector('#liWorld').onclick=()=>{hideLangIntro(true);if(S.flying)S.backAfter=true;else toWorld()};el.querySelector('.vplay').onclick=()=>toggleVoice(L);
   cancelAnimationFrame(LI.raf);LI.raf=requestAnimationFrame(liTick)}
 function liTick(now){const el=LI.el;if(el.hidden)return;drawVoice(now);
@@ -1476,15 +1498,16 @@ function cancelLiFade(){if(!LI.fading||LI.closing)return;const el=LI.el;clearTim
 function finishLi(){const el=LI.el;$('#app').classList.remove('lion');clearTimeout(LI.ft);clearTimeout(LI.st);el.hidden=true;el.classList.remove('on','out');el.style.transition='';el.innerHTML='';stopVoice();cancelAnimationFrame(LI.raf);const d=LI.done;LI.done=null;d&&d()}
 function hideLangIntro(silent){if(LI.el.hidden)return;if(silent){LI.done=null;finishLi();return}LI.closing=true;startLiFade(600)}
 function toggleVoice(L){if(LI.playing){stopVoice();return}cancelLiFade();LI.ended=false;LI.playing=true;if(LI.pos>=LI.dur)LI.pos=0;LI.pt0=performance.now()-LI.pos*1000;
-  if(L.audio){LI.audio=new Audio(L.audio);LI.audio.currentTime=LI.pos;LI.audio.onloadedmetadata=()=>{LI.dur=LI.audio.duration};LI.audio.onended=()=>{LI.pos=LI.dur;LI.ended=true;stopVoice()};const a=LI.audio;a.play().catch(()=>{if(LI.audio===a)LI.audio=null})}
+  if(L.audio){LI.audio=new Audio(L._aurl||L.audio);LI.audio.preservesPitch=true;LI.audio.playbackRate=VOICE_RATE;LI.audio.currentTime=LI.pos*VOICE_RATE;LI.audio.onloadedmetadata=()=>{LI.dur=LI.audio.duration/VOICE_RATE};LI.audio.onended=()=>{LI.pos=LI.dur;LI.ended=true;stopVoice()};const a=LI.audio;a.play().catch(()=>{if(LI.audio===a){LI.audio=null;stopVoice();LI.pos=0;const b=LI.el.querySelector('.vplay');if(b)b.style.borderColor='var(--accent)'}})}
   const b=LI.el.querySelector('.vplay');if(b){b.innerHTML=PAUSE;b.setAttribute('aria-label','Pause voice note')}}
 function stopVoice(){LI.playing=false;if(LI.audio){LI.audio.pause();LI.audio=null}
   const b=LI.el.querySelector('.vplay');if(b){b.innerHTML=PLAY;b.setAttribute('aria-label','Play voice note')}}
 function drawVoice(now){const c=LI.el.querySelector('.vwave');if(!c)return;const r=c.getBoundingClientRect();if(!r.width)return;const dpr=Math.min(2,devicePixelRatio||1);
   if(c.width!==Math.round(r.width*dpr)){c.width=Math.round(r.width*dpr);c.height=Math.round(r.height*dpr)}const g=c.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,r.width,r.height);
-  if(LI.playing){LI.pos=LI.audio?LI.audio.currentTime:(now-LI.pt0)/1000;if(!LI.audio&&LI.pos>=LI.dur){LI.pos=LI.dur;LI.ended=true;stopVoice()}}
+  if(LI.playing){LI.pos=LI.audio?LI.audio.currentTime/VOICE_RATE:(now-LI.pt0)/1000;if(!LI.audio&&LI.pos>=LI.dur){LI.pos=LI.dur;LI.ended=true;stopVoice()}}
   const f=LI.dur?LI.pos/LI.dur:0,n=Math.floor(r.width/7),mid=r.height/2,t=now/1000;
-  for(let i=0;i<n;i++){const fx=i/n,x=i*7+3;let amp=(Math.abs(Math.sin(i*.9)*Math.sin(i*.23+1.7))*.8+.2)*(mid-6)*(1-Math.abs(fx-.5)*.5);
+  const PK=S.lang&&LANGS[S.lang]._peaks;
+  for(let i=0;i<n;i++){const fx=i/n,x=i*7+3;let amp=PK?(.06+.94*PK[Math.min(PK.length-1,Math.floor(fx*PK.length))])*(mid-4):(Math.abs(Math.sin(i*.9)*Math.sin(i*.23+1.7))*.8+.2)*(mid-6)*(1-Math.abs(fx-.5)*.5);
     if(LI.playing&&!reduce&&Math.abs(fx-f)<.04)amp*=1+.25*Math.sin(t*14+i);
     for(let a=-amp;a<=amp+.1;a+=6){g.beginPath();g.arc(x,mid+a,1.5,0,6.283);g.fillStyle=fx<=f?C.accent:C.faint;g.fill()}}
   const tm=LI.el.querySelector('.vtime');if(tm)tm.textContent=mmss(LI.pos)+' / '+mmss(LI.dur)}
@@ -1512,14 +1535,14 @@ haw:{title:'Eighty-seven years without a count',dek:'Hawaiian went from the lang
   {t:'photo',hero:true,key:'haw-hero',scene:'ship',cap:'Image slot · suggested: Honolulu harbour, c. 1890 · Hawaiʻi State Archives',ken:[0,-3]},
   {t:'map',cam:{lon:-168,lat:14,z:1.1,year:1853},k:'1853 · estimate',h:'In the middle of the Pacific',p:['Hawaiʻi is 3,800 km from the nearest continent. Hawaiian’s closest relatives, Tahitian and Marquesan, are spoken more than 3,000 km to the south.']},
   {t:'map',cam:{...HAW,year:1853},k:'1853 · estimate',h:'Almost everyone spoke Hawaiian',p:['The Kingdom’s census counted about 70,000 Native Hawaiians. Hawaiian was the language of government, church and the press.','Each blue dot stands for a share of the islands’ people who spoke it.']},
-  {t:'wa',h0:620,yr:'1885',yk:'survey map · Maui'},
+  {t:'wa',h0:620,yr:'1885',yk:'Maui · Survey map'},
   {t:'photo',key:'haw-queen',src:'img/queen-liliuokalani.jpg',alt:'Queen Liliʻuokalani seated in a high-backed chair, a fan in her hand, inscribed to Josephus Daniels in 1916',cap:'Queen Liliʻuokalani, inscribed to Josephus Daniels, 1916',k:'1893',h:'The overthrow',p:['Business leaders, backed by US marines, deposed Queen Liliʻuokalani. Three years later, the republic they formed rewrote the school law.']},
   {t:'chapter',big:'1896',ti:'Act 57'},
   {t:'doc',head:'Act 57, Section 30 · Laws of the Republic of Hawaii · 1896',html:'<mark>The English Language shall be the medium and basis of instruction</mark> in <mark>all public and private schools</mark>, provided that where it is desired that another language shall be taught in addition to the English language, such instruction may be authorized by the Department.',notes:['English only, in every school, public and private.','Hawaiian is never named. It didn’t need to be.','Not repealed until 1986, ninety years later.'],k:'1896 · measured event',h:'One sentence in a school law',p:['It closed Hawaiian-medium schools across the islands.']},
   {t:'map',h0:150,cam:{...HAW,year:1896}},
-  {t:'pet',h0:420,yr:'1897',yk:'petition · Honolulu',sig:true,k:'[ Paper Resistance · 1897 Kūʻē Petitions ]',h:'21,269 Names Against Annexation',p:['In 1897, over 21,000 native Hawaiians—more than half the remaining population—signed this petition to reject American annexation. They inscribed their indigenous names onto paper as an enduring act of civil defiance.']},
+  {t:'pet',h0:260,yr:'1897',yk:'',sig:true,h:'21,269 Names Against Annexation',p:['In 1897, over 21,000 native Hawaiians—more than half the remaining population—signed this petition to reject American annexation. They inscribed their indigenous names onto paper as an enduring act of civil defiance.']},
   {t:'map',h0:320,cam:{...HAW,year:1983},k:'1896 → 1983 · estimated',h:'Then the dots drain',p:['Scroll slowly. No one counted Hawaiian speakers for 87 years, so every year here is an estimate.','The last dots to go are on Niʻihau, the one island where families never stopped speaking Hawaiian at home.']},
-  {t:'news',h0:380,yr:'1924',yk:'newsprint · Hilo',k:'[ The Quiet Resistance · 1924 ]',h:'Sanctuary in Ink',p:['Decades after the language was banned in schools, Hawaiian survived in weekly newsprint. Native elders and editors preserved genealogies, chants, and cultural knowledge in print before living voices could be forgotten.']},
+  {t:'news',h0:220,yr:'1924',yk:'Ka Hōkū o Hawaiʻi',h:'Sanctuary in Ink',p:['Decades after the language was banned in schools, Hawaiian survived in weekly newsprint. Native elders and editors preserved genealogies, chants, and cultural knowledge in print before living voices could be forgotten.']},
   {t:'map',h0:150,cam:{...HAW,year:1983}},
   {t:'gap',gap:'1896-1983',k:'1896 → 1983 · unexplained',h:'Eighty-seven years. No count.',p:['The record has a measured point at each end and nothing in between. In families, this is where grandparents stopped speaking Hawaiian to their children.','AI suggests what might explain it. Families can confirm or correct each suggestion.']},
   {t:'photo',key:'haw-punana',scene:'group',cap:'Image slot · suggested: an early Pūnana Leo class, 1980s · ʻAha Pūnana Leo',ken:[-2,-2],ann:{x:.28,y:.42,r:.07,l:'Is this your family? Tag them'},k:'1983 · measured',h:'Fewer than fifty children',p:['About 2,000 native speakers were left, and fewer than 50 of them were children.','Parents and teachers opened ʻAha Pūnana Leo, preschools taught only in Hawaiian.']},
@@ -1563,7 +1586,11 @@ function drawMapCore(c,W,H,o){const L=o.lang?LANGS[o.lang]:null,R=o.R,cx=o.cx,cy
     if(o.hits&&regA===0)o.hits.push([q[0],q[1],M.id])}}
   if(!L){c.globalAlpha=1;return}
   const col=C[L.color.slice(2)];
-  if(regA>0&&!o.markers){const SG=rmStoryGeo(L.id);if(SG){const sc=R*Math.cos(o.lat*RAD)/SG.proj.scale();rmPaint(c,SG,year,p=>{const q=P(p.lon,p.lat);return q[2]>0&&on(q[0],q[1])?[q[0],q[1],Math.max(.7,p.r*sc)]:null},regA)}
+  if(regA>0&&!o.markers){const SG=rmStoryGeo(L.id);if(SG){const k=R*Math.cos(o.lat*RAD)/SG.proj.scale(),g0=SG.proj([o.lon,o.lat]),s0=P(o.lon,o.lat);
+      rmPaint(c,SG,year,p=>{const x=s0[0]+(p.x-g0[0])*k,y=s0[1]+(p.y-g0[1])*k;return on(x,y)?[x,y,p.r*k]:null},regA);
+      c.save();c.globalAlpha=regA;c.translate(s0[0],s0[1]);c.scale(k,k);c.translate(-g0[0],-g0[1]);
+      if(SG.id==='ga'){if(year>=1956){c.fillStyle=rgba(col,.1);c.fill(SG.gt);c.setLineDash(year>=2012?[]:[3/k,3/k]);c.strokeStyle=rgba(col,.9);c.lineWidth=1.1/k;c.stroke(SG.gt);c.setLineDash([])}const pa=clamp01(year-1920.33);if(pa>0){c.strokeStyle=rgba(C.fg,.75*pa);c.lineWidth=1.3/k;c.stroke(SG.part)}}
+      c.strokeStyle=rgba(C.muted,.3);c.lineWidth=.7/k;c.stroke(SG.coast);c.restore()}
     const M=regionModel(L,year),step=L.id==='ga'?.1:.03,rd=Math.max(1.1,R*step*RAD*.36);
     const rlit=[];for(const p of SG?[]:REG[L.id].pts){const q=P(p.lon,p.lat);if(q[2]<=0||!on(q[0],q[1]))continue;c.beginPath();c.arc(q[0],q[1],rd,0,6.283);paintRegionDot(c,p,M,col,regA,rd);
       const g=glowAt(q[0],q[1]);if(g>0)rlit.push(q[0],q[1],g,p)}
@@ -1573,7 +1600,7 @@ function drawMapCore(c,W,H,o){const L=o.lang?LANGS[o.lang]:null,R=o.R,cx=o.cx,cy
     if(L.id==='haw'&&year>=1940){const q=P(-160.15,21.9),a=regA*clamp01((year-1940)/25),rr=Math.max(26,R*.004);c.globalAlpha=a;c.beginPath();c.arc(q[0],q[1],rr,0,6.283);c.strokeStyle=col;c.lineWidth=1.4;c.setLineDash([3,4]);c.stroke();c.setLineDash([]);
       c.textAlign='center';c.font='italic 15px Spectral,Georgia,serif';c.fillStyle=C.fg;c.fillText('Niʻihau',q[0],q[1]+rr+20);c.font='11px "IBM Plex Mono",monospace';c.fillStyle=C.muted;c.fillText('Hawaiian still spoken at home',q[0],q[1]+rr+36);c.textAlign='start'}
     c.globalAlpha=regA*clamp01((z-8)/4);c.font='11px "IBM Plex Mono",monospace';c.fillStyle=C.muted;
-    for(const [lo,la,t] of L.labels){const q=P(lo,la);if(q[2]>0&&on(q[0],q[1]))c.fillText(t.toUpperCase()===t?t.split('').join(' '):t,q[0],q[1])}}
+    }
   else if(!o.markers){const q=P(L.lon,L.lat);if(q[2]>0){c.globalAlpha=1;c.beginPath();c.arc(q[0],q[1],9,0,6.283);c.fillStyle=rgba(col,.18);c.fill();c.beginPath();c.arc(q[0],q[1],4,0,6.283);c.fillStyle=col;c.fill()}}
   const rt=ROUTES[L.id];if(rt&&o.path>0){c.lineWidth=1.6;
     rt.to.forEach((dst,k)=>{const prog=clamp01(o.path*1.5-k*.12);if(prog<=0)return;const n=Math.max(2,Math.round(48*prog));let last=null;
@@ -1586,9 +1613,10 @@ function drawMapCore(c,W,H,o){const L=o.lang?LANGS[o.lang]:null,R=o.R,cx=o.cx,cy
   c.globalAlpha=1}
 function drawStoryMap(cam){const W=SX.W,H=SX.H;if(!W)return;const L=LANGS[SX.lang];const narrow=W<820;STEP=false;try{drawStoryMap2(cam,W,H,L,narrow)}finally{STEP=true}}
 function drawStoryMap2(cam,W,H,L,narrow){
-  drawMapCore(SX.ctx,W,H,{lon:cam.lon,lat:cam.lat,z:cam.z,R:Math.min(W,H)*.42*cam.z,cx:narrow?W/2:W*.6,cy:narrow?H*.4:H*.5,year:cam.year,lang:SX.lang,path:cam.path||0,critA:.32,critR:1.05,markers:false});
+  const G=rmStoryGeo(SX.lang),zb=SX.lang==='ga'?IRL.z:HAW.z;let z=cam.z;if(G){const zf=G.proj.scale()/(Math.cos(cam.lat*RAD)*Math.min(W,H)*.42);z=z*Math.pow(zf/zb,clamp01((z-3)/(zb-3)))}
+  drawMapCore(SX.ctx,W,H,{lon:cam.lon,lat:cam.lat,z,R:Math.min(W,H)*.42*z,cx:narrow?W/2:W*.6,cy:narrow?H*.4:H*.5,year:cam.year,lang:SX.lang,path:cam.path||0,critA:.32,critR:1.05,markers:false});
   const year=Math.round(cam.year),hud=SX.el.querySelector('.sx-hud'),v=seriesAt(L,'can',year);hud.querySelector('.y').textContent=year;
-  hud.querySelector('.k').innerHTML=v.kind==='meas'?'<i class="dot" style="color:var(--fg)"></i>Measured':v.kind==='before'?'<i class="ring" style="color:var(--muted);border-style:dashed"></i>Before the first count':`<i class="dot" style="color:var(--fg);opacity:.4"></i>Estimated · ${fmt(v.v)} speakers`}
+  hud.querySelector('.k').textContent=v.kind==='before'?'':(v.kind==='meas'?'':'~')+fmt(v.v)+' speakers'}
 function regionModel(L,y){const R=REG[L.id];const can=seriesAt(L,'can',y),daily=seriesAt(L,'daily',y);
   const usesDaily=!!daily;const solidShare=usesDaily?daily.share:can.share,paleShare=usesDaily?can.share:0;
   const measured=(usesDaily?daily.kind:can.kind)==='meas';const afterPartition=L.id==='ga'&&y>=1922;const base=afterPartition?R.inN:R.homeN;
@@ -1620,7 +1648,7 @@ function sceneHTML(L,s,i){
   </div></div>`;  if(s.t==='photo'&&s.src)return`<div class="sx-scene sx-ph sx-real" data-sc="${i}"><figure class="rp"><img src="${s.src}" alt="${esc(s.alt||'')}"><figcaption class="cap">${esc(s.cap)}</figcaption></figure></div>`;
   if(s.t==='photo')return`<div class="sx-scene sx-ph" data-sc="${i}"><div class="kb">${plateHTML(s.key,s.cap,s.scene)}${s.ann?`<div class="ann" style="left:${s.ann.x*100}%;top:${s.ann.y*100}%;width:${s.ann.r*200}vmin;height:${s.ann.r*200}vmin"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/></svg><span class="lb">${esc(s.ann.l)}</span></div>`:''}</div>${s.hero?'<div class="shade"></div>':''}</div>`;
   if(s.t==='chapter')return`<div class="sx-scene sx-ch" data-sc="${i}"><div class="in"><div class="big ${s.word?'word':''}">${esc(s.big)}</div><div class="ti">${esc(s.ti)}</div></div></div>`;
-  if(s.t==='doc')return`<div class="sx-scene sx-doc" data-sc="${i}"><div class="paper"><div class="dh">${esc(s.head)}</div><div>${s.html}</div><div class="notes">${s.notes.map((n,j)=>`<div class="note"><span class="n">${j+1}</span><span>${esc(n)}</span></div>`).join('')}</div></div></div>`;
+  if(s.t==='doc')return`<div class="sx-scene sx-doc" data-sc="${i}"><div class="paper"><div class="dh">${esc(s.head)}</div><div>${s.html}</div><div class="notes">${s.notes.map((n,j)=>`<div class="note"><span class="n">${String(j+1).padStart(2,'0')}</span><span>${esc(n)}</span></div>`).join('')}</div></div></div>`;
   if(s.t==='gap'){const g=L.gapList.find(x=>x.id===s.gap);if(!g)return'';const W2=560;
     return`<div class="sx-scene sx-gap" data-sc="${i}"><div class="in"><div><div class="yrs" data-n="${g.to-g.from}">${g.to-g.from}</div><div class="cap" style="margin-top:10px">${esc(gapTitle(g))}</div></div>
      <svg class="line" viewBox="0 0 ${W2} 56"><line x1="14" x2="${W2-14}" y1="22" y2="22" stroke="${C.faint}" stroke-width="2" stroke-dasharray="2 6" stroke-linecap="round" pathLength="100"/><circle cx="14" cy="22" r="6" fill="${g.a.k==='meas'?C.fg:C.bg}" stroke="${C.fg}" stroke-width="1.5"/><circle cx="${W2-14}" cy="22" r="6" fill="${g.b.k==='meas'?C.fg:C.bg}" stroke="${C.fg}" stroke-width="1.5"/><text x="14" y="50">${g.from} · ${fmt(g.a.v)}</text><text x="${W2-14}" y="50" text-anchor="end">${g.to} · ${fmt(g.b.v)}</text></svg>
@@ -1631,24 +1659,23 @@ function sceneHTML(L,s,i){
     <canvas class="wa-rays" aria-hidden="true"></canvas>
     <div class="dir n">Mauka<small>toward the mountains</small></div>
     <div class="txt">
-      <div class="cap">[ Cognitive Worldview · Wā ]</div>
-      <h2>I ka wā ma mua, ka wā ma hope<small>The time in front; the time behind.</small></h2>
+            <h2>I ka wā ma mua, ka wā ma hope<small>The time in front; the time behind.</small></h2>
       <div><p>In our language, space and time are one: <em>Wā</em>.</p><p>What lies in front of our eyes (<em>mua</em>) is the past—already seen, known, and shaped by our ancestors.</p><p>What approaches from behind our backs (<em>hope</em>) is the future—unseen, unknown.</p><p>We do not blindly march forward into tomorrow.</p><p><em>We step backward into the future, facing what came before.</em></p></div>
     </div>
     <div class="dir s">Makai<small>toward the ocean</small></div>
   </div>
   <div class="m2">
     <div class="m2-stage"></div>
-    <div class="sx-yr m2-yr"><div class="y">1885</div><div class="k mono">survey map · Maui</div></div>
+    <div class="sx-yr m2-yr"><div class="y">1885</div><div class="k mono">Maui · Survey map</div></div>
     <div class="m2-cards">
-      <div class="m2-c"><div class="cap">[ The Fracture of Fluidity · Wao vs. Grids ]</div><p>A <i>wao</i> is not a parcel. Mountain, forest, stream and shore ran into one another, and families moved along them with the seasons.</p><p>Then came maps like this one, made for title and sale by the acre. The surveys served the sugar planters, and U.S. marines stood behind the 1893 overthrow that cleared their way.</p></div>
-      <div class="m2-c"><div class="cap">[ Ahupuaʻa · Survey lines ]</div><p>An ahupuaʻa ran from the summit to the sea. The survey redrew the land as boundaries, and they spread outward from Haleakalā across the island.</p></div>
+      <div class="m2-c"><p>A <i>wao</i> is not a parcel. Mountain, forest, stream and shore ran into one another, and families moved along them with the seasons.</p><p>Then came maps like this one, made for title and sale by the acre. The surveys served the sugar planters, and U.S. marines stood behind the 1893 overthrow that cleared their way.</p></div>
+      <div class="m2-c"><div class="cap">Ahupuaʻa · Survey lines</div><p>An ahupuaʻa ran from the summit to the sea. The survey redrew the land as boundaries, and they spread outward from Haleakalā across the island.</p></div>
     </div>
   </div></div>`;  return''}
 function cardHTML(L,ST,s){
-  if(s.hero)return`<div class="sx-card hero"><div class="cap">${esc(L.place)} · ${esc(L.endo)}</div><h1>${esc(ST.title)}</h1><p>${esc(ST.dek)}</p><div class="mono" style="margin-top:20px">Scroll ↓</div></div>`;
-  if(!s.h)return'';const mark=/unexplained|estimate/.test(s.k)?'<i class="ring" style="border-style:dashed"></i>':/measured/.test(s.k)?'<i class="dot" style="color:var(--fg)"></i>':'<i class="dot" style="color:var(--accent)"></i>';
-  return`<div class="sx-card${s.sig?' sig-card':''}${s.t==='doc'?' doc-card':''}"><div class="k cap">${mark}${esc(s.k)}</div><h3>${s.sig?esc(s.h).replace('21,269','<span class="pcount">21,269</span>'):esc(s.h)}</h3>${s.p.map(t=>`<p>${esc(t)}</p>`).join('')}${s.sig?`<div class="sig"><div class="tabs"><button type="button" data-m="draw" class="on">Draw</button><button type="button" data-m="type">Type</button></div><canvas class="sig-cv" aria-label="Sign with mouse or touch"></canvas><input class="sig-in" type="text" maxlength="36" placeholder="Your name" autocomplete="off" hidden><div class="sig-row"><button class="btn sm" type="button" data-a="inscribe"><span class="dot"></span>[ Inscribe Name ]</button><button class="btn ghost sm" type="button" data-a="clear">[ Clear ]</button></div><div class="sig-fb" aria-live="polite"></div></div>`:''}</div>`}
+  if(s.hero)return`<div class="sx-card hero"><h1>${esc(ST.title)}</h1><p>${esc(ST.dek)}</p><div class="mono" style="margin-top:20px">Scroll ↓</div></div>`;
+  if(!s.h)return'';const kk=s.k&&!/estimate/.test(s.k)?`<div class="k cap">${esc(s.k)}</div>`:'';
+  return`<div class="sx-card${s.sig?' sig-card':''}${s.t==='doc'?' doc-card':''}${s.t==='map'?' map-card':''}">${kk}<h3>${s.sig?esc(s.h).replace('21,269','<span class="pcount">21,269</span>'):esc(s.h)}</h3>${s.p.map(t=>`<p>${esc(t)}</p>`).join('')}${s.sig?`<div class="sig"><div class="tabs"><button type="button" data-m="draw" class="on">Draw</button><button type="button" data-m="type">Type</button></div><canvas class="sig-cv" aria-label="Sign with mouse or touch"></canvas><input class="sig-in" type="text" maxlength="36" placeholder="Your name" autocomplete="off" hidden><div class="sig-row"><button class="btn sm" type="button" data-a="inscribe"><span class="dot"></span>Inscribe your name</button><button class="btn ghost sm" type="button" data-a="clear">Clear</button></div><div class="sig-fb" aria-live="polite"></div></div>`:''}</div>`}
 function openStory(id){const L=LANGS[id],ST=STORIES[id];const el=$('#story');togglePlay(false);SX.el=el;SX.lang=id;SX.steps=ST.steps;SX.i=-1;
   const other=id==='ga'?'haw':'ga';
   el.innerHTML=`<div class="bar"><button class="linkish sback" type="button" id="sClose">Back to the map</button><div class="prog"></div></div>
@@ -1682,9 +1709,9 @@ function storyTick(){const el=SX.el;if(!el||el.hidden||!SX.tops.length)return;co
   if(s.t==='photo'&&s.src){}
   else if(s.t==='photo'){const kb=sc.querySelector('.kb'),k=s.ken||[0,0];if(!reduce)kb.style.transform=`scale(${1.04+.16*p}) translate(${(p-.5)*k[0]}%,${(p-.5)*k[1]+(s.hero?p*6:0)}%)`;
     const a=sc.querySelector('.ann');if(a){const t=reduce?(p>.3?1:0):smooth((p-.3)/.18);a.querySelector('circle').setAttribute('stroke-dashoffset',100*(1-t));a.querySelector('.lb').style.opacity=t>=1?1:0}}
-  if(s.t==='news'){const f=sc.querySelector('.sx-fig'),pr=clamp01((el.scrollTop-SX.tops[i].top)/Math.max(1,SX.tops[i].h-vh));f.style.transform=`translateY(${-pr*Math.max(0,f.offsetHeight-vh)}px)`}
+  if(s.t==='news'){const f=sc.querySelector('.sx-fig'),pr=clamp01((el.scrollTop-SX.tops[i].top)/Math.max(1,SX.tops[i].h-vh));f.style.transform=`translateY(${-pr*Math.min(Math.max(0,f.offsetHeight-vh),f.offsetHeight*.33)}px)`}
   if(s.t==='chapter'&&!reduce){sc.querySelector('.big').style.transform=`translateY(${(.5-p)*28}vh)`;sc.querySelector('.ti').style.transform=`translateY(${(.5-p)*10}vh)`}
-  if(s.t==='doc'){const z=reduce?1:1+.22*smooth((p-.12)/.45);sc.querySelector('.paper').style.transform=`scale(${z})`;
+  if(s.t==='doc'){const z=1;sc.querySelector('.paper').style.transform=`scale(${z})`;
     sc.querySelectorAll('mark').forEach((m,j)=>m.style.backgroundSize=`${(reduce?(p>.2?1:0):smooth((p-.2-j*.1)/.1))*100}% 100%`);
     sc.querySelectorAll('.note').forEach((n,j)=>{const t=reduce?(p>.3?1:0):smooth((p-.45-j*.08)/.08);n.style.opacity=t;n.style.transform=`translateX(${(1-t)*-10}px)`})}
   if(s.t==='gap'){const n=sc.querySelector('.yrs');const N=+n.dataset.n;n.textContent=reduce?N:Math.round(N*smooth(p/.3));
@@ -1723,7 +1750,7 @@ const WX=(()=>{const IW=1920,IH=1531,SRC='img/maui-1885-clean.jpg',LINES='img/ma
   // Act 2, driven by the scroll progress p (0–1) of the step: the map settles in clean, then its survey lines spread out from the crater
   function apply(p){if(!sc)return;if(!W)size();if(!W)return;
     const f=ramp(p,.1,.24);a1.style.opacity=1-f;a1.style.transform=`translateY(${-f*70}px)`;a1.style.visibility=f>=1?'hidden':'visible';
-    const e=ramp(p,.16,.3);stage.style.opacity=e;stage.style.transform=`translate(-50%,-50%) scale(${.92+.08*e})`;
+    const e=ramp(p,.16,.3);stage.style.opacity=e;stage.style.transform=`translate(-50%,-50%) scale(${1.06-.06*e})`;
     const q=(p-.48)/.4;lines.style.setProperty('--r',(ramp(q,0,.7)*150).toFixed(1)+'%');
     yrEl.style.opacity=ramp(p,.26,.34);
     const c=[ramp(p,.28,.34)*(1-ramp(p,.44,.5)),ramp(p,.5,.56)];
