@@ -3,24 +3,24 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js"></script>
 <script src="https://unpkg.com/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
 <script src="https://unpkg.com/topojson-server@3.0.1/dist/topojson-server.min.js"></script>
 <style>
 /* Layout: one full-height stage. The map is the page; a timeline docks below it, a reading panel docks right; stories open as a scrolling layer above. */
 :root{
-  --bg:#fbfbf9; --surface:#ffffff; --fg:#1d1e20; --muted:#6a6c70; --faint:#b9bbb7; --land:#dadbd9; --line:#e3e3de; --en:#3d6fb6; --eng:#a3a7ab;
+  --bg:#fbfbf9; --surface:#ffffff; --fg:#1d1e20; --muted:#6a6c70; --faint:#b9bbb7; --land:#dadbd9; --line:#e3e3de; --en:#8fb0de; --eng:#cdd0d2;
   --accent:#d6452b; --ga:#0f8a4c; --haw:#1a5ec9; --mori:#cf962a; --near:#d6452b; --ext:#8b8d90;
   --paper:#f2efe7; --ink:#2b2824; --mark:rgba(214,69,43,.16); --shadow:0 10px 30px rgba(20,20,25,.08),0 1px 2px rgba(20,20,25,.06);
   --serif:"Spectral",Georgia,"Times New Roman",serif; --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#131416; --surface:#1b1c1f; --fg:#ebeae6; --muted:#9b9ca0; --faint:#4a4c50; --land:#3a3c40; --line:#2a2c30; --en:#6f9be0; --eng:#6b6e72;
+  --bg:#131416; --surface:#1b1c1f; --fg:#ebeae6; --muted:#9b9ca0; --faint:#4a4c50; --land:#3a3c40; --line:#2a2c30; --en:#3e5b86; --eng:#46494d;
   --accent:#f0644a; --ga:#3fc485; --haw:#5a9cf0; --mori:#e2b14c; --near:#f0644a; --ext:#8c8e91;
   --paper:#24221f; --ink:#e8e2d6; --mark:rgba(240,100,74,.22); --shadow:0 10px 30px rgba(0,0,0,.4),0 1px 2px rgba(0,0,0,.3); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#131416; --surface:#1b1c1f; --fg:#ebeae6; --muted:#9b9ca0; --faint:#4a4c50; --land:#3a3c40; --line:#2a2c30; --en:#6f9be0; --eng:#6b6e72;
+  --bg:#131416; --surface:#1b1c1f; --fg:#ebeae6; --muted:#9b9ca0; --faint:#4a4c50; --land:#3a3c40; --line:#2a2c30; --en:#3e5b86; --eng:#46494d;
   --accent:#f0644a; --ga:#3fc485; --haw:#5a9cf0; --mori:#e2b14c; --near:#f0644a; --ext:#8c8e91;
   --paper:#24221f; --ink:#e8e2d6; --mark:rgba(240,100,74,.22); --shadow:0 10px 30px rgba(0,0,0,.4),0 1px 2px rgba(0,0,0,.3); color-scheme:dark}
 [hidden]{display:none!important}
@@ -428,8 +428,8 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
 #play{width:34px;height:34px;margin-bottom:25px}
 .trackhead{display:none}
 #track text{font-size:10px}
-#track .mk.on{stroke:var(--fg);fill:var(--fg);stroke-width:1.3;transform:scale(1.2)}
-#track rect.mk.on{transform:rotate(45deg) scale(1.2)}
+#track .mk.on{stroke:var(--fg);fill:var(--fg);stroke-width:1;transform:scale(1.15)}
+#track rect.mk.on{transform:rotate(45deg) scale(1.15)}
 /* event card */
 #pop{bottom:76px;width:300px;border-radius:12px;padding:16px 18px 17px;box-shadow:0 16px 40px -18px rgba(20,20,25,.3)}
 #pop:after{content:"";position:absolute;bottom:-6px;left:var(--cx,50%);width:10px;height:10px;margin-left:-5px;background:var(--surface);border-right:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg)}
@@ -556,6 +556,66 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
 .end p{font-size:16.25px}
 .sheet h3{font-size:23px}
 .sheet .q{font-size:15.5px}
+/* revision: discrete timeline, visible key, community tiles */
+#track:focus,#track:focus-visible{outline:none}
+#panel .sec.chart{margin-bottom:16px}
+#time{grid-template-columns:178px 80px minmax(0,1fr)}
+.tnav{display:flex;gap:8px;margin:8px 0 0}
+#time{align-items:center}
+#year{margin:8px 0 0}
+@media (min-width:821px){#year{font-size:59px}}
+.tnav button{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;padding:0;color:var(--fg)}
+.tnav button:hover{border-color:var(--fg)}
+@media (min-width:821px){.tnav button{width:25px;height:25px}.tnav button svg{width:11px;height:11px}.tnav{gap:6px}#time{grid-template-columns:auto 66px minmax(0,1fr);column-gap:36px;padding-right:24px}.trackwrap{margin-left:-32px}}
+@media (max-width:820px){#time{grid-template-columns:minmax(0,1fr) auto}.tnav{margin:0;justify-self:end}}
+#tLine{transition:opacity .25s ease}
+.trackwrap:has(#pop:not(.on)) #tLine{opacity:0}
+#track{cursor:grab}
+.brand b{font-size:26px}
+.brand b{transition:opacity .4s}
+#app.away:not(.landed) .brand b{opacity:0;pointer-events:none}
+#crumb{display:none!important}
+#side .sub{display:none}
+.chip[tabindex]{cursor:default}
+#wkey{top:72px}
+.wkbtn{display:none}
+#wkeyPop{position:static;opacity:1;transform:none;pointer-events:auto;width:240px;padding:0;background:none;border:0;box-shadow:none}
+#wkeyPop{gap:7px;width:170px;font:400 10.5px var(--mono);color:var(--muted)}
+#wkeyPop .cap{font-size:10.5px;margin-bottom:2px}
+#wkeyPop .krow{grid-template-columns:7px minmax(0,1fr) auto;gap:8px;align-items:center}
+#wkeyPop .krow .dot,#wkeyPop .krow .ring{width:7px;height:7px;margin-top:0}
+#wkeyPop .krow b{font:400 10.5px var(--mono);color:var(--muted)}
+#wkeyPop .krow small{display:none}
+#wkeyPop .krow .n{font:400 10.5px var(--mono);color:var(--muted);padding-top:0}
+#wkeyPop .src{display:none}
+@media (min-width:821px){.search{width:min(360px,100%)}.search input[type=text]{height:42px;border-radius:21px;font-size:14px;padding-left:44px}.search svg{left:17px;top:13px}#results{bottom:52px}}
+#wkeyPop .src a{color:var(--fg);text-decoration-color:var(--faint)}
+#pop{width:300px}
+#pop .x{background:var(--surface);z-index:1}
+.fc.ev{padding-right:0}
+.fthumb{aspect-ratio:16/10;margin:0 0 12px;border-radius:6px}
+.fnav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.fnav button{background:none;border:0;padding:4px 0;font:500 12px var(--mono);letter-spacing:.03em;color:var(--fg);text-decoration:underline;text-underline-offset:3px}
+.fnav .fback{color:var(--muted);font-weight:400}
+.fnav button:disabled{opacity:.35;cursor:default}
+.lgo{background:none;border:0;padding:0;font:500 14px var(--mono);letter-spacing:.03em;color:var(--fg);text-decoration:underline;text-underline-offset:4px}
+.lgo.back{color:var(--muted);font-weight:400}
+.lgo:hover{color:var(--accent)}
+@media (min-width:821px){.lgo{font-size:12px;text-underline-offset:3px}.intro .go{gap:20px}}
+.btn.accent{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.accent .dot{color:#fff}
+.ctas .btn{height:36px;border-radius:18px;font-size:12.5px;gap:8px;padding:0 16px}
+.ctas .btn .dot{width:6px;height:6px}
+.ctas{background:var(--surface);z-index:2}
+.ctas:before{content:"";position:absolute;left:0;right:0;bottom:100%;height:28px;background:linear-gradient(to top,var(--surface),color-mix(in srgb,var(--surface) 0%,transparent));pointer-events:none}
+.ctas{padding-top:12px;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.story .thumb img{position:absolute;inset:0}
+#comm .stories{grid-template-columns:1fr;gap:20px}
+#comm .story .thumb{height:190px;margin-bottom:8px}
+#comm .story b{font-size:13.5px}
+#comm .story>.mono{font-size:11px}
+#allStories .stories{grid-template-columns:1fr 1fr;gap:18px 14px}
+#allStories .story .thumb{height:150px;margin-bottom:6px}
 /* desktop: pin the app to the window so nothing can scroll it out of line */
 @media (min-width:821px){html,body{overflow:hidden}#app{position:fixed;inset:0;height:auto}#panel{align-self:stretch;margin:0}}
 
@@ -650,7 +710,7 @@ textarea{min-height:120px;resize:vertical;font-family:var(--serif);font-size:17p
       <div id="year">1840</div>
       <div id="yearNote" class="mono"></div>
     </div>
-    <button id="play" aria-label="Play through time"><svg width="14" height="14" viewBox="0 0 14 14"><path id="playIcon" d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg></button>
+    <div class="tnav"><button id="tPrev" type="button" aria-label="Previous point"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M8.5 3 4.5 7l4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button id="tNext" type="button" aria-label="Next point"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M5.5 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
     <div class="trackwrap">
       <div class="trackhead"><span class="mono" id="trackLabel"></span></div>
       <svg id="track" role="slider" tabindex="0" aria-label="Year" aria-valuemin="1840" aria-valuemax="2025"></svg>
@@ -803,6 +863,8 @@ LANGS.haw.intro={q:'I ka ʻōlelo nō ke ola; i ka ʻōlelo nō ka make.',tr:'In
 // Photo slots for the timeline's fact cards (suggested archival images; drop a real photo onto a slot to preview it).
 const EV_IMG={ga:{1845:['group','“Bridget O’Donnell and her children”, Illustrated London News, 1849 · public domain'],1893:['group','A Gaelic League Irish class, c. 1900s · National Library of Ireland'],1922:['page','Constitution of the Irish Free State, 1922, Irish-language text'],1972:['portrait','Raidió na Gaeltachta studio, Casla, 1972 · RTÉ Archives']},
   haw:{1893:['portrait','Queen Liliʻuokalani, c. 1891 · public domain'],1896:['page','Act 57, Section 30, Laws of the Republic of Hawaii, 1896'],1948:['page','Front page of Ka Hoku o Hawaii, 1948 · Papakilo Database'],1983:['group','An early Pūnana Leo class, 1980s · ʻAha Pūnana Leo'],1987:['group','A Kaiapuni immersion classroom, 1987']}};
+Object.assign(EV_IMG.ga,{1840:['landscape','A west of Ireland townland before the Famine, c. 1840 · National Library of Ireland'],1926:['page','Coimisiún na Gaeltachta report and map, 1926'],1996:['portrait','TG4 launch night, 31 October 1996 · TG4 archive'],2003:['page','Official Languages Act 2003, Irish-language text']});
+Object.assign(EV_IMG.haw,{1853:['landscape','Honolulu, 1850s · Hawaiʻi State Archives'],1898:['group','Annexation ceremony at ʻIolani Palace, 12 August 1898 · public domain'],1978:['group','Delegates to the 1978 Constitutional Convention · Hawaiʻi State Archives']});
 for(const [id,m] of Object.entries(EV_IMG))for(const e of LANGS[id].events)if(m[e.y])e.img={scene:m[e.y][0],cap:m[e.y][1]};
 
 /* ============ gaps are computed, not curated ============ */
@@ -1540,12 +1602,13 @@ function rmCname(c,y){if(c==='OFFALY')return y<1922?"King's County":'Offaly';if(
 // the 26 counties, so Northern Ireland shows no figure.
 function gaRel(c,y){const A=RMD.ga.ab,Y=RMD.ga.years,val=v=>A[v]&&A[v][c]!=null?A[v][c]/100:null;let lo=null,hi=null;
   for(const v of Y){if(v<=y&&val(v)!=null)lo=v;if(v>=y&&hi==null&&val(v)!=null)hi=v}
+  if(STEP&&lo!=null)return val(lo);
   if(lo!=null&&hi!=null)return lo===hi?val(lo):val(lo)+(val(hi)-val(lo))*(y-lo)/(hi-lo);return lo!=null?val(lo):hi!=null?val(hi):null}
 function gaState(c,y){if(y>=1921.33&&NI6.includes(c))return{mode:'none',ni:true};const v=seriesAt(LANGS.ga,'can',y);
   const mode=v.kind==='meas'||v.kind==='est'?'exact':v.kind==='before'?'pre':v.kind==='after'?'near':'interp';
   return{mode,her:v.share,meas:v.kind==='meas',a:v.a,b:v.b,rel:gaRel(c,y)}}
 function hawState(y){const ex=HC.find(c=>c[0]===y);if(ex)return{mode:'exact',c:ex,s:ex[2],meas:ex[3]==='m'};let lo=null,hi=null;for(const c of HC){if(c[0]<=y)lo=c;if(c[0]>=y&&!hi)hi=c}
-  if(lo&&hi&&hi[0]-lo[0]<=10){const t=(y-lo[0])/(hi[0]-lo[0]);return{mode:'interp',lo,hi,s:lo[2]+(hi[2]-lo[2])*t}}
+  if(!STEP&&lo&&hi&&hi[0]-lo[0]<=10){const t=(y-lo[0])/(hi[0]-lo[0]);return{mode:'interp',lo,hi,s:lo[2]+(hi[2]-lo[2])*t}}
   const n=[lo,hi].filter(Boolean).sort((a,b)=>Math.abs(a[0]-y)-Math.abs(b[0]-y))[0];if(n&&Math.abs(n[0]-y)<=5)return{mode:'near',c:n,s:n[2]};return{mode:'none',lo,hi}}
 function rmResize(){if(!RM.on||(RM.vw===innerWidth&&RM.vh===innerHeight))return;clearTimeout(RM.t);RM.t=setTimeout(()=>{if(RM.on)rmShow(RM.lang)},160)}
 function rmShow(id){if(!window.d3||!id)return;RM.lang=id;if(id==='haw'&&!RM.us){RM.pending=true;return}RM.pending=false;
@@ -1555,7 +1618,7 @@ function rmShow(id){if(!window.d3||!id)return;RM.lang=id;if(id==='haw'&&!RM.us){
   RM.W=r.width;RM.H=r.height;RM.cv.width=r.width*dpr;RM.cv.height=r.height*dpr;RM.x.setTransform(dpr,0,0,dpr,0,0);
   try{rmBuild(id)}catch(e){console.warn('region map',e);return}RM.on=true;$('#app').classList.add('rmapon');rmDraw()}
 function rmHide(){RM.on=false;RM.vw=0;RM.pending=false;RM.hov=null;$('#app').classList.remove('rmapon');$('#rtip').hidden=$('#rring').hidden=true}
-function rmBuild(id){const m={...regionBox()},lg=$('#legend').getBoundingClientRect(),sr=RM.cv.getBoundingClientRect();if(innerWidth>820&&lg.width)m.l=Math.max(m.l,lg.right-sr.left+16);m.r+=RM.padR||0;m.b+=RM.padB||0;RM.geo=rmGeo(id,RM.W,RM.H,m)}
+function rmBuild(id){const m={...regionBox()},lg=$('#legend').getBoundingClientRect(),sr=RM.cv.getBoundingClientRect();if(innerWidth>820&&lg.width)m.l=Math.max(m.l,lg.right-sr.left+16);m.r+=RM.padR||0;m.b+=RM.padB||0;if(id==='ga'){m.t-=40;m.b-=34;m.r+=52;m.l-=80}RM.geo=rmGeo(id,RM.W,RM.H,m)}
 // story maps: the same dots, built once at a fixed size and re-projected by the story camera
 function rmStoryGeo(id){RM.sg=RM.sg||{};if(RM.sg[id])return RM.sg[id];if(!window.d3||(id==='haw'&&!RM.us))return null;try{RM.sg[id]=rmGeo(id,1000,1000,{l:10,r:10,t:16,b:10})}catch(e){return null}return RM.sg[id]}
 function rmGeo(id,W,H,m){const ext=[[m.l,m.t],[W-m.r,H-m.b]],ga=id==='ga';
@@ -1588,14 +1651,8 @@ function rmPaint(x,G,y,pos,A=1){const ga=G.id==='ga',SPK=ga?C.ga:C.haw,OTH=ga?C.
 function rmDraw(){if(!RM.on||!RM.geo)return;const G=RM.geo,x=RM.x,W=RM.W,H=RM.H,y=S.year,ga=G.id==='ga',SPK=ga?C.ga:C.haw;x.clearRect(0,0,W,H);x.fillStyle=C.bg;x.fillRect(0,0,W,H);
   rmPaint(x,G,y,p=>[p.x,p.y,p.r]);
   if(ga){if(y>=1956){x.save();x.fillStyle=rgba(SPK,.1);x.fill(G.gt);x.setLineDash(y>=2012?[]:[3,3]);x.strokeStyle=rgba(SPK,.9);x.lineWidth=1.1;x.stroke(G.gt);x.restore()}
-    x.strokeStyle=rgba(C.muted,.35);x.lineWidth=.7;x.stroke(G.lines);const pa=Math.max(0,Math.min(1,y-1920.33));if(pa>0){x.strokeStyle=rgba(C.fg,.75*pa);x.lineWidth=1.3;x.stroke(G.part)}}
+    const pa=Math.max(0,Math.min(1,y-1920.33));if(pa>0){x.strokeStyle=rgba(C.fg,.75*pa);x.lineWidth=1.3;x.stroke(G.part)}}
   x.strokeStyle=rgba(C.muted,.3);x.lineWidth=.7;x.stroke(G.coast);
-  const lab=(t,ll)=>{const q=G.proj(ll);x.fillText(t,q[0],q[1])};x.textBaseline='middle';x.textAlign='center';x.font='10.5px "IBM Plex Mono",monospace';x.fillStyle=C.muted;if('letterSpacing' in x)x.letterSpacing='2.3px';
-  if(ga){lab(rmPolity('ga','GALWAY',y),[-8.15,53.05]);if(y>=1921.33)lab('NORTHERN IRELAND · UK',[-6.85,54.62])}else lab(rmPolity('haw','',y),[-157.3,21.75]);
-  if('letterSpacing' in x)x.letterSpacing='0px';
-  if(!ga){x.font='italic 300 15px Spectral,Georgia,serif';lab('Pacific Ocean',[-158.6,19.9])}
-  x.textAlign='left';x.font='11px "IBM Plex Sans",sans-serif';
-  for(const[n,ll]of G.cities){const q=G.proj(ll);x.beginPath();x.arc(q[0],q[1],2.5,0,7);x.fillStyle=C.surface;x.fill();x.strokeStyle=C.fg;x.lineWidth=1;x.stroke();x.fillStyle=C.muted;x.fillText(n,q[0]+6,q[1])}
   if(RM.hov)rmTip(RM.hov)}
 function rmTip(p){const tip=$('#rtip'),ring=$('#rring');if(!p){tip.hidden=ring.hidden=true;return}const G=RM.geo,ga=G.id==='ga',st=p.st,y=S.year,sm='<span>',SPK=ga?C.ga:C.haw,OTH=ga?C.en:C.eng;
   const pc=s=>s<.01?(s*100).toFixed(1)+'%':(s*100).toFixed(ga?1:0).replace(/\.0$/,'')+'%',dot=c=>'<i style="background:'+C.muted+';'+(c?'':'opacity:.45;filter:blur(.6px)')+'"></i>';let v,s;
@@ -1631,8 +1688,8 @@ function gcx(){return GX}function gcy(){return GY}
 // Globe as large as the space allows: left of it the title column (desktop) or above it (phone), below it the search.
 function layoutGlobe(){const find=$('#find'),side=$('#side'),fh=find.offsetHeight||150;let R;
   if(W<820){const top=side.offsetTop+side.offsetHeight+18;R=Math.max(120,Math.min(W/2-14,(H-top-fh-40)/2));GX=W/2;GY=top+R}
-  else{R=Math.max(150,Math.min(H*.325,W*.24));GX=W/2;GY=H*.413}
-  S.R=R;find.style.left=GX+'px';find.style.top=(W<820?GY+R+14:Math.max(GY+R+24,H*.79))+'px'}
+  else{const gap=36,sh=find.querySelector('.search').offsetHeight||42;R=Math.max(150,Math.min(H*.34,W*.24,(H-gap-sh-60)/2));GX=W/2;GY=(H-(2*R+gap+sh))/2+R}
+  S.R=R;find.style.left=GX+'px';find.style.top=(W<820?GY+R+14:GY+R+36)+'px'}
 function proj(lon,lat,R){const l=(lon-S.cLon)*RAD,p=lat*RAD,cp=Math.cos(p),sp=Math.sin(p),cl=Math.cos(l);
   return[gcx()+R*cp*Math.sin(l),gcy()-R*(cosP0*sp-sinP0*cp*cl),sinP0*sp+cosP0*cp*cl]}
 let hits=[];
@@ -1658,11 +1715,13 @@ function prepRegions(){for(const L of Object.values(LANGS)){const g=GRIDS[L.grid
   const hs=pts.filter(p=>p.home).sort((a,b)=>a.d-b.d);hs.forEach((p,i)=>p.rank=i);
   REG[L.id]={pts,homeN:hs.length,inN:hs.filter(p=>!p.out).length}}}
 prepRegions();
+// STEP: inside a language the map holds the last count until the next one; nothing is interpolated. Story mode turns it off.
+let STEP=true;
 function seriesAt(L,key,y){const s=L.series.find(x=>x.key===key);if(!s)return null;const p=s.pts;
   if(y<p[0].y)return key==='can'?{v:p[0].v,share:p[0].v/p[0].pop,kind:'before',a:p[0]}:null;
   for(let i=0;i<p.length;i++){if(p[i].y===y)return{v:p[i].v,share:p[i].v/p[i].pop,kind:p[i].k,a:p[i]}}
   if(y>p[p.length-1].y){const q=p[p.length-1];return{v:q.v,share:q.v/q.pop,kind:'after',a:q}}
-  for(let i=1;i<p.length;i++)if(y<p[i].y){const a=p[i-1],b=p[i],t=(y-a.y)/(b.y-a.y);
+  for(let i=1;i<p.length;i++)if(y<p[i].y){const a=p[i-1],b=p[i],t=(y-a.y)/(b.y-a.y);if(STEP)return{v:a.v,share:a.v/a.pop,kind:'after',a};
     const v=Math.exp(Math.log(a.v)+(Math.log(b.v)-Math.log(a.v))*t),pop=a.pop+(b.pop-a.pop)*t;return{v,share:v/pop,kind:'interp',a,b}}}
 /* ============ landing background ============ */
 // A still, faint dot grid behind the world view (hidden inside a language). Painted on resize and theme change only.
@@ -1740,12 +1799,12 @@ function openLang(id){hideTip(true);closePop();if(S.mode==='region'&&S.lang===id
   const L=LANGS[id];togglePlay(false);S.lang=id;S.mode='zoom';$('#app').classList.add('away');
   setYear(L.series[0].pts[0].y);S.introDone=false;
   fly(3600,()=>[...bboxCenter(L),fitZ(L),1],landRegion,()=>{showLangIntro(L,()=>{S.introDone=true;openPanel()});rmShow(id)})}
-function landRegion(){S.mode='region';if(!RM.on)rmShow(S.lang);FACT.off=false;FACT.id=undefined;const L=LANGS[S.lang];$('#crumb').hidden=false;$('#crumbHere').textContent=L.place;
+function landRegion(){S.mode='region';$('#app').classList.add('landed');if(S.backAfter){S.backAfter=false;toWorld();return}if(!RM.on)rmShow(S.lang);FACT.off=false;FACT.id=undefined;const L=LANGS[S.lang];$('#crumb').hidden=false;$('#crumbHere').textContent=L.place;
   renderLegend();renderTrack();updateYearNote();dirty=true;if(S.introDone)openPanel()}
-function openPanel(){if(S.mode!=='region')return;$('#app').classList.add('region','timeon');$('#panel').hidden=false;renderPanel();FACT.id=undefined;updateFact();
+function openPanel(){if(S.mode!=='region')return;$('#app').classList.add('region','timeon');$('#panel').hidden=false;renderPanel();FACT.id=undefined;FACT.sel=null;FACT.manual=false;FACT.off=false;updateFact();
   clearTimeout(S.autoT)}
 function toWorld(done){if(S.mode==='globe'||S.flying)return;rmHide();$('#legend').innerHTML='';$('#rtip').hidden=$('#rring').hidden=true;clearTimeout(S.autoT);hideLangIntro(true);FACT.off=false;$('#pop').classList.remove('on');
-  togglePlay(false);$('#app').classList.remove('region','timeon');$('#panel').hidden=true;$('#crumb').hidden=true;S.mode='zoom';S.year=Y1;
+  togglePlay(false);$('#app').classList.remove('region','timeon','landed');$('#panel').hidden=true;$('#crumb').hidden=true;S.mode='zoom';S.year=Y1;
   fly(2400,()=>[S.cLon,24,1,0],()=>{S.mode='globe';S.lang=null;$('#app').classList.remove('away');renderLegend();renderTrack();updateYearNote();done&&done()})}
 $('#crumbWorld').addEventListener('click',()=>toWorld());$('#home').addEventListener('click',()=>toWorld());
 
@@ -1757,8 +1816,7 @@ function renderLegend(){const el=$('#legend');
     :dt('background:'+sp)+'Speaks Hawaiian</div>'+dt('background:var(--eng)')+'English</div>'+dt('border:1px solid '+sp)+'Hawaiian spoken, no count</div>';
   const src=ga?L.series[0].pts.map(p=>p.y+': '+p.src).concat(['County variation: county shares from the Census of Ireland, compiled by irishlanguagemap.org (Alessio Coci), scaled each year so the map’s average matches the figures above. They set where speakers are, not how many.','From 1922 the figures cover the 26 counties, so Northern Ireland shows no figure.','County boundaries: modern 32-county outlines (irishlanguagemap.org). Partition line from 3 May 1921.','Gaeltacht: Language Planning Areas, Tailte Éireann (2015). Solid from the Gaeltacht Act 2012; dashed from 1956.','Dot size: GeoNames towns of 1,000+.'])
     :L.series[0].pts.map(p=>p.y+': '+p.src).concat(['Coastlines: Natural Earth 1:50m. Dot size: 2020 US Census populations of the larger towns and census places, rounded.']);
-  el.innerHTML=rows+'<hr>'+dt('background:var(--muted)')+'Measured year'+'</div>'+dt('background:var(--muted);opacity:.4;filter:blur(.8px)')+'Estimate or between counts'+'</div><div class="row opt"><i style="width:3px;height:3px;background:var(--faint)"></i><i style="width:6px;height:6px;background:var(--faint);margin-left:-4px"></i>Dot size: population</div>'
-    +(ga?'<p>The number of speakers is the island figure. County differences show where they lived.</p>':'<p>Dots show the statewide share of speakers, spread evenly across the islands. There are no island-level figures.</p>')+'<button class="srcbtn" type="button">Sources ↗</button><div class="sources" hidden><button class="x" type="button" aria-label="Close">×</button><div class="cap">Sources</div><ol>'+src.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ol></div>';
+  el.innerHTML=rows+'<div style="height:10px"></div>'+'<button class="srcbtn" type="button">Sources ↗</button><div class="sources" hidden><button class="x" type="button" aria-label="Close">×</button><div class="cap">Sources</div><ol>'+src.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ol></div>';
   el.querySelector('.srcbtn').onclick=()=>{const s=el.querySelector('.sources');s.hidden=!s.hidden};el.querySelector('.sources .x').onclick=()=>{el.querySelector('.sources').hidden=true}}
 
 
@@ -1769,19 +1827,24 @@ function txScale(){const w=track.clientWidth||600;return{w,x:y=>12+(y-Y0)/(Y1-Y0
 function renderTrack(){if(!track.clientWidth)return;TX=txScale();const {w,x}=TX;const base=50;let s='';
   s+=`<defs><pattern id="hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" stroke="${C.faint}" stroke-width="1.4"/></pattern></defs>`;
   for(let yy=1850;yy<=2000;yy+=50)s+=`<text x="${x(yy)}" y="${base+22}" text-anchor="middle">${yy}</text>`;
-  const CY=S.mode==='region'&&S.lang?censusPts(LANGS[S.lang]).map(p=>p.y):[];for(let yy=Y0;yy<=Y1;yy+=2)if(!CY.some(v=>Math.abs(v-yy)<1.5))s+=`<circle cx="${x(yy)}" cy="${base}" r=".9" fill="${C.faint}"/>`;
+  s+=`<line x1="${x(Y0)}" x2="${x(Y1)}" y1="${base}" y2="${base}" stroke="${C.faint}" stroke-width=".6"/>`;
   if(S.mode==='region'&&S.lang){const L=LANGS[S.lang];$('#trackLabel').textContent=`${L.name}: dots are census data, diamonds are historical events, hatched spans are gaps`;
     for(const g of []){const gw=Math.max(4,x(g.to)-x(g.from)-10);s+=`<g class="gp" data-gap="${g.id}" style="cursor:pointer"><rect x="${x(g.from)+5}" y="${base-5}" width="${gw}" height="10" rx="3" fill="url(#hatch)" opacity=".7"/><rect x="${x(g.from)+5}" y="${base-7}" width="${gw}" height="14" rx="3" fill="transparent"/></g>`}
-    for(const p of censusPts(L))s+=`<circle class="mk" data-pt="${p.y}" cx="${x(p.y)}" cy="${base}" r="3.2" fill="${p.k==='meas'?C.fg:C.surface}" stroke="${C.fg}" stroke-width="1.2" style="cursor:pointer"/>`;
-    for(const ev of L.events){const ex=x(ev.y);s+=`<rect class="mk" data-ev="${ev.y}" x="${ex-4}" y="${base-4}" width="8" height="8" style="cursor:pointer;transform:rotate(45deg)" fill="${C.surface}" stroke="${C.fg}" stroke-width="1.3"/>`}}
-  s+=`<g id="tHead" transform="translate(${x(S.year)} 0)" style="pointer-events:none"><line x1="0" x2="0" y1="${base-24}" y2="${base+6}" stroke="${C.fg}" stroke-width="1"/><circle cx="0" cy="${base}" r="7" fill="${C.surface}" stroke="${C.fg}" stroke-width="1.5"/><circle cx="0" cy="${base}" r="2.6" fill="${S.lang?C[LANGS[S.lang].color.slice(2)]:C.accent}"/></g>`;
+    for(const p of censusPts(L))s+=`<circle class="mk" data-pt="${p.y}" cx="${x(p.y)}" cy="${base}" r="2.6" fill="${p.k==='meas'?C.fg:C.surface}" stroke="${C.fg}" stroke-width="1" style="cursor:pointer"/>`;
+    for(const ev of L.events){const ex=x(ev.y);s+=`<rect class="mk" data-ev="${ev.y}" x="${ex-3.25}" y="${base-3.25}" width="6.5" height="6.5" style="cursor:pointer;transform:rotate(45deg)" fill="${C.surface}" stroke="${C.fg}" stroke-width="1"/>`}}
+  s+=`<g id="tHead" transform="translate(${x(S.year)} 0)" style="pointer-events:none"><line id="tLine" x1="0" x2="0" y1="${base-24}" y2="${base-6}" stroke="${C.fg}" stroke-width=".8"/></g>`;
   track.setAttribute('viewBox',`0 0 ${w} 92`);track.innerHTML=s;track.setAttribute('aria-valuenow',S.year);FACT.id=undefined;updateFact()}
 function moveHead(){if(!TX)return;const hx=TX.x(S.year),h=track.querySelector('#tHead'),pl=track.querySelector('#tPlayed');if(h)h.setAttribute('transform',`translate(${hx} 0)`);if(pl)pl.setAttribute('x2',hx);track.setAttribute('aria-valuenow',S.year)}
 let tdrag=false;
-track.addEventListener('pointerdown',e=>{const mk=e.target.closest('.mk,.gp');if(mk){openMarker(mk);return}tdrag=true;track.setPointerCapture(e.pointerId);scrubTo(e)});
+track.addEventListener('pointerdown',e=>{const mk=e.target.closest('.mk,.gp');tdrag=true;track.setPointerCapture(e.pointerId);if(mk)openMarker(mk);else scrubTo(e)});
 track.addEventListener('pointermove',e=>{if(tdrag)scrubTo(e)});
 track.addEventListener('pointerup',()=>{tdrag=false});
-function scrubTo(e){FACT.manual=false;if(S.playing)togglePlay(false);const r=track.getBoundingClientRect();setYear(Math.max(Y0,Math.min(Y1,TX.inv((e.clientX-r.left)*(TX.w/r.width)))))}
+// The timeline only lands on dots and diamonds: dragging snaps to the nearest one.
+function scrubTo(e){if(S.mode!=='region'||!S.lang||!TX)return;const r=track.getBoundingClientRect(),px=(e.clientX-r.left)*(TX.w/r.width),fs=factsFor(LANGS[S.lang]);let bi=0,bd=1e9;
+  fs.forEach((f,i)=>{const d=Math.abs(TX.x(f.y)-px);if(d<bd){bd=d;bi=i}});if(S.playing)togglePlay(false);if(fs[bi].id!==FACT.sel||fs[bi].y!==S.year||!$('#pop').classList.contains('on'))goFactIdx(bi)}
+function curFactIdx(){const fs=factsFor(LANGS[S.lang]);if(FACT.sel){const i=fs.findIndex(f=>f.id===FACT.sel);if(i>=0&&fs[i].y===S.year)return i}let a=-1;fs.forEach((f,i)=>{if(f.y<=S.year)a=i});return a}
+function goFactIdx(i){const fs=factsFor(LANGS[S.lang]);i=Math.max(0,Math.min(fs.length-1,i));const f=fs[i];FACT.sel=f.id;FACT.off=false;FACT.manual=true;FACT.id=undefined;setYear(f.y);FACT.id=undefined;updateFact()}
+function stepFact(d){if(S.mode!=='region'||!S.lang)return;if(S.playing)togglePlay(false);const i=curFactIdx();goFactIdx(FACT.manual&&$('#pop').classList.contains('on')?i+d:Math.max(0,i))}
 function setYear(y){y=Math.max(Y0,Math.min(Y1,Math.round(y)));const prev=S.year;if(y===prev)return;S.year=y;
   $('#year').textContent=y;moveHead();updateFact();updateYearNote();if(S.mode==='region')updatePanelYear();rmDraw();dirty=true}
 function updateYearNote(){const el=$('#yearNote');
@@ -1802,21 +1865,20 @@ function pointAt(y){if(!S.lang)return null;let h=null;for(const f of factsFor(LA
 function beginHold(f){S.inHold=true;S.hold=performance.now()+PLAYBACK.fact+160;FACT.off=false;FACT.id=f.id;FACT.kind=f.k;highlightFact(f);renderFact(LANGS[S.lang],f,true)}
 function endHold(){S.inHold=false;FACT.id=undefined;highlightFact(null);$('#pop').classList.remove('on')}
 function playTick(){const now=performance.now(),pop=$('#pop'),busy=!$('#modal').hidden||!!(SX.el&&!SX.el.hidden);pop.classList.toggle('frozen',busy);
-  if(S.inHold){if(busy||pop.matches(':hover')){S.hold+=PLAYBACK.step;return}if(now>=S.hold)endHold();return}
-  if(busy)return;if(S.year>=Y1){togglePlay(false);return}
-  setYear(S.year+1);const h=S.mode==='region'&&pointAt(S.year);if(h)beginHold(h)}
-function togglePlay(force){S.playing=force??!S.playing;$('#playIcon').setAttribute('d',S.playing?'M3 2h3v10H3zM8 2h3v10H8z':'M3 1.5v11l9-5.5z');$('#play').setAttribute('aria-label',S.playing?'Pause':'Play through time');
+  if(busy||pop.matches(':hover')){S.hold+=PLAYBACK.step;return}if(now<S.hold)return;
+  const fs=factsFor(LANGS[S.lang]),i=curFactIdx();if(i>=fs.length-1){togglePlay(false);return}const f=fs[i+1];FACT.sel=f.id;setYear(f.y);beginHold(f)}
+function togglePlay(force){S.playing=force??!S.playing;if(S.playing&&(S.mode!=='region'||!S.lang))S.playing=false;$('#playIcon')?.setAttribute('d',S.playing?'M3 2h3v10H3zM8 2h3v10H8z':'M3 1.5v11l9-5.5z');$('#play')?.setAttribute('aria-label',S.playing?'Pause':'Play through time');
   clearInterval(playT);S.inHold=false;
-  if(!S.playing){const fh=$('#pop .fhold');if(fh)fh.remove();$('#pop').classList.remove('frozen');FACT.id=undefined;updateFact();return}
-  if(S.year>=Y1)setYear(Y0);const h=S.mode==='region'&&pointAt(S.year);if(h)beginHold(h);else endHold();
+  if(!S.playing){$('#pop').classList.remove('frozen');FACT.id=undefined;updateFact();return}
+  const fs=factsFor(LANGS[S.lang]);let i=curFactIdx();if(i<0||i>=fs.length-1)i=0;const f=fs[i];FACT.sel=f.id;FACT.manual=true;setYear(f.y);beginHold(f);
   playT=setInterval(playTick,PLAYBACK.step)}
-$('#play').addEventListener('click',()=>togglePlay());
+$('#tPrev').addEventListener('click',()=>stepFact(-1));$('#tNext').addEventListener('click',()=>stepFact(1));
 document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,select')||!$('#modal').hidden)return;
   if(!$('#story').hidden){if(e.key==='Escape')closeStory();return}
   if(!LI.el.hidden){if(e.key==='Escape')hideLangIntro(false);return}
   if(S.mode!=='region'){if(e.key==='Escape')hideTip(true);return}
-  if(e.key==='ArrowRight'){setYear(S.year+(e.shiftKey?10:1));e.preventDefault()}else if(e.key==='ArrowLeft'){setYear(S.year-(e.shiftKey?10:1));e.preventDefault()}
-  else if(e.key===' '){togglePlay();e.preventDefault()}else if(e.key==='Escape'){closePop();hideTip(true)}});
+  if(e.key==='ArrowRight'){stepFact(1);e.preventDefault()}else if(e.key==='ArrowLeft'){stepFact(-1);e.preventDefault()}
+  else if(e.key==='Escape'){closePop();hideTip(true)}});
 
 /* fact card: follows the slider */
 const FACT={id:undefined,kind:null,off:false,t:0};
@@ -1826,10 +1888,10 @@ function factsFor(L){if(L._facts)return L._facts;const f=[],cp=censusPts(L);
   cp.forEach((p,i)=>f.push({k:'pt',y:p.y,id:'pt'+p.y,p,prev:cp[i-1]}));L.events.forEach(e=>f.push({k:'ev',y:e.y,id:'ev'+e.y,ev:e}));
   f.sort((a,b)=>a.y-b.y||(a.k==='pt'?-1:1));return L._facts=f}
 // The latest event or count at or before the year; inside a gap, once the last marker is more than 2 years behind, the gap itself.
-function activeFact(L,y){let a=null;for(const f of factsFor(L))if(f.y<=y)a=f;
+function activeFact(L,y){if(FACT.sel){const s=factsFor(L).find(f=>f.id===FACT.sel);if(s&&s.y===y)return s}let a=null;for(const f of factsFor(L))if(f.y<=y)a=f;
   const g=L.gapList.find(g=>g.id!=='daily'&&y>g.from&&y<g.to);if(g&&(!a||y-a.y>2))return{k:'gap',y:(g.from+g.to)/2,id:'gap'+g.id,g};return a}
 function factHTML(L,f){
-  if(f.k==='ev'){const e=f.ev;return`<div class="fc ev"><div class="cap evk"><b></b>${e.y} · Event</div><h5>${esc(e.t)}</h5><p>${esc(e.d)}</p></div>`}
+  if(f.k==='ev'){const e=f.ev;return`<div class="fc ev">${e.img?`<figure class="plate fthumb" data-plate="ev-${L.id}-${e.y}" data-scene="${esc(e.img.scene)}" data-cap="${esc(e.img.cap)}" title="${esc(e.img.cap)}"></figure>`:''}<div class="cap evk"><b></b>${e.y} · Event</div><h5>${esc(e.t)}</h5><p>${esc((e.d.match(/^.*?[.!?](\s|$)/)||[e.d])[0].trim())}</p></div>`}
   if(f.k==='pt'){const p=f.p,sh=p.v/p.pop,pr=f.prev,meas=p.k==='meas';let dl='';
     if(pr){const c=(p.v-pr.v)/pr.v;dl=(c<0?'Down ':'Up ')+Math.abs(Math.round(c*100))+'% since '+pr.y+'. '}
     return`<div class="fc pt"><div class="cap evk"><i style="width:6px;height:6px;border-radius:50%;display:block;${meas?'background:var(--fg)':'border:1px solid var(--fg)'}"></i>${p.y} · ${meas?'Census':'Estimate'}</div><h5>${meas?'':'~'}${fmt(p.v)} ${esc(L.unit)}</h5><p>${dl}${sh<.01?(sh*100).toFixed(1):Math.round(sh*100)}% of everyone counted.</p><div class="mono src" style="margin-top:8px">${esc(p.src)}</div></div>`}
@@ -1837,12 +1899,13 @@ function factHTML(L,f){
 // Waits until the language intro has cleared (the panel opens then), so the card never shows through the intro.
 // While playing, cards only appear at dots and diamonds (see playTick); otherwise the card follows the slider.
 function updateFact(){const pop=$('#pop');if(S.mode!=='region'||!S.lang||!TX||$('#panel').hidden){pop.classList.remove('on');FACT.id=undefined;return}
-  if(S.playing)return;if(!FACT.manual){pop.classList.remove('on');highlightFact(null);FACT.id=undefined;return}
+  if(S.playing)return;if(!FACT.manual){pop.classList.remove('on');highlightFact(activeFact(LANGS[S.lang],S.year));FACT.id=undefined;return}
   const L=LANGS[S.lang],f=activeFact(L,S.year),id=f?f.id:null;if(id===FACT.id)return;FACT.id=id;FACT.kind=f&&f.k;highlightFact(f);
   if(!f||FACT.off){pop.classList.remove('on');return}renderFact(L,f,false)}
 function highlightFact(f){track.querySelectorAll('.mk.on').forEach(m=>m.classList.remove('on'));
   if(f&&f.k!=='gap'){const m=track.querySelector(f.k==='ev'?`[data-ev="${f.y}"]`:`[data-pt="${f.y}"]`);if(m)m.classList.add('on')}}
 function renderFact(L,f,holding){const pop=$('#pop');
+  const fs=factsFor(L),fi=fs.findIndex(q=>q.id===f.id),nav=f.k==='gap'?'':`<div class="fnav"><button class="fback" type="button" ${fi<=0?'disabled':''}>← Back</button><button class="fcont" type="button" ${fi>=fs.length-1?'disabled':''}>Continue →</button></div>`;
   const show=()=>{pop.innerHTML=factHTML(L,f)+'<button class="x" type="button" aria-label="Hide facts">×</button>';initPlates(pop);
     pop.querySelectorAll('.fthumb').forEach(fg=>fg.addEventListener('click',()=>{const inp=fg.querySelector('input');if(inp)inp.click()}));
     const x=TX.x(f.y)*(track.getBoundingClientRect().width/TX.w),pw=pop.offsetWidth||300,cl=Math.max(pw/2,Math.min(track.clientWidth-pw/2,x));pop.style.left=cl+'px';pop.style.setProperty('--cx',(x-cl+pw/2)+'px');
@@ -1850,12 +1913,12 @@ function renderFact(L,f,holding){const pop=$('#pop');
   clearTimeout(FACT.t);if(pop.classList.contains('on')&&!reduce){pop.classList.add('swap');FACT.t=setTimeout(show,160)}else show()}
 function openMarker(mk){const L=LANGS[S.lang];
   if(mk.dataset.gap){openGap(L.gapList.find(g=>g.id===mk.dataset.gap));return}
-  FACT.off=false;FACT.manual=true;FACT.id=undefined;togglePlay(false);setYear(+(mk.dataset.ev||mk.dataset.pt));updateFact()}
+  const id=(mk.dataset.ev?'ev'+mk.dataset.ev:'pt'+mk.dataset.pt);if(S.playing)togglePlay(false);goFactIdx(factsFor(L).findIndex(f=>f.id===id))}
 function closePop(){if(S.inHold){S.hold=0;return}FACT.manual=false;FACT.off=true;$('#pop').classList.remove('on')}
-$('#pop').addEventListener('click',e=>{if(e.target.closest('.x')){closePop();return}if(e.target.closest('.fnext')){S.hold=0;return}const g=e.target.closest('[data-gapopen]');if(g)openGap(LANGS[S.lang].gapList.find(x=>x.id===g.dataset.gapopen))});
+$('#pop').addEventListener('click',e=>{if(e.target.closest('.x')){closePop();return}if(e.target.closest('.fcont')){if(S.playing)S.hold=0;else stepFact(1);return}if(e.target.closest('.fback')){stepFact(-1);return}const g=e.target.closest('[data-gapopen]');if(g)openGap(LANGS[S.lang].gapList.find(x=>x.id===g.dataset.gapopen))});
 
 /* ============ panel ============ */
-function chartSVG(L,opts){const w=opts.w||380,h=opts.h||170,ml=44,mr=opts.mr??92,mt=10,mb=24;const SER=L.series.slice(0,1),all=SER.flatMap(s=>s.pts.map(p=>p.v));
+function chartSVG(L,opts){const w=opts.w||380,h=opts.h||170,ml=34,mr=opts.mr??6,mt=10,mb=24;const SER=L.series.slice(0,1),all=SER.flatMap(s=>s.pts.map(p=>p.v));
   const lo=Math.pow(10,Math.floor(Math.log10(Math.min(...all)*.8))),hi=Math.pow(10,Math.ceil(Math.log10(Math.max(...all)*1.1)));
   const X=y=>ml+(y-Y0)/(Y1-Y0)*(w-ml-mr),Yv=v=>mt+(1-(Math.log10(v)-Math.log10(lo))/(Math.log10(hi)-Math.log10(lo)))*(h-mt-mb);
   let s=`<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Speakers of ${L.name} over time, log scale">`;
@@ -1864,10 +1927,10 @@ function chartSVG(L,opts){const w=opts.w||380,h=opts.h||170,ml=44,mr=opts.mr??92
   const up=opts.upTo||Y1;const col=C[L.color.slice(2)];const gapIds=new Set(L.gapList.map(g=>g.id));
   s+=`<defs><clipPath id="clip${opts.id}"><rect x="0" y="0" width="${X(up)+6}" height="${h}" class="reveal"/></clipPath></defs><g clip-path="url(#clip${opts.id})">`;
   SER.forEach((se,si)=>{const p=se.pts;const c=col;
-    for(let i=1;i<p.length;i++){const a=p[i-1],b=p[i];const dashed=true;
+    for(let i=1;i<p.length;i++){const a=p[i-1],b=p[i];const dashed=false;
       s+=`<line x1="${X(a.y)}" y1="${Yv(a.v)}" x2="${X(b.y)}" y2="${Yv(b.v)}" stroke="${c}" stroke-width="1.6" ${dashed?'stroke-dasharray="2 4" stroke-linecap="round"':''}/>`}
-    for(const q of p)s+=`<circle cx="${X(q.y)}" cy="${Yv(q.v)}" r="3.2" fill="${q.k==='meas'?c:C.surface}" stroke="${c}" stroke-width="1.4"/>`;
-    const last=p[p.length-1];s+=`<text x="${X(last.y)+8}" y="${Yv(last.v)+3.5}" style="fill:${c}">${si===0?(L.id==='ga'?'can speak':'speakers'):'daily'}</text>`});
+    for(const q of p)s+=`<circle cx="${X(q.y)}" cy="${Yv(q.v)}" r="3" fill="${c}"/>`;
+    });
   s+='</g>';if(opts.yearLine)s+=`<line class="yl" data-x0="${ml}" data-x1="${w-mr}" x1="${X(S.year)}" x2="${X(S.year)}" y1="${mt}" y2="${h-mb}" stroke="${C.accent}" stroke-width="1"/>`;
   return s+'</svg>'}
 function renderPanel(){const L=LANGS[S.lang];const p=$('#panel');const crit=L.glotto==='Moribund';
@@ -1877,9 +1940,9 @@ function renderPanel(){const L=LANGS[S.lang];const p=$('#panel');const crit=L.gl
    <p class="lede">${esc(L.lede)}</p>
    <div class="now" id="now"></div>
    <div class="sec chart"><div class="head"><span class="cap">Speakers over time</span><span class="mono">log scale</span></div><div id="pchart"></div>
-     <div class="mono" style="display:flex;gap:14px;flex-wrap:wrap"><span><i class="dot" style="color:var(--fg)"></i> measured</span><span><i class="ring" style="color:var(--fg)"></i> estimate</span><span>┄ assumed between counts</span></div></div>
+     </div>
    <div class="sec"><div class="head"><span class="cap">From the community</span></div><div id="comm"></div></div>
-  </div><div class="ctas"><button class="btn" id="readBtn"><span class="dot"></span>Read the story</button><button class="btn ghost" id="addBtn">Add your story</button></div>`;
+  </div><div class="ctas"><button class="btn accent" id="addBtn"><span class="dot"></span>Add your story</button><button class="btn ghost" id="readBtn">Read the story</button></div>`;
   p.querySelector('.close').onclick=()=>toWorld();p.querySelector('#readBtn').onclick=()=>openStory(L.id);p.querySelector('#addBtn').onclick=()=>openForm({lang:L.id});
   p.scrollTop=0;updatePanelYear();refreshCommunity()}
 function updatePanelYear(){const L=LANGS[S.lang];if(!L||!$('#now'))return;const v=seriesAt(L,'can',S.year),d=seriesAt(L,'daily',S.year);
@@ -1895,11 +1958,17 @@ function renderGaps(L,el){el.innerHTML=L.gapList.map(g=>`<button class="gapbtn" 
   el.onclick=e=>{const b=e.target.closest('[data-g]');if(b)openGap(L.gapList.find(g=>g.id===b.dataset.g))}}
 const EXAMPLES={ga:[{type:'voice',title:'Children’s songs, Fionán Mac Coluim',when:'1928 · Doegen Records'},{type:'doc',label:'manuscript',title:'Stories told by Peig Sayers',when:'1930s · Great Blasket'},{type:'doc',label:'newspaper',title:'An Claidheamh Soluis',when:'1899–1932 · Gaelic League'},{type:'doc',label:'school copybook',title:'Schools’ Collection notebook',when:'1937–39 · Dúchas'}],
  haw:[{type:'voice',title:'Ka Leo Hawaiʻi: Sarah Nākoa',when:'24 Oct 1972 · KCCN'},{type:'doc',label:'newspaper',img:'img/kuu-hae-hawaii-1913.jpg',pos:'center 42%',title:'Kuu Hae Hawaii',when:'Vol. I, No. 9 · 4 July 1913'},{type:'doc',label:'letter',title:'Liholiho to Kaluaiahuena',when:'1823 · State Archives'},{type:'doc',label:'petition',title:'Petition against annexation',when:'1897 · signed in Hawaiian'}]};
-function renderComm(){const L=LANGS[S.lang];const mine=store.stories.filter(s=>s.lang===L.id||s.langName===L.name).sort((a,b)=>(b.at||0)-(a.at||0));
+function exampleCard(L,x){return`<div class="story"><div class="thumb"><span class="chip ex">Example</span>${x.type==='voice'?waveSVG(L):x.img?`<img src="${x.img}" alt="" style="object-position:${x.pos||'center'}">`:x.type==='doc'?`<span class="mono">${esc(x.label)}</span>`:x.type==='photo'?'<span class="mono">photo</span>':'<span class="q">“…”</span>'}</div><b>${esc(x.title)}</b><span class="mono">${esc(x.when)}</span></div>`}
+function commCards(L){const mine=store.stories.filter(s=>s.lang===L.id||s.langName===L.name).sort((a,b)=>(b.at||0)-(a.at||0));
+  return{mine,cards:mine.map(storyCard).concat(mine.length<2?EXAMPLES[L.id].map(x=>exampleCard(L,x)):[])}}
+function openAllStories(L){const {cards}=commCards(L);openGapId=null;const m=$('#modal');
+  m.innerHTML=`<div class="sheet" id="allStories" role="dialog" aria-modal="true" aria-labelledby="at"><button class="close" aria-label="Close">×</button><div class="cap">${esc(L.name)} · From the community</div><h3 id="at">Stories and records</h3><div class="stories">${cards.join('')}</div><div><button class="btn accent" id="aAdd"><span class="dot"></span>Add your story</button></div></div>`;
+  m.hidden=false;m.querySelector('.close').onclick=closeModal;m.querySelector('#aAdd').onclick=()=>openForm({lang:L.id})}
+function renderComm(){const L=LANGS[S.lang];const {mine,cards}=commCards(L);
   const empty=mine.length?'':`<div class="empty" style="margin-top:14px">No stories yet for ${L.name}. Families hold what the census missed: who stopped speaking, and why. <button class="linkish" id="firstAdd">Add the first one</button></div>`;
-  let h=`<div class="stories">`+mine.slice(0,6).map(storyCard).join('')+(mine.length<2?EXAMPLES[L.id].map(x=>`<div class="story"><div class="thumb"><span class="chip ex">Example</span>${x.type==='voice'?waveSVG(L):x.img?`<img src="${x.img}" alt="" style="object-position:${x.pos||'center'}">`:x.type==='doc'?`<span class="mono">${esc(x.label)}</span>`:x.type==='photo'?'<span class="mono">photo</span>':'<span class="q">“…”</span>'}</div><b>${esc(x.title)}</b><span class="mono">${esc(x.when)}</span></div>`).join(''):'')+`</div>`+empty;
+  let h=`<div class="stories">`+cards.slice(0,3).join('')+`</div>`+(cards.length?`<div style="margin-top:14px"><button class="linkish" id="seeAll" type="button" style="font-size:13px">See all</button></div>`:'')+empty;
   if(store.local)h+=`<div class="mono" style="margin-top:10px">Preview mode: stories you add are saved in this browser only.</div>`;
-  $('#comm').innerHTML=h;const fa=$('#firstAdd');if(fa)fa.onclick=()=>openForm({lang:L.id})}
+  $('#comm').innerHTML=h;const sa=$('#seeAll');if(sa)sa.onclick=()=>openAllStories(L);const fa=$('#firstAdd');if(fa)fa.onclick=()=>openForm({lang:L.id})}
 function waveSVG(L){const wc=L?C[L.color.slice(2)]:C.accent;let s='<svg width="70%" height="40" viewBox="0 0 140 40" aria-hidden="true">';for(let i=0;i<28;i++){const a=Math.abs(Math.sin(i*1.7)*Math.cos(i*.4))*14+2;for(let j=-a;j<=a;j+=5)s+=`<circle cx="${i*5+2}" cy="${20+j}" r="1.3" fill="${wc}"/>`}return s+'</svg>'}
 function storyCard(s){const g=s.gap&&LANGS[s.lang]?LANGS[s.lang].gapList.find(x=>x.id===s.gap):null;let th='';
   if(s.photo)th=`<img alt="" src="${esc(s.photo.startsWith('data:')?s.photo:'/_blob/'+s.photo)}">`;else if(s.audio)th=`<audio controls src="${esc(s.audio.startsWith('data:')?s.audio:'/_blob/'+s.audio)}"></audio>`;else th=`<span class="q">“${esc((s.text||'').slice(0,110))}${(s.text||'').length>110?'…':''}”</span>`;
@@ -2018,11 +2087,11 @@ function showLangIntro(L,done){const I=L.intro,el=LI.el;LI.done=done;LI.fading=L
    <div class="vnote"><button class="vplay" type="button" aria-label="Play voice note">${PLAY}</button><canvas class="vwave" aria-hidden="true"></canvas><span class="mono vtime">0:00 / ${mmss(I.dur)}</span></div>
    <div class="mono">${L.audio?'Voice note · ':'Audio slot · '}${esc(I.voice)}</div>
    <p class="stat">${I.stat}</p>
-   <div class="go"><button class="linkish" type="button" id="liBack" style="text-decoration:none;font-size:15px">Continue →</button></div></div></div><div class="lbar"></div>`;
+   <div class="go"><button class="lgo back" type="button" id="liWorld">← Back</button><button class="lgo" type="button" id="liBack">Continue →</button></div></div></div><div class="lbar"></div>`;
   initPlates(el);el.style.transition='';el.classList.remove('out','on');el.hidden=false;$('#app').classList.add('lion');
   requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('on')));
   clearTimeout(LI.st);LI.st=setTimeout(()=>{if(!LI.el.hidden&&!LI.playing&&!LI.ended)toggleVoice(L)},900);
-  el.querySelector('#liBack').onclick=()=>hideLangIntro(false);el.querySelector('.vplay').onclick=()=>toggleVoice(L);
+  el.querySelector('#liBack').onclick=()=>hideLangIntro(false);el.querySelector('#liWorld').onclick=()=>{hideLangIntro(true);if(S.flying)S.backAfter=true;else toWorld()};el.querySelector('.vplay').onclick=()=>toggleVoice(L);
   cancelAnimationFrame(LI.raf);LI.raf=requestAnimationFrame(liTick)}
 function liTick(now){const el=LI.el;if(el.hidden)return;drawVoice(now);
   el.querySelector('.lbar').style.width=(LI.fading?100:LI.dur?Math.min(100,LI.pos/LI.dur*100):0)+'%';
@@ -2140,7 +2209,8 @@ function drawMapCore(c,W,H,o){const L=o.lang?LANGS[o.lang]:null,R=o.R,cx=o.cx,cy
         c.font='12px "IBM Plex Mono",monospace';c.fillStyle=C.fg;c.fillText(dst.n,q[0]+14,q[1]+4+(dst.dy||0))}}});
     const f=P(rt.from.lon,rt.from.lat);if(f[2]>0&&z<6){c.globalAlpha=1;c.font='12px "IBM Plex Mono",monospace';c.fillStyle=C.muted;c.fillText(rt.from.n,f[0]+8,f[1]-8)}}
   c.globalAlpha=1}
-function drawStoryMap(cam){const W=SX.W,H=SX.H;if(!W)return;const L=LANGS[SX.lang];const narrow=W<820;
+function drawStoryMap(cam){const W=SX.W,H=SX.H;if(!W)return;const L=LANGS[SX.lang];const narrow=W<820;STEP=false;try{drawStoryMap2(cam,W,H,L,narrow)}finally{STEP=true}}
+function drawStoryMap2(cam,W,H,L,narrow){
   drawMapCore(SX.ctx,W,H,{lon:cam.lon,lat:cam.lat,z:cam.z,R:Math.min(W,H)*.42*cam.z,cx:narrow?W/2:W*.6,cy:narrow?H*.4:H*.5,year:cam.year,lang:SX.lang,path:cam.path||0,critA:.32,critR:1.05,markers:false});
   const year=Math.round(cam.year),hud=SX.el.querySelector('.sx-hud'),v=seriesAt(L,'can',year);hud.querySelector('.y').textContent=year;
   hud.querySelector('.k').innerHTML=v.kind==='meas'?'<i class="dot" style="color:var(--fg)"></i>Measured':v.kind==='before'?'<i class="ring" style="color:var(--muted);border-style:dashed"></i>Before the first count':`<i class="dot" style="color:var(--fg);opacity:.4"></i>Estimated · ${fmt(v.v)} speakers`}
@@ -2199,7 +2269,7 @@ function openStory(id){const L=LANGS[id],ST=STORIES[id];const el=$('#story');tog
    <section class="end"><div class="in"><div class="cap">What the census never asked</div><h2>Who spoke ${esc(L.name)} at home, who stopped, and why.</h2><p>Records count people. Families remember the rest: the grandmother who switched to English for her children’s sake, the song only one aunt still knew. Add what you know to the gaps below.</p>
     <div class="sec"><div class="head"><span class="cap">What fades with it</span></div><div class="lost">${L.lost.map(x=>`<div class="it"><span class="cap k">${esc(x.k)}</span><span class="w">${esc(x.w)}</span><span class="m">${esc(x.m)}</span></div>`).join('')}</div></div>
     <div class="sec"><div class="head"><span class="cap">Gaps in the record</span><span class="mono">${L.gapList.length} found</span></div><div class="gaps" id="sGaps"></div></div>
-    <div class="row"><button class="btn" id="sAdd"><span class="dot"></span>Add your story</button><button class="btn ghost" id="sOther">Read the ${esc(LANGS[other].name)} story</button><button class="btn ghost" id="sBack">Back to the map</button></div></div></section>`;
+    <div class="row"><button class="btn accent" id="sAdd"><span class="dot"></span>Add your story</button><button class="btn ghost" id="sOther">Read the ${esc(LANGS[other].name)} story</button><button class="btn ghost" id="sBack">Back to the map</button></div></div></section>`;
   el.hidden=false;el.classList.remove('fade');el.scrollTop=0;initPlates(el);document.body.style.overflow='hidden';
   el.querySelector('#sClose').onclick=closeStory;el.querySelector('#sBack').onclick=closeStory;el.querySelector('#sAdd').onclick=()=>openForm({lang:id});el.querySelector('#sOther').onclick=()=>openStory(other);
   el.querySelectorAll('[data-opengap]').forEach(b=>b.onclick=()=>openGap(L.gapList.find(g=>g.id===b.dataset.opengap)));renderGaps(L,el.querySelector('#sGaps'));
