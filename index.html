@@ -331,7 +331,35 @@ header.top>*{pointer-events:auto}
 .sx-pet .sx-yr{bottom:auto;top:84px;right:auto;left:max(28px,env(safe-area-inset-left,0px));text-align:left}
 .m2-yr{opacity:0;background:none;padding:0}
 @media (max-width:820px){.sx-yr{bottom:16px;right:16px}.sx-yr .y{font-size:40px}}
-.sx-steps{position:relative;z-index:1}
+.sx-school{background:var(--bg);display:grid;align-items:center;justify-items:end;padding:90px max(6vw,env(safe-area-inset-right,0px)) 40px 24px;overflow:auto}
+.sx-school .list{width:min(640px,54vw);display:grid;gap:20px}
+.sx-school .it{display:grid;grid-template-columns:clamp(70px,8vw,110px) 1fr;gap:18px;align-items:baseline;border-top:1px solid var(--line);padding-top:14px;opacity:0;transform:translateY(14px)}
+.sx-school .y{font-family:var(--serif);font-size:clamp(32px,4vw,56px);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.sx-school .t{font-family:var(--serif);font-size:clamp(16px,1.45vw,20px);line-height:1.5}
+.sx-song{background:var(--bg);display:grid;place-items:center;padding:84px max(24px,4vw) 28px;overflow:auto}
+.sng{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(24px,4vw,72px);width:min(1120px,100%);align-items:start}
+.sng h3{font-family:var(--serif);font-weight:400;font-size:clamp(30px,3.6vw,48px);line-height:1.05;margin:10px 0 4px}
+.sng .by{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted);margin-bottom:18px}
+.sng .lyr p{font-family:var(--serif);font-size:clamp(17px,1.55vw,21px);line-height:1.7;margin:0 0 14px}
+.sng .lyr p.hui{font-style:italic;padding-left:18px;border-left:2px solid var(--accent)}
+.sng .lyr p.hui b{font-style:normal;font-family:var(--mono);font-size:.7em;letter-spacing:.06em;margin-right:4px}
+.sng h4{font-family:var(--serif);font-weight:400;font-size:clamp(22px,2.2vw,28px);margin:10px 0 14px}
+.sng audio{width:100%;display:block}
+.sng .rec{margin-top:26px;padding-top:18px;border-top:1px solid var(--line);display:grid;gap:12px}
+.sng .rt{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+.sng .rrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.sng .rrow[hidden],.sng audio[hidden],.sng button[hidden]{display:none}
+.sng .rfile{cursor:pointer}
+.sng .rfb{min-height:20px;font-family:var(--serif);font-style:italic;font-size:15px;color:var(--muted)}
+.sng .rnote{font-size:12.5px;line-height:1.5;color:var(--muted)}
+.sng button.rec-on .dot{animation:slot 1s ease-in-out infinite}
+@media (max-width:820px){.sx-school{justify-items:center;padding-top:78px}.sx-school .list{width:100%}.sng{grid-template-columns:1fr}.sng .snd{order:-1}.sx-song{place-items:start center}}
+.sx-real{background:var(--bg);display:flex;justify-content:flex-end;align-items:center;padding:68px max(6vw,env(safe-area-inset-right,0px)) 22px 24px;box-sizing:border-box}
+.sx-real .rp{margin:0;height:100%;display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-height:0}
+.sx-real .rp img{display:block;flex:1;min-height:0;width:auto;max-width:100%;object-fit:contain;box-shadow:var(--shadow)}
+.sx-real .rp .cap{text-align:right;max-width:min(520px,100%)}
+@media (max-width:820px){.sx-real{justify-content:center;padding-left:16px;padding-right:16px}.sx-real .rp{align-items:center}}
+.sx-steps{position:relative;z-index:1;pointer-events:none}
 .sx-step{display:flow-root;position:relative;box-sizing:border-box;padding:0 max(24px,env(safe-area-inset-right,0px)) 0 max(6vw,env(safe-area-inset-left,0px));pointer-events:none}
 .sx-card{pointer-events:auto;position:relative;width:min(400px,100%);box-sizing:border-box;background:var(--surface);border:1px solid var(--line);border-radius:6px;box-shadow:var(--shadow);padding:22px 24px;margin-top:62vh}
 .sx-card .k{display:flex;gap:8px;align-items:center}
@@ -2140,7 +2168,7 @@ haw:{title:'Eighty-seven years without a count',dek:'Hawaiian went from the lang
   {t:'map',cam:{lon:-168,lat:14,z:1.1,year:1853},k:'1853 · estimate',h:'In the middle of the Pacific',p:['Hawaiʻi is 3,800 km from the nearest continent. Hawaiian’s closest relatives, Tahitian and Marquesan, are spoken more than 3,000 km to the south.']},
   {t:'map',cam:{...HAW,year:1853},k:'1853 · estimate',h:'Almost everyone spoke Hawaiian',p:['The Kingdom’s census counted about 70,000 Native Hawaiians. Hawaiian was the language of government, church and the press.','Each blue dot stands for a share of the islands’ people who spoke it.']},
   {t:'wa',h0:620,yr:'1885',yk:'survey map · Maui'},
-  {t:'photo',key:'haw-queen',scene:'portrait',cap:'Image slot · suggested: Queen Liliʻuokalani, c. 1891 · public domain',ken:[0,-3],ann:{x:.5,y:.34,r:.12,l:'Liliʻuokalani, last monarch of Hawaiʻi'},k:'1893',h:'The overthrow',p:['Business leaders, backed by US marines, deposed Queen Liliʻuokalani. Three years later, the republic they formed rewrote the school law.']},
+  {t:'photo',key:'haw-queen',src:'img/queen-liliuokalani.jpg',alt:'Queen Liliʻuokalani seated in a high-backed chair, a fan in her hand, inscribed to Josephus Daniels in 1916',cap:'Queen Liliʻuokalani, inscribed to Josephus Daniels, 1916',k:'1893',h:'The overthrow',p:['Business leaders, backed by US marines, deposed Queen Liliʻuokalani. Three years later, the republic they formed rewrote the school law.']},
   {t:'chapter',big:'1896',ti:'Act 57'},
   {t:'doc',head:'Act 57, Section 30 · Laws of the Republic of Hawaii · 1896',html:'<mark>The English Language shall be the medium and basis of instruction</mark> in <mark>all public and private schools</mark>, provided that where it is desired that another language shall be taught in addition to the English language, such instruction may be authorized by the Department.',notes:['English only, in every school, public and private.','Hawaiian is never named. It didn’t need to be.','Not repealed until 1986, ninety years later.'],k:'1896 · measured event',h:'One sentence in a school law',p:['It closed Hawaiian-medium schools across the islands.']},
   {t:'map',h0:150,cam:{...HAW,year:1896}},
@@ -2150,6 +2178,8 @@ haw:{title:'Eighty-seven years without a count',dek:'Hawaiian went from the lang
   {t:'map',h0:150,cam:{...HAW,year:1983}},
   {t:'gap',gap:'1896-1983',k:'1896 → 1983 · unexplained',h:'Eighty-seven years. No count.',p:['The record has a measured point at each end and nothing in between. In families, this is where grandparents stopped speaking Hawaiian to their children.','AI suggests what might explain it. Families can confirm or correct each suggestion.']},
   {t:'photo',key:'haw-punana',scene:'group',cap:'Image slot · suggested: an early Pūnana Leo class, 1980s · ʻAha Pūnana Leo',ken:[-2,-2],ann:{x:.28,y:.42,r:.07,l:'Is this your family? Tag them'},k:'1983 · measured',h:'Fewer than fifty children',p:['About 2,000 native speakers were left, and fewer than 50 of them were children.','Parents and teachers opened ʻAha Pūnana Leo, preschools taught only in Hawaiian.']},
+  {t:'school',h0:460,k:'1983 → 1986 · a school begins',h:'A language nest',p:['ʻAha Pūnana Leo means “language nest”. It was modelled on the Māori language nests of Aotearoa, and every day was taught only in Hawaiian.'],items:[['1983','ʻAha Pūnana Leo is formed by Hawaiian-language educators, including Larry Kimura, Kauanoe Kamanā and William H. “Pila” Wilson.'],['1984','The first preschool opens in Kekaha, Kauaʻi, in August, while the 1896 law still stood. Hawaiian-medium schooling was then against the law.'],['1985','Nests open in Hilo, Hawaiʻi and in Honolulu, Oʻahu.'],['1986','After the group works with the state legislature, the laws that limited Hawaiian-language instruction are lifted.']]},
+  {t:'song',h0:340},
   {t:'map',h0:240,cam:{...HAW,year:2013},k:'1987 → 2013 · measured',h:'The dots come back',p:['Immersion schools opened in public schools in 1987. By 2013 about 18,600 people spoke Hawaiian at home, most of them learners and their children.']},
   {t:'chapter',big:'kuleana',word:true,ti:'A responsibility and a right in one word: to the land, to family, to the work you are given.'}
 ]}};
@@ -2228,6 +2258,21 @@ function paintRegionDot(c,p,M,col,alpha,ds){
   else{c.globalAlpha=alpha;c.fillStyle=C.faint;c.fill()}}
 
 function sceneHTML(L,s,i){
+  if(s.t==='school')return`<div class="sx-scene sx-school" data-sc="${i}"><div class="list"><div class="cap">ʻAha Pūnana Leo · what the school did</div>${s.items.map(x=>`<div class="it"><div class="y">${x[0]}</div><div class="t">${esc(x[1])}</div></div>`).join('')}</div></div>`;
+  if(s.t==='song')return`<div class="sx-scene sx-song" data-sc="${i}"><div class="sng">
+    <div class="lyr"><div class="cap">Nā Huamele o ke mele</div><h3>Ke ʻAla Tuberose</h3><div class="by">Na Joseph ʻAeʻa</div>
+     <p>ʻAuhea wale ʻoe, e ke ʻala Tuberose,<br>He moani ʻaʻala i ke ano ahiahi,<br>Ua like me ka lau wāpine,<br>I ka hoene i ka poli pili paʻa.</p>
+     <p class="hui"><b>Hui:</b> ʻIke hou ana i ka nani aʻo Hilo,<br>I ka uluwehiwehi i ka lehua,<br>Lei hoʻohihi a ka malihini,<br>Mea ʻole i ke kono a ke aloha.</p>
+     <p>E aloha aʻe ana i ka makani Puʻulena,<br>Ka makani kaulana o ka ʻāina,<br>Home noho a nā ʻiʻiwi pōlena,<br>Mea ʻole i ke kono a ke aloha.</p></div>
+    <div class="snd"><div class="cap">Ka Leo o ke Mele</div><h4>Listen, then sing it back</h4>
+     <audio class="sg-audio" controls preload="metadata" src="audio/ke-ala-tuberose.m4a"></audio>
+     <div class="rec"><div class="rt">Record yourself</div>
+      <div class="rrow"><button class="btn sm" type="button" data-r="rec"><span class="dot"></span>Record</button><button class="btn ghost sm" type="button" data-r="stop" hidden>Stop</button><span class="rtime mono"></span><label class="btn ghost sm rfile">Or choose an audio file<input type="file" accept="audio/*" hidden></label></div>
+      <audio class="sg-take" controls hidden></audio>
+      <div class="rrow"><button class="btn sm" type="button" data-r="up" hidden>Upload to the timeline</button><button class="btn ghost sm" type="button" data-r="drop" hidden>Discard</button></div>
+      <div class="rfb" aria-live="polite"></div>
+      <div class="rnote">Only upload a recording you are happy to share. It appears on the Hawaiian timeline for everyone who opens this page.</div></div></div>
+  </div></div>`;  if(s.t==='photo'&&s.src)return`<div class="sx-scene sx-ph sx-real" data-sc="${i}"><figure class="rp"><img src="${s.src}" alt="${esc(s.alt||'')}"><figcaption class="cap">${esc(s.cap)}</figcaption></figure></div>`;
   if(s.t==='photo')return`<div class="sx-scene sx-ph" data-sc="${i}"><div class="kb">${plateHTML(s.key,s.cap,s.scene)}${s.ann?`<div class="ann" style="left:${s.ann.x*100}%;top:${s.ann.y*100}%;width:${s.ann.r*200}vmin;height:${s.ann.r*200}vmin"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/></svg><span class="lb">${esc(s.ann.l)}</span></div>`:''}</div>${s.hero?'<div class="shade"></div>':''}</div>`;
   if(s.t==='chapter')return`<div class="sx-scene sx-ch" data-sc="${i}"><div class="in"><div class="big ${s.word?'word':''}">${esc(s.big)}</div><div class="ti">${esc(s.ti)}</div></div></div>`;
   if(s.t==='doc')return`<div class="sx-scene sx-doc" data-sc="${i}"><div class="paper"><div class="dh">${esc(s.head)}</div><div>${s.html}</div><div class="notes">${s.notes.map((n,j)=>`<div class="note"><span class="n">${j+1}</span><span>${esc(n)}</span></div>`).join('')}</div></div></div>`;
@@ -2273,7 +2318,7 @@ function openStory(id){const L=LANGS[id],ST=STORIES[id];const el=$('#story');tog
   el.hidden=false;el.classList.remove('fade');el.scrollTop=0;initPlates(el);document.body.style.overflow='hidden';
   el.querySelector('#sClose').onclick=closeStory;el.querySelector('#sBack').onclick=closeStory;el.querySelector('#sAdd').onclick=()=>openForm({lang:id});el.querySelector('#sOther').onclick=()=>openStory(other);
   el.querySelectorAll('[data-opengap]').forEach(b=>b.onclick=()=>openGap(L.gapList.find(g=>g.id===b.dataset.opengap)));renderGaps(L,el.querySelector('#sGaps'));
-  SX.cv=el.querySelector('.sx-map');SX.ctx=SX.cv.getContext('2d');WX.mount(el);initSig(el);
+  SX.cv=el.querySelector('.sx-map');SX.ctx=SX.cv.getContext('2d');WX.mount(el);SONG.mount(el);initSig(el);
   SX.ro&&SX.ro.disconnect();SX.ro=new ResizeObserver(()=>{storyMeasure();storyTick()});SX.ro.observe(el.querySelector('.sx-stage'));
   el.onscroll=()=>{if(!SX.raf)SX.raf=requestAnimationFrame(()=>{SX.raf=0;storyTick()})};storyMeasure();storyTick()}
 function storyMeasure(){const el=SX.el;if(!el||el.hidden)return;const r=SX.cv.getBoundingClientRect();const dpr=Math.min(2,devicePixelRatio||1);SX.W=r.width;SX.H=r.height;
@@ -2281,13 +2326,15 @@ function storyMeasure(){const el=SX.el;if(!el||el.hidden)return;const r=SX.cv.ge
   const base=el.getBoundingClientRect().top-el.scrollTop;SX.tops=[...el.querySelectorAll('.sx-step')].map(s=>{const b=s.getBoundingClientRect();return{top:b.top-base,h:b.height}})}
 function storyTick(){const el=SX.el;if(!el||el.hidden||!SX.tops.length)return;const vh=el.clientHeight,y=el.scrollTop+vh*.5;
   let i=0;for(let k=0;k<SX.tops.length;k++)if(SX.tops[k].top<=y)i=k;const p=clamp01((y-SX.tops[i].top)/SX.tops[i].h);const s=SX.steps[i];
-  if(i!==SX.i){SX.i=i;el.querySelectorAll('.sx-scene').forEach(n=>n.classList.toggle('on',+n.dataset.sc===i));el.querySelector('.sx-hud').classList.toggle('off',s.t!=='map');WX.setActive(s.t==='wa')}
+  if(i!==SX.i){SX.i=i;el.querySelectorAll('.sx-scene').forEach(n=>n.classList.toggle('on',+n.dataset.sc===i));el.querySelector('.sx-hud').classList.toggle('off',s.t!=='map');WX.setActive(s.t==='wa');if(s.t!=='song'&&window.SONG)SONG.leave()}
   if(s.t==='wa')WX.apply(clamp01((el.scrollTop-SX.tops[i].top)/Math.max(1,SX.tops[i].h-vh)));
   el.querySelector('.prog').style.width=(el.scrollTop/Math.max(1,el.scrollHeight-vh)*100)+'%';
   const sc=el.querySelector(`.sx-scene[data-sc="${i}"]`);
   if(s.t==='map'||(sc&&s.t==='gap')||!sc)drawStoryMap(camAt(i,p));
   if(!sc)return;
-  if(s.t==='photo'){const kb=sc.querySelector('.kb'),k=s.ken||[0,0];if(!reduce)kb.style.transform=`scale(${1.04+.16*p}) translate(${(p-.5)*k[0]}%,${(p-.5)*k[1]+(s.hero?p*6:0)}%)`;
+  if(s.t==='school'){sc.querySelectorAll('.it').forEach((n,j)=>{const t=reduce?(p>.12+j*.14?1:0):smooth((p-.1-j*.17)/.1);n.style.opacity=t;n.style.transform=`translateY(${(1-t)*14}px)`})}
+  if(s.t==='photo'&&s.src){}
+  else if(s.t==='photo'){const kb=sc.querySelector('.kb'),k=s.ken||[0,0];if(!reduce)kb.style.transform=`scale(${1.04+.16*p}) translate(${(p-.5)*k[0]}%,${(p-.5)*k[1]+(s.hero?p*6:0)}%)`;
     const a=sc.querySelector('.ann');if(a){const t=reduce?(p>.3?1:0):smooth((p-.3)/.18);a.querySelector('circle').setAttribute('stroke-dashoffset',100*(1-t));a.querySelector('.lb').style.opacity=t>=1?1:0}}
   if(s.t==='news'){const f=sc.querySelector('.sx-fig'),pr=clamp01((el.scrollTop-SX.tops[i].top)/Math.max(1,SX.tops[i].h-vh));f.style.transform=`translateY(${-pr*Math.max(0,f.offsetHeight-vh)}px)`}
   if(s.t==='chapter'&&!reduce){sc.querySelector('.big').style.transform=`translateY(${(.5-p)*28}vh)`;sc.querySelector('.ti').style.transform=`translateY(${(.5-p)*10}vh)`}
@@ -2297,7 +2344,7 @@ function storyTick(){const el=SX.el;if(!el||el.hidden||!SX.tops.length)return;co
   if(s.t==='gap'){const n=sc.querySelector('.yrs');const N=+n.dataset.n;n.textContent=reduce?N:Math.round(N*smooth(p/.3));
     sc.querySelector('svg.line line').setAttribute('stroke-dashoffset',0);
     sc.querySelectorAll('.hyp').forEach((h,j)=>{const t=reduce?1:smooth((p-.25-j*.09)/.08);h.style.opacity=t;h.style.transform=`translateY(${(1-t)*14}px)`})}}
-function closeStory(){const el=$('#story');WX.setActive(false);el.classList.add('fade');SX.ro&&SX.ro.disconnect();el.onscroll=null;setTimeout(()=>{el.hidden=true;el.innerHTML='';SX.el=null},600);document.body.style.overflow=''}
+function closeStory(){const el=$('#story');WX.setActive(false);window.SONG&&SONG.leave();el.classList.add('fade');SX.ro&&SX.ro.disconnect();el.onscroll=null;setTimeout(()=>{el.hidden=true;el.innerHTML='';SX.el=null},600);document.body.style.overflow=''}
 
 /* ============ Wā: first-person time, then the 1885 map of Maui cut by survey lines (a scroll step in the Hawaiian story) ============ */
 const WX=(()=>{const IW=1920,IH=1531,SRC='img/maui-1885-clean.jpg',LINES='img/maui-1885-lines.png';
@@ -2357,6 +2404,37 @@ function initSig(el){const card=el.querySelector('.sig');if(!card)return;
       const o=document.createElement('canvas');o.width=cv.width;o.height=cv.height;o.getContext('2d').drawImage(cv,0,0);nm.innerHTML='';const im=new Image();im.src=o.toDataURL('image/png');im.alt='Your signature';nm.appendChild(im)}
     else{const t=inp.value.trim();if(!t){fb.textContent='Type your name first.';return}nm.textContent=t;nm.style.fontSize=Math.max(14,nm.offsetHeight*.7)+'px'}
     pg.classList.remove('signed');void pg.offsetWidth;pg.classList.add('signed');total(21270);fb.textContent='Your name is inscribed alongside the 21,269 ancestors.'}}
+
+/* ---- song lesson: listen, record, upload to the timeline ---- */
+window.SONG=(()=>{let rec=null,chunks=[],stream=null,blob=null,timer=0,t0=0,url='';
+  const q=(r,sel)=>r.querySelector(sel);
+  function root(){return document.querySelector('.sx-song')}
+  function stopTracks(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}}
+  function leave(){const r=root();if(!r)return;const a=q(r,'.sg-audio'),t=q(r,'.sg-take');a&&a.pause();t&&t.pause();if(rec&&rec.state==='recording')rec.stop();stopTracks();clearInterval(timer)}
+  function mount(el){const r=el.querySelector('.sx-song');if(!r)return;const b=n=>q(r,`[data-r=${n}]`),fb=q(r,'.rfb'),tk=q(r,'.sg-take'),tm=q(r,'.rtime');
+    const reset=()=>{blob=null;if(url)URL.revokeObjectURL(url);url='';tk.hidden=true;tk.removeAttribute('src');b('up').hidden=true;b('drop').hidden=true;b('rec').hidden=false;b('stop').hidden=true;b('rec').classList.remove('rec-on');tm.textContent=''};
+    b('rec').onclick=async()=>{q(r,'.sg-audio').pause();fb.textContent='';
+      if(!navigator.mediaDevices||!window.MediaRecorder){fb.textContent='Recording is not supported here (it needs https or localhost). Choose an audio file instead.';return}
+      try{stream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){fb.textContent='The microphone is blocked here. Open this page in Chrome, Edge or Safari and allow the microphone, or choose an audio file instead.';toast('Microphone blocked. You can choose an audio file instead.');return}
+      chunks=[];rec=new MediaRecorder(stream);rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+      rec.onstop=()=>{clearInterval(timer);stopTracks();blob=new Blob(chunks,{type:rec.mimeType||'audio/webm'});if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(blob);tk.src=url;tk.hidden=false;b('stop').hidden=true;b('rec').hidden=false;b('rec').classList.remove('rec-on');b('up').hidden=false;b('drop').hidden=false;fb.textContent='Play it back, then upload or record again.'};
+      rec.start();t0=Date.now();b('rec').hidden=true;b('stop').hidden=false;b('up').hidden=true;b('drop').hidden=true;tk.hidden=true;timer=setInterval(()=>{const sec=Math.round((Date.now()-t0)/1000);tm.textContent=Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');if(sec>=60)rec.stop()},250)};
+    q(r,'.rfile input').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(f.size>600000&&!store.assets){fb.textContent='That file is too big to keep here. Choose a shorter one.';return}
+      blob=f;if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(f);tk.src=url;tk.hidden=false;b('up').hidden=false;b('drop').hidden=false;fb.textContent='Play it back, then upload.'};
+    b('stop').onclick=()=>{if(rec&&rec.state==='recording')rec.stop()};
+    b('drop').onclick=()=>{reset();fb.textContent=''};
+    b('up').onclick=async()=>{if(!blob)return;const btn=b('up');btn.disabled=true;btn.textContent='Uploading…';
+      const L=LANGS.haw,doc={lang:'haw',langName:L.name,gap:'',connection:'I’m learning it',year:'',title:'Singing Ke ʻAla Tuberose',text:'A recording of Ke ʻAla Tuberose, sung after the Ka Leo o ke Mele lesson.',by:store.me||'local',at:Date.now()};
+      const ext=/mp4|m4a|mpeg|mp3/.test(blob.type)?(/mpeg|mp3/.test(blob.type)?'mp3':'m4a'):/ogg/.test(blob.type)?'ogg':/wav/.test(blob.type)?'wav':'webm',f=blob instanceof File?blob:new File([blob],'ke-ala-tuberose.'+ext,{type:blob.type});
+      let ok=true;
+      if(store.assets){try{const x=await store.assets.upload(f);doc.audio=x.id}catch(e){ok=false;fb.textContent='The recording couldn’t be uploaded.'}}
+      else if(f.size<600000){doc.audio=await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.readAsDataURL(f)})}
+      else{ok=false;fb.textContent='That recording is too long to keep here. Try a shorter take.'}
+      if(ok){try{if(store.db)await store.db.collection('stories').add(doc);else{store.stories.push({...doc,id:'l'+Date.now()});saveLocal()}
+        reset();fb.textContent='Thank you. Your recording is on the Hawaiian timeline.';toast('Added to the Hawaiian timeline');refreshCommunity()}
+        catch(e){ok=false;fb.textContent='Couldn’t save. You may only have view access to this page.'}}
+      btn.disabled=false;btn.textContent='Upload to the timeline'}}
+  return{mount,leave}})();
 
 /* ============ boot ============ */
 renderLegend();updateYearNote();resize();connect();
