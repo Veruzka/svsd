@@ -11,8 +11,8 @@
 /* Layout: one full-height stage. The map is the page; a timeline docks below it, a reading panel docks right; stories open as a scrolling layer above. */
 :root{
   --bg:#fbfbf9; --surface:#ffffff; --fg:#1d1e20; --muted:#6a6c70; --faint:#b9bbb7; --land:#dadbd9; --line:#e3e3de; --en:#8fb0de; --eng:#cdd0d2;
-  --accent:#d6452b; --ga:#0f8a4c; --haw:#1a5ec9; --mori:#cf962a; --near:#d6452b; --ext:#8b8d90;
-  --paper:#f2efe7; --ink:#2b2824; --mark:rgba(214,69,43,.16); --shadow:0 10px 30px rgba(20,20,25,.08),0 1px 2px rgba(20,20,25,.06);
+  --accent:#da5a2c; --ga:#0f8a4c; --haw:#1a5ec9; --mori:#cf962a; --near:#da5a2c; --ext:#8b8d90;
+  --paper:#f2efe7; --ink:#2b2824; --mark:rgba(218,90,44,.16); --shadow:0 10px 30px rgba(20,20,25,.08),0 1px 2px rgba(20,20,25,.06);
   --serif:"Spectral",Georgia,"Times New Roman",serif; --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
@@ -899,6 +899,9 @@ LANGS.ga.intro={q:'Is fearr Gaeilge bhriste ná Béarla cliste.',tr:'Broken Iris
   cap:'Portrait slot · a native speaker from Conamara or Corca Dhuibhne, photographed by family',voice:'a native speaker reads the proverb',dur:24,
   stat:'<b>1,524,286</b> people could speak Irish in 1851. <b>71,968</b> speak it every day today.'};
 LANGS.haw.audio='audio/haw-proverb.wav';
+// waveform of the recording, precomputed (RMS per bin, 0–99) so it also shows when the page is opened from disk
+LANGS.haw.peaks='000102020202020303030303030303040404030404030403020303030303040504151806040202050906182239354240526469675546456173677046394140678087715047484759605139271608040316090813585950514551515451595559636373769299783437403561665341382716121210090906050303020303020202030302020303040303030511130402020215080809281215201536494945353240596864503026303641393730333736414242250703030306140950757639293134343534414750493722170806020203020504050705060504050303020203040304040303030203020202020200';
+for(const L of Object.values(LANGS))if(L.peaks)L._peaks=Float32Array.from(L.peaks.match(/../g),v=>+v/99);
 LANGS.haw.intro={q:'I ka ʻōlelo nō ke ola; i ka ʻōlelo nō ka make.',tr:'In language there is life; in language there is death.',attr:'ʻŌlelo noʻeau · Hawaiian proverb',
   cap:'Portrait slot · a kupuna who spoke Hawaiian, photographed by family',photo:'img/haw-family.jpg',voice:'a mānaleo (native speaker) reads the proverb',
   dur:4.2,stat:'About <b>70,000</b> people spoke Hawaiian in 1853. In 1983, fewer than <b>50</b> children did.'};
@@ -1986,7 +1989,7 @@ function renderPanel(){const L=LANGS[S.lang];const p=$('#panel');const crit=L.gl
    <div class="sec chart"><div class="head"><span class="cap">Speakers over time</span><span class="mono">log scale</span></div><div id="pchart"></div>
      </div>
    <div class="sec"><div class="head"><span class="cap">From the community</span></div><div id="comm"></div></div>
-  </div><div class="ctas"><button class="btn accent" id="readBtn"><span class="dot"></span>Read the story</button><button class="btn ghost" id="addBtn">Add your story</button></div>`;
+  </div><div class="ctas"><button class="btn accent" id="readBtn">Read the story</button><button class="btn ghost" id="addBtn">Add your story</button></div>`;
   p.querySelector('.close').onclick=()=>toWorld();p.querySelector('#readBtn').onclick=()=>openStory(L.id);p.querySelector('#addBtn').onclick=()=>openForm({lang:L.id});
   p.scrollTop=0;updatePanelYear();refreshCommunity()}
 function updatePanelYear(){const L=LANGS[S.lang];if(!L||!$('#now'))return;const v=seriesAt(L,'can',S.year),d=seriesAt(L,'daily',S.year);
@@ -2001,7 +2004,7 @@ function refreshCommunity(){const sg=document.querySelector('#sGaps');if(sg&&SX.
 function renderGaps(L,el){el.innerHTML=L.gapList.map(g=>`<button class="gapbtn" data-g="${g.id}"><svg width="28" height="10" aria-hidden="true"><line x1="2" x2="26" y1="5" y2="5" stroke="currentColor" stroke-dasharray="1.5 3.5" stroke-linecap="round" stroke-width="1.6"/></svg><span><b>${esc(gapTitle(g))}</b><span class="mono">${g.from}–${g.to}</span></span>${stateHTML(gapState(g))}</button>`).join('');
   el.onclick=e=>{const b=e.target.closest('[data-g]');if(b)openGap(L.gapList.find(g=>g.id===b.dataset.g))}}
 const EXAMPLES={ga:[{type:'voice',title:'Children’s songs, Fionán Mac Coluim',when:'1928 · Doegen Records'},{type:'doc',label:'manuscript',title:'Stories told by Peig Sayers',when:'1930s · Great Blasket'},{type:'doc',label:'newspaper',title:'An Claidheamh Soluis',when:'1899–1932 · Gaelic League'},{type:'doc',label:'school copybook',title:'Schools’ Collection notebook',when:'1937–39 · Dúchas'}],
- haw:[{type:'voice',title:'Ka Leo Hawaiʻi: Sarah Nākoa',when:'24 Oct 1972 · KCCN'},{type:'doc',label:'newspaper',img:'img/kuu-hae-hawaii-1913.jpg',pos:'center 42%',title:'Kuu Hae Hawaii',when:'Vol. I, No. 9 · 4 July 1913'},{type:'doc',label:'letter',title:'Liholiho to Kaluaiahuena',when:'1823 · State Archives'},{type:'doc',label:'petition',title:'Petition against annexation',when:'1897 · signed in Hawaiian'}]};
+ haw:[{type:'doc',label:'letter',img:'img/mahelona-letter-1895.png',pos:'center 30%',title:'S. W. Mahelona to Liliʻuokalani',when:'25 Aug 1895 · Kahala · on fishing rights'},{type:'voice',title:'Ka Leo Hawaiʻi: Sarah Nākoa',when:'24 Oct 1972 · KCCN'},{type:'doc',label:'newspaper',img:'img/kuu-hae-hawaii-1913.jpg',pos:'center 42%',title:'Kuu Hae Hawaii',when:'Vol. I, No. 9 · 4 July 1913'},{type:'doc',label:'letter',title:'Liholiho to Kaluaiahuena',when:'1823 · State Archives'},{type:'doc',label:'petition',title:'Petition against annexation',when:'1897 · signed in Hawaiian'}]};
 function exampleCard(L,x){return`<div class="story"><div class="thumb"><span class="chip ex">Example</span>${x.type==='voice'?waveSVG(L):x.img?`<img src="${x.img}" alt="" style="object-position:${x.pos||'center'}">`:x.type==='doc'?`<span class="mono">${esc(x.label)}</span>`:x.type==='photo'?'<span class="mono">photo</span>':'<span class="q">“…”</span>'}</div><b>${esc(x.title)}</b><span class="mono">${esc(x.when)}</span></div>`}
 function commCards(L){const mine=store.stories.filter(s=>s.lang===L.id||s.langName===L.name).sort((a,b)=>(b.at||0)-(a.at||0));
   return{mine,cards:mine.map(storyCard).concat(mine.length<2?EXAMPLES[L.id].map(x=>exampleCard(L,x)):[])}}
@@ -2293,7 +2296,7 @@ function sceneHTML(L,s,i){
      <p class="hui"><b>Hui:</b> ʻIke hou ana i ka nani aʻo Hilo,<br>I ka uluwehiwehi i ka lehua,<br>Lei hoʻohihi a ka malihini,<br>Mea ʻole i ke kono a ke aloha.</p>
      <p>E aloha aʻe ana i ka makani Puʻulena,<br>Ka makani kaulana o ka ʻāina,<br>Home noho a nā ʻiʻiwi pōlena,<br>Mea ʻole i ke kono a ke aloha.</p></div>
     <div class="snd"><div class="cap">Ka Leo o ke Mele</div><h4>Listen, then sing it back</h4>
-     <audio class="sg-audio" controls preload="metadata" src="audio/ke-ala-tuberose.m4a"></audio>
+     <audio class="sg-audio" controls preload="metadata" src="audio/ke-ala-tuberose.mp4"></audio>
      <div class="rec"><div class="rt">Record yourself</div>
       <div class="rrow"><button class="btn sm" type="button" data-r="rec"><span class="dot"></span>Record</button><button class="btn ghost sm" type="button" data-r="stop" hidden>Stop</button><span class="rtime mono"></span><label class="btn ghost sm rfile">Or choose an audio file<input type="file" accept="audio/*" hidden></label></div>
       <audio class="sg-take" controls hidden></audio>
@@ -2439,7 +2442,9 @@ window.SONG=(()=>{let rec=null,chunks=[],stream=null,blob=null,timer=0,t0=0,url=
   function root(){return document.querySelector('.sx-song')}
   function stopTracks(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}}
   function leave(){const r=root();if(!r)return;const a=q(r,'.sg-audio'),t=q(r,'.sg-take');a&&a.pause();t&&t.pause();if(rec&&rec.state==='recording')rec.stop();stopTracks();clearInterval(timer)}
-  function mount(el){const r=el.querySelector('.sx-song');if(!r)return;const b=n=>q(r,`[data-r=${n}]`),fb=q(r,'.rfb'),tk=q(r,'.sg-take'),tm=q(r,'.rtime');
+  function mount(el){const r=el.querySelector('.sx-song');if(!r)return;
+    // Safari won't stream media without range requests; play the song from a blob URL instead
+    {const sa=q(r,'.sg-audio');fetch(sa.getAttribute('src')).then(x=>x.ok?x.blob():null).then(b=>{if(b)sa.src=URL.createObjectURL(b)}).catch(()=>{})}const b=n=>q(r,`[data-r=${n}]`),fb=q(r,'.rfb'),tk=q(r,'.sg-take'),tm=q(r,'.rtime');
     const reset=()=>{blob=null;if(url)URL.revokeObjectURL(url);url='';tk.hidden=true;tk.removeAttribute('src');b('up').hidden=true;b('drop').hidden=true;b('rec').hidden=false;b('stop').hidden=true;b('rec').classList.remove('rec-on');tm.textContent=''};
     b('rec').onclick=async()=>{q(r,'.sg-audio').pause();fb.textContent='';
       if(!navigator.mediaDevices||!window.MediaRecorder){fb.textContent='Recording is not supported here (it needs https or localhost). Choose an audio file instead.';return}
